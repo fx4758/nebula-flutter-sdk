@@ -11,7 +11,7 @@ Last verified: 2026-08-03
 | Public API excludes App Secret | DONE | `NebulaOptions` only exposes public `appId` |
 | AI governance G0-G2 baseline | DONE | policy, guard, exception registry, PR/CI gates |
 | Governance regression after task transition | DONE | G0-04: GOV-TASK fixtures select/insert own task rows; 23 cases pass while F0-02 stays DONE |
-| F0 contract tests/CI | READY | F0-04/F0-05 |
+| F0 contract tests/CI | IN_PROGRESS | F0-04 fixtures DONE; F0-05 CI/API surface/secret scan pending |
 | Real backend integration | BLOCKED | Requires F0 contract freeze and explicit authorization |
 | App migration | BLOCKED | Requires F1/F2 and App repository access |
 
@@ -22,11 +22,11 @@ Last verified: 2026-08-03
 | F0-01 | DONE | Codex | Initial architecture and compilable contract scaffold |
 | F0-02 | DONE | Architect@3cb52e5 | Current-vs-target audit, trust/session contract and coding handoff frozen |
 | F0-03 | READY | - | Legacy HMAC compatibility and sunset plan |
-| F0-04 | READY | - | Contract fixtures/error mapping |
+| F0-04 | DONE | Codex | Contract fixtures: real-encoding JSON fixtures (bootstrap req/resp, proof canonical, error mapping) + 8 fixture-driven tests |
 | F0-05 | READY | - | CI/API surface/secret scan |
 | G0-01 | DONE | Codex | Guard PASS; SEC-MOBILE-SECRET negative probe exits 1 |
 | G0-02 | DONE | Codex@4c89302 | 23 isolated pass/fail/false-positive cases; all Rule IDs covered |
-| G0-03 | BLOCKED | - | Requires F0-04 API contract fixture |
+| G0-03 | READY | - | API surface snapshot; F0-04 fixtures DONE |
 | G0-04 | DONE | Codex | Fixtures select/insert their own task rows; no architecture or policy change |
 | BR-01 | DONE | Codex | flypost `1bae972`: AI Admin route ownership converged to module/ai; router tests green |
 | F1-01..F6 | BLOCKED | - | Follow dependencies in implementation plan |
@@ -41,4 +41,4 @@ Last verified: 2026-08-03
 
 ## Next recommended task
 
-`F0-04` (contract fixtures/error mapping) — the F0-02 target protocol is now fully reconciled across repositories (FB-01..05, FS-01/02, FC-01 all DONE): next is pinning final fixture encoding (public-key DER, digest hex) which unblocks G0-03. `F0-05` (CI/API surface/secret scan) is parallel READY.
+`G0-03` (API surface compatibility snapshot, now unblocked by F0-04 fixtures) and `F0-05` (CI/API surface/secret scan) — both are tooling tasks; `F0-03` (legacy HMAC sunset plan, docs) is also READY. All F0-02 protocol work (FB-01..05, FS-01/02, FC-01) and F0-04 contract fixtures are DONE.

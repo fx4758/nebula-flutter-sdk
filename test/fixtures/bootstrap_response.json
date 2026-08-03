@@ -1,0 +1,13 @@
+{
+  "comment": "Frozen bootstrap response fixture (docs/08 §4.2, F0-04). installation_token is a capability-poor JWT sample (scope=installation). Change requires a fixture freeze ADR.",
+  "installation_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6Imluc3RhbGxhdGlvbiIsImFwcF9pZCI6Im5lYnVsYS5leGFtcGxlLmFwcCIsImluc3RhbGxhdGlvbl9pZCI6IjNmMmExYzhlLTliNGQtNGY2ZS04YTJiLTFjNWQ3ZTlmMGEzYiIsImlhdCI6MTcyNTMwMDAwMCwiZXhwIjoxNzI1Mzg2NDAwfQ.sample-signature",
+  "expires_at": "2026-08-04T18:00:00Z",
+  "renew_after": "2026-08-03T19:12:00Z",
+  "server_time": "2026-08-03T18:00:00Z",
+  "app_id": "nebula.example.app",
+  "installation_id": "3f2a1c8e-9b4d-4f6e-8a2b-1c5d7e9f0a3b",
+  "proof_algorithm": "es256",
+  "attestation_state": "not_supported",
+  "minimum_supported_build": null,
+  "request_id": "req-0f3a9c2e-7b4d-4a6f-8e1c-2b5d6c7f8a9b"
+}

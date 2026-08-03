@@ -1,0 +1,11 @@
+{
+  "comment": "Frozen proof canonicalization fixture (docs/08 §5, F0-04). bodySha256/tokenSha256 are real SHA-256 hex digests (64 chars). The expected value is exactly what the ES256 signature covers.",
+  "version": "V1",
+  "method": "POST",
+  "path": "/api/v1/auth/login",
+  "timestamp": "1725300000",
+  "nonce": "nonce-2f7a1c",
+  "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "token_sha256": "5c8f2d9a1b6e4c3d8a7f0e2b5c9d1a4f7e3b6c2d9a1f4e7b3c8d5a6f0e2b1c4d",
+  "expected_canonical": "V1\nPOST\n/api/v1/auth/login\n1725300000\nnonce-2f7a1c\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n5c8f2d9a1b6e4c3d8a7f0e2b5c9d1a4f7e3b6c2d9a1f4e7b3c8d5a6f0e2b1c4d"
+}

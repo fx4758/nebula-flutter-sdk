@@ -1,0 +1,48 @@
+{
+  "comment": "Frozen SDK error-code mapping (docs/08 §8 categories, FB-01 allocation 12001-12004 + stable legacy codes, F0-04). Unknown codes are preserved with integer code + requestId and classify as authentication_required.",
+  "version": 1,
+  "table": [
+    {
+      "code": 12001,
+      "category": "invalid_installation",
+      "action": "clear installation token and bootstrap once",
+      "sdk_class": "InvalidInstallationError"
+    },
+    {
+      "code": 12002,
+      "category": "session_revoked",
+      "action": "clear user session; do not retry",
+      "sdk_class": "SessionRevokedError"
+    },
+    {
+      "code": 12003,
+      "category": "client_outdated",
+      "action": "block or recommend upgrade by server policy",
+      "sdk_class": "ClientOutdatedError"
+    },
+    {
+      "code": 12004,
+      "category": "temporarily_unavailable",
+      "action": "bounded backoff; preserve safe local state",
+      "sdk_class": "TemporarilyUnavailableError"
+    },
+    {
+      "code": 10003,
+      "category": "authentication_required",
+      "action": "single-flight refresh if refresh exists",
+      "sdk_class": "AuthenticationRequiredError"
+    },
+    {
+      "code": 30001,
+      "category": "invalid_request",
+      "action": "no retry",
+      "sdk_class": "InvalidRequestError"
+    },
+    {
+      "code": 40002,
+      "category": "rate_limited",
+      "action": "honor Retry-After; no immediate loop",
+      "sdk_class": "RateLimitedError"
+    }
+  ]
+}
