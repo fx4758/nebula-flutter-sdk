@@ -1,0 +1,11 @@
+name: nebula_sdk
+description: Shared client foundation for Nebula multi-app Flutter products.
+version: 0.1.0-dev.1
+publish_to: none
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies: {}
+
+dev_dependencies: {}
