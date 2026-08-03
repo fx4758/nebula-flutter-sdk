@@ -87,6 +87,7 @@ Next task
 
 ```bash
 dart run tool/governance.dart
+dart run tool/governance_test.dart
 ```
 
 当前检查：
@@ -99,6 +100,8 @@ dart run tool/governance.dart
 - 临时例外字段和截止日期是否有效。
 
 守卫是启发式防线，不替代代码审查和威胁建模。
+
+`governance_test.dart` 在系统临时目录为每个 Rule ID 建立隔离工程、注入单一违规并执行真实守卫。当前 23 个用例覆盖基线通过、误报样例、所有 Rule ID、非法策略、例外缺字段/通配/过期/超期。测试完成后删除临时工程，不修改当前工作树。
 
 ## 7. 例外与技术债
 

@@ -24,7 +24,7 @@ Last verified: 2026-08-03
 | F0-04 | READY | - | Contract fixtures/error mapping |
 | F0-05 | READY | - | CI/API surface/secret scan |
 | G0-01 | DONE | Codex | Guard PASS; SEC-MOBILE-SECRET negative probe exits 1 |
-| G0-02 | READY | - | Add isolated regression suite for all guard rules |
+| G0-02 | DONE | Codex@4c89302 | 23 isolated pass/fail/false-positive cases; all Rule IDs covered |
 | G0-03 | BLOCKED | - | Requires F0-04 API contract fixture |
 | F1-01..F6 | BLOCKED | - | Follow dependencies in implementation plan |
 

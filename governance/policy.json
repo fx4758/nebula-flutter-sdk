@@ -4,7 +4,8 @@
     "max_dart_file_lines": 400,
     "max_public_exports": 20,
     "max_agents_lines": 120,
-    "max_handoff_lines": 160
+    "max_handoff_lines": 160,
+    "max_exception_days": 30
   },
   "required_files": [
     "AGENTS.md",
@@ -19,6 +20,7 @@
     "docs/DECISIONS.md",
     "governance/exceptions.json",
     "governance/public_api.txt",
+    "tool/governance_test.dart",
     ".github/pull_request_template.md",
     ".github/workflows/governance.yml"
   ],

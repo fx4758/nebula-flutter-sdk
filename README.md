@@ -27,6 +27,7 @@ Nebula 多 App 共用的客户端基础能力工程。业务 App 保留 UI、业
 ```bash
 dart pub get
 dart run tool/governance.dart
+dart run tool/governance_test.dart
 dart format --output=none --set-exit-if-changed .
 dart analyze
 dart run tool/smoke.dart

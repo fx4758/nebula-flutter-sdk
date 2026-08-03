@@ -31,7 +31,7 @@ void main() {
   _checkPublicApi(root, policy, findings);
   _checkPolicyExamples(policy, findings);
   _checkSources(root, policy, findings);
-  _checkExceptions(root, findings);
+  _checkExceptions(root, policy, findings);
 
   if (findings.isEmpty) {
     stdout.writeln('Nebula Governance: PASS');
@@ -219,7 +219,18 @@ void _checkSources(
     }
     final String contents = lines.join('\n');
     for (final Map<String, Object?> pattern in patterns) {
-      final RegExp expression = _patternFromPolicy(pattern);
+      RegExp expression;
+      try {
+        expression = _patternFromPolicy(pattern);
+      } on FormatException catch (error) {
+        findings.add(
+          Finding(
+            'GOV-POLICY',
+            '${pattern['id']! as String} invalid regex: $error',
+          ),
+        );
+        continue;
+      }
       if (expression.hasMatch(contents)) {
         findings.add(
           Finding(
@@ -275,13 +286,25 @@ RegExp _patternFromPolicy(Map<String, Object?> pattern) => RegExp(
       caseSensitive: pattern['case_sensitive'] as bool? ?? true,
     );
 
-void _checkExceptions(Directory root, List<Finding> findings) {
+void _checkExceptions(
+  Directory root,
+  Map<String, Object?> policy,
+  List<Finding> findings,
+) {
   final File file = File('${root.path}/governance/exceptions.json');
   if (!file.existsSync()) return;
   final Map<String, Object?> registry =
       (jsonDecode(file.readAsStringSync()) as Map).cast<String, Object?>();
   final List<Object?> exceptions = registry['exceptions']! as List<Object?>;
   final DateTime today = DateTime.now().toUtc();
+  final Map<String, Object?> limits =
+      (policy['limits']! as Map).cast<String, Object?>();
+  final int maxDays = limits['max_exception_days']! as int;
+  final DateTime latestAllowed = DateTime.utc(
+    today.year,
+    today.month,
+    today.day,
+  ).add(Duration(days: maxDays));
   const Set<String> required = <String>{
     'id',
     'rule_id',
@@ -320,6 +343,13 @@ void _checkExceptions(Directory root, List<Finding> findings) {
     } else if (expiry
         .isBefore(DateTime.utc(today.year, today.month, today.day))) {
       findings.add(Finding('GOV-EXCEPTION', '$id expired on $expiresOn'));
+    } else if (expiry.isAfter(latestAllowed)) {
+      findings.add(
+        Finding(
+          'GOV-EXCEPTION',
+          '$id exceeds the maximum $maxDays-day exception window',
+        ),
+      );
     }
   }
 }

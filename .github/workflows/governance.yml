@@ -19,5 +19,6 @@ jobs:
           sdk: stable
       - run: dart pub get
       - run: dart run tool/governance.dart
+      - run: dart run tool/governance_test.dart
       - run: dart format --output=none --set-exit-if-changed .
       - run: dart analyze
