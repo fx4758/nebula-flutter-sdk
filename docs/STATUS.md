@@ -10,7 +10,7 @@ Last verified: 2026-08-03
 | AI task router and architecture | DONE | `docs/00..06`, `AGENTS.md` |
 | Public API excludes App Secret | DONE | `NebulaOptions` only exposes public `appId` |
 | AI governance G0-G2 baseline | DONE | policy, guard, exception registry, PR/CI gates |
-| Governance regression after task transition | BLOCKED | G0-04: test fixture hard-codes `F0-02 READY` |
+| Governance regression after task transition | DONE | G0-04: GOV-TASK fixtures select/insert own task rows; 23 cases pass while F0-02 stays DONE |
 | F0 contract tests/CI | READY | F0-04/F0-05 |
 | Real backend integration | BLOCKED | Requires F0 contract freeze and explicit authorization |
 | App migration | BLOCKED | Requires F1/F2 and App repository access |
@@ -27,9 +27,10 @@ Last verified: 2026-08-03
 | G0-01 | DONE | Codex | Guard PASS; SEC-MOBILE-SECRET negative probe exits 1 |
 | G0-02 | DONE | Codex@4c89302 | 23 isolated pass/fail/false-positive cases; all Rule IDs covered |
 | G0-03 | BLOCKED | - | Requires F0-04 API contract fixture |
-| G0-04 | READY | Coding AI | Make invalid-state fixture select/insert its own task; no architecture changes |
+| G0-04 | DONE | Codex | Fixtures select/insert their own task rows; no architecture or policy change |
+| BR-01 | DONE | Codex | flypost `1bae972`: AI Admin route ownership converged to module/ai; router tests green |
 | F1-01..F6 | BLOCKED | - | Follow dependencies in implementation plan |
-| FB-01 | READY | - | flypost target fixtures and error allocation; docs/09 ownership |
+| FB-01 | DONE | Codex | flypost `d3f6502`: fixtures frozen, 12001-12004 allocated, envelope reconciled; targets not-implemented |
 | FB-02 | BLOCKED | - | Installation identity owner module; depends FB-01 |
 | FB-03 | BLOCKED | - | Installation proof/replay middleware; depends FB-02 |
 | FB-04 | BLOCKED | - | App-bound session rotation/logout; depends FB-01/FB-02 |
@@ -40,4 +41,4 @@ Last verified: 2026-08-03
 
 ## Next recommended task
 
-`G0-04`: a coding AI fixes `tool/governance_test.dart` so tests create/select their own fixture task instead of requiring `F0-02` to remain `READY`. Acceptance: all 23+ cases pass while F0-02 remains DONE; no architecture or policy semantics change. After G0-04, start `FB-01` in flypost.
+`FB-02` in flypost: installation identity owner module (docs/09). BR-01 restored the flypost router test baseline; FB-01 froze the target protocol fixtures, error codes 12001-12004 and the `{code,data}` envelope.
