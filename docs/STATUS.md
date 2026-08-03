@@ -37,8 +37,8 @@ Last verified: 2026-08-03
 | FB-05 | DONE | Codex | flypost `fd3f799`: router isolation, trusted claims rate/idempotency keys, CORS header allowlist (MB-08/09/11) |
 | FS-01 | DONE | Codex | SDK installation contracts: typed bootstrap/identity, key/token-store/proof Ports, canonicalization tests |
 | FS-02 | DONE | Codex | SDK session state machine: serialized §7 transitions, single-flight refresh, logout cleanup, typed errors |
-| FC-01 | BLOCKED | - | Cross-repository compatibility; depends FB/FS tasks |
+| FC-01 | DONE | Codex | Cross-repo reconciliation: 8 scenarios anchored both sides, contract artifacts + 12 consistency assertions |
 
 ## Next recommended task
 
-`FC-01` in nebula-flutter-sdk + flypost: cross-repository compatibility and end-to-end fixtures (docs/09 §4) — contract artifacts only, no duplicate production implementation. Depends on FB-01..FB-05 (DONE), FS-01 (DONE) and FS-02 (DONE).
+`F0-04` (contract fixtures/error mapping) — the F0-02 target protocol is now fully reconciled across repositories (FB-01..05, FS-01/02, FC-01 all DONE): next is pinning final fixture encoding (public-key DER, digest hex) which unblocks G0-03. `F0-05` (CI/API surface/secret scan) is parallel READY.
