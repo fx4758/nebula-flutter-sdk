@@ -35,10 +35,10 @@ Last verified: 2026-08-03
 | FB-03 | DONE | Codex | flypost `c7f022a`: proof/replay middleware, pkg/proof, migration 031 public key |
 | FB-04 | DONE | Codex | flypost `77a10cb`: session rotation/logout, jwt jti fix, migration 032 |
 | FB-05 | DONE | Codex | flypost `fd3f799`: router isolation, trusted claims rate/idempotency keys, CORS header allowlist (MB-08/09/11) |
-| FS-01 | BLOCKED | - | SDK installation contracts; depends FB-01 fixtures |
+| FS-01 | DONE | Codex | SDK installation contracts: typed bootstrap/identity, key/token-store/proof Ports, canonicalization tests |
 | FS-02 | BLOCKED | - | SDK session state machine; depends FS-01/FB-04 |
 | FC-01 | BLOCKED | - | Cross-repository compatibility; depends FB/FS tasks |
 
 ## Next recommended task
 
-`FS-01` in nebula-flutter-sdk (SDK): installation contracts and secure adapters (docs/09 §3). FB-05 closed the flypost-side router work for the F0-02 target protocol (BR-01 baseline, FB-01 fixtures/error codes/envelope, FB-02 installation owner module, FB-03 proof/replay middleware, FB-04 session rotation/logout, FB-05 trusted-claims rate/idempotency keys + CORS allowlist MB-08/09/11). FS-01 depends on FB-01 frozen fixtures, which are DONE — SDK foundation contracts (typed bootstrap/installation identity, key/signing Port, secure token store Port, request proof Port) are now unblocked.
+`FS-02` in nebula-flutter-sdk (SDK): user session state machine (docs/09 §3) — serialized state machine per docs/08 §7, single-flight refresh, local logout cleanup and session event stream, typed error categories without invented backend codes. Depends on FB-04 fixtures (DONE) and FS-01 (DONE).
