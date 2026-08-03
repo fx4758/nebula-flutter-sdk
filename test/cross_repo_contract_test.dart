@@ -233,13 +233,14 @@ void main() {
       // legacy HMAC-style string anywhere in the SDK auth contracts.
       final canonical = const ProofCanonicalInput(
         method: 'POST',
-        path: '/api/v1/auth/login',
+        path: '/api/v1/mobile/auth/login',
         timestamp: '1725300000',
         nonce: 'n',
         bodySha256: 'b',
         tokenSha256: 't',
       ).canonicalize();
-      expect(canonical, 'V1\nPOST\n/api/v1/auth/login\n1725300000\nn\nb\nt');
+      expect(canonical,
+          'V1\nPOST\n/api/v1/mobile/auth/login\n1725300000\nn\nb\nt');
       expect(canonical, isNot(contains('sign=')));
     });
   });

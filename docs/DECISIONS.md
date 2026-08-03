@@ -62,3 +62,11 @@ Consequences:
 - 契约 fixture（docs/08 §3 target 表）路径同步更新。
 
 Migration/Rollback: 新路径无既有流量，直接发布；回滚 = 还原 target 注册（legacy 不受影响）。
+
+## ADR-F009 — device/bind out of F0 scope
+
+Background: ADR-F008 将 `/api/v1/mobile/auth/device/bind` 列入 target 端点，但该端点（用户与 installation 绑定）依赖 user access + installation proof 完整会话链，且当前无真实消费方（F0 聚焦 bootstrap/auth/refresh/logout 闭环）。评审 P1 要求：实现它，或经 ADR 正式移出 F0 契约。
+
+Decision: 正式移出 F0 契约。`/api/v1/mobile/auth/device/bind` 标记为 F1 实现（docs/08 §3 target 表注记）；F0 不注册该路由，mobile_contract_test 的 not-implemented 断言保留至 F1。这不改变任何已冻结 wire 语义，仅调整 scope 边界。
+
+Migration/Rollback: 无代码影响；F1 实现时恢复注册并按 docs/08 §3 语义落地。

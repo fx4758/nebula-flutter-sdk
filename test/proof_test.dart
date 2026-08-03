@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   ProofCanonicalInput input() => const ProofCanonicalInput(
         method: 'POST',
-        path: '/api/v1/auth/login',
+        path: '/api/v1/mobile/auth/login',
         timestamp: '1725300000',
         nonce: 'nonce-1',
         bodySha256: 'abc123',
@@ -19,7 +19,7 @@ void main() {
     test('joins the seven frozen segments with \\n in frozen order', () {
       expect(
         input().canonicalize(),
-        'V1\nPOST\n/api/v1/auth/login\n1725300000\nnonce-1\nabc123\ndef456',
+        'V1\nPOST\n/api/v1/mobile/auth/login\n1725300000\nnonce-1\nabc123\ndef456',
       );
     });
 
@@ -30,7 +30,7 @@ void main() {
       expect(segments, hasLength(7));
       expect(segments[0], nebulaProofVersion); // VERSION
       expect(segments[1], 'POST'); // METHOD
-      expect(segments[2], '/api/v1/auth/login'); // PATH
+      expect(segments[2], '/api/v1/mobile/auth/login'); // PATH
       expect(segments[3], '1725300000'); // TIMESTAMP
       expect(segments[4], 'nonce-1'); // NONCE
       expect(segments[5], 'abc123'); // BODY_SHA256
@@ -42,7 +42,7 @@ void main() {
       expect(
         const ProofCanonicalInput(
           method: 'PUT',
-          path: '/api/v1/auth/login',
+          path: '/api/v1/mobile/auth/login',
           timestamp: '1725300000',
           nonce: 'nonce-1',
           bodySha256: 'abc123',
@@ -53,7 +53,7 @@ void main() {
       expect(
         const ProofCanonicalInput(
           method: 'POST',
-          path: '/api/v1/auth/logout',
+          path: '/api/v1/mobile/auth/logout',
           timestamp: '1725300000',
           nonce: 'nonce-1',
           bodySha256: 'abc123',
@@ -64,7 +64,7 @@ void main() {
       expect(
         const ProofCanonicalInput(
           method: 'POST',
-          path: '/api/v1/auth/login',
+          path: '/api/v1/mobile/auth/login',
           timestamp: '9999999999',
           nonce: 'nonce-1',
           bodySha256: 'abc123',
@@ -75,7 +75,7 @@ void main() {
       expect(
         const ProofCanonicalInput(
           method: 'POST',
-          path: '/api/v1/auth/login',
+          path: '/api/v1/mobile/auth/login',
           timestamp: '1725300000',
           nonce: 'nonce-2',
           bodySha256: 'abc123',
@@ -86,7 +86,7 @@ void main() {
       expect(
         const ProofCanonicalInput(
           method: 'POST',
-          path: '/api/v1/auth/login',
+          path: '/api/v1/mobile/auth/login',
           timestamp: '1725300000',
           nonce: 'nonce-1',
           bodySha256: 'abc124',
@@ -97,7 +97,7 @@ void main() {
       expect(
         const ProofCanonicalInput(
           method: 'POST',
-          path: '/api/v1/auth/login',
+          path: '/api/v1/mobile/auth/login',
           timestamp: '1725300000',
           nonce: 'nonce-1',
           bodySha256: 'abc123',
@@ -108,7 +108,7 @@ void main() {
       expect(
         const ProofCanonicalInput(
           method: 'POST',
-          path: '/api/v1/auth/login',
+          path: '/api/v1/mobile/auth/login',
           timestamp: '1725300000',
           nonce: 'nonce-1',
           bodySha256: 'abc123',

@@ -78,12 +78,12 @@ The following endpoints are target contracts, not current routes.
 | Endpoint | Trust before call | Purpose | Retry |
 | --- | --- | --- | --- |
 | `POST /api/v1/mobile/bootstrap` | public endpoint + IP/App rate limit + optional attestation | register/renew installation trust | one bounded retry with same bootstrap request ID |
-| `POST /api/v1/auth/code/send` | installation token + proof | send login code | no automatic retry |
-| `POST /api/v1/auth/login` | installation token + proof | PHONE login and session creation | no automatic retry |
-| `POST /api/v1/auth/oauth/login` | installation token + proof | supported Provider login | no retry; disabled until real adapter exists |
-| `POST /api/v1/auth/refresh` | installation token + proof + refresh token | atomic refresh rotation | single-flight; one request only |
-| `POST /api/v1/auth/logout` | user access token + installation proof | revoke current session | idempotent, one bounded retry |
-| `POST /api/v1/auth/device/bind` | user access token + installation proof | bind current installation to user | idempotent |
+| `POST /api/v1/mobile/auth/code/send` | installation token + proof | send login code | no automatic retry |
+| `POST /api/v1/mobile/auth/login` | installation token + proof | PHONE login and session creation | no automatic retry |
+| `POST /api/v1/mobile/auth/oauth/login` | installation token + proof | supported Provider login | no retry; disabled until real adapter exists |
+| `POST /api/v1/mobile/auth/refresh` | installation token + proof + refresh token | atomic refresh rotation | single-flight; one request only |
+| `POST /api/v1/mobile/auth/logout` | user access token + installation proof | revoke current session | idempotent, one bounded retry |
+| `POST /api/v1/mobile/auth/device/bind` | user access token + installation proof | bind current installation to user | idempotent；**F0 契约外**（ADR-F008 注记，F1 实现） |
 
 `/sync/bootstrap` keeps its Flypost business meaning and must never be reused for installation bootstrap.
 
