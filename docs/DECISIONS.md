@@ -30,4 +30,10 @@ Decision: 凭据、Entitlement、退款、模板管理等控制面 API 不进入
 
 Reason: 权限最小化和职责隔离。
 
+## ADR-F006 — Routed AI governance
+
+Decision: AI 默认只读取任务路由页；blocking 规则集中在机器策略中，例外必须登记并到期。
+
+Reason: 保持多轮协作一致性的同时，限制规则复制、上下文增长和 Token 成本。
+
 修改任何已冻结决策必须新增 ADR：背景、选项、决定、迁移、回滚和影响，禁止静默改写历史。

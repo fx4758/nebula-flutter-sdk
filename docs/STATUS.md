@@ -9,6 +9,7 @@ Last verified: 2026-08-03
 | Independent package scaffold | DONE | `pubspec.yaml`, `lib/` |
 | AI task router and architecture | DONE | `docs/00..06`, `AGENTS.md` |
 | Public API excludes App Secret | DONE | `NebulaOptions` only exposes public `appId` |
+| AI governance G0-G2 baseline | DONE | policy, guard, exception registry, PR/CI gates |
 | F0 contract tests/CI | READY | F0-04/F0-05 |
 | Real backend integration | BLOCKED | Requires F0 contract freeze and explicit authorization |
 | App migration | BLOCKED | Requires F1/F2 and App repository access |
@@ -22,6 +23,9 @@ Last verified: 2026-08-03
 | F0-03 | READY | - | Legacy HMAC compatibility and sunset plan |
 | F0-04 | READY | - | Contract fixtures/error mapping |
 | F0-05 | READY | - | CI/API surface/secret scan |
+| G0-01 | DONE | Codex | Guard PASS; SEC-MOBILE-SECRET negative probe exits 1 |
+| G0-02 | READY | - | Add isolated regression suite for all guard rules |
+| G0-03 | BLOCKED | - | Requires F0-04 API contract fixture |
 | F1-01..F6 | BLOCKED | - | Follow dependencies in implementation plan |
 
 ## Next recommended task

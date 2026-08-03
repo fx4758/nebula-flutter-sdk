@@ -26,9 +26,12 @@ Nebula 多 App 共用的客户端基础能力工程。业务 App 保留 UI、业
 
 ```bash
 dart pub get
+dart run tool/governance.dart
 dart format --output=none --set-exit-if-changed .
 dart analyze
 dart run tool/smoke.dart
 ```
 
 Flutter 原生插件进入 F3 后再增加 `flutter` 依赖；F0-F2 的网络、身份、配置和分析契约保持纯 Dart，以便测试和服务端 Dart 工具复用。
+
+AI 治理采用按需加载和机器门禁。详细机制见 [`docs/07_AI_GOVERNANCE.md`](docs/07_AI_GOVERNANCE.md)，临时例外不得通过注释静默跳过，必须登记在 `governance/exceptions.json`。

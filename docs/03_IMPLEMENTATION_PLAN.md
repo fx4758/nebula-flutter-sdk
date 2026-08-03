@@ -2,6 +2,16 @@
 
 Sprint ID 使用 `F` 前缀，避免与 flypost 生产化 `E0-E6` 冲突。一个任务一个 PR；任务的依赖未 DONE 时不得抢跑。
 
+## G0 — AI governance baseline
+
+| ID | 任务 | Ownership | Depends |
+| --- | --- | --- | --- |
+| G0-01 | 任务路由、治理策略、守卫、例外和 CI 门禁 | governance/docs/tooling | F0-01 |
+| G0-02 | 为守卫增加正例、反例和误报回归测试 | governance tests | G0-01 |
+| G0-03 | API surface 兼容快照和版本门禁 | tooling/API | F0-04 |
+
+Exit：AI 默认上下文受预算约束；G0-G2 可机器执行；例外可追踪且会到期；治理规则没有复制到各模块。
+
 ## F0 — Contract and security correction
 
 目标：冻结新 SDK 边界，消除旧移动端 App Secret 模型。
