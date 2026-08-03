@@ -44,17 +44,10 @@ void main() {
       _appendLines(File('${root.path}/docs/00_AI_HANDOFF.md'), 161);
     }),
     GuardCase.fail('invalid task state', 'GOV-TASK', (Directory root) {
-      _replaceInFile(
-        File('${root.path}/docs/STATUS.md'),
-        '| F0-02 | READY |',
-        '| F0-02 | ALMOST |',
-      );
+      _breakTaskState(File('${root.path}/docs/STATUS.md'));
     }),
     GuardCase.fail('duplicate task ID', 'GOV-TASK', (Directory root) {
-      File('${root.path}/docs/STATUS.md').writeAsStringSync(
-        '\n| F0-02 | READY | duplicate | probe |\n',
-        mode: FileMode.append,
-      );
+      _duplicateTaskId(File('${root.path}/docs/STATUS.md'));
     }),
     GuardCase.fail('no task rows', 'GOV-TASK', (Directory root) {
       File('${root.path}/docs/STATUS.md').writeAsStringSync(
@@ -237,6 +230,50 @@ void _replaceInFile(File file, String from, String to) {
     throw StateError('fixture text not found: $from');
   }
   file.writeAsStringSync(original.replaceFirst(from, to));
+}
+
+/// 把 STATUS.md 中第一条任务行的状态改成非法状态，触发 GOV-TASK；
+/// 若文件里没有任何任务行，则插入一条带非法状态的 fixture 任务。
+/// 与 tool/governance.dart 的 taskRow 正则保持一致，不依赖具体任务 ID。
+void _breakTaskState(File status) {
+  final RegExp taskRow = RegExp(
+    r'^(\|\s*[A-Z][A-Z0-9]*-[^| ]+\s*\|\s*)([A-Z_]+)(\s*\|)',
+  );
+  final List<String> lines = status.readAsLinesSync();
+  for (int i = 0; i < lines.length; i++) {
+    final RegExpMatch? match = taskRow.firstMatch(lines[i]);
+    if (match != null) {
+      lines[i] = '${match.group(1)}ALMOST${match.group(3)}';
+      status.writeAsStringSync('${lines.join('\n')}\n');
+      return;
+    }
+  }
+  status.writeAsStringSync(
+    '# Execution Status\n\n| GX-FIXTURE | ALMOST | - | regression fixture |\n',
+  );
+}
+
+/// 把 STATUS.md 中第一条任务行的 ID 复制出一行重复任务，触发 GOV-TASK；
+/// 若文件里没有任何任务行，则插入两条相同 ID 的 fixture 任务。
+void _duplicateTaskId(File status) {
+  final RegExp taskRow = RegExp(
+    r'^\|\s*([A-Z][A-Z0-9]*-[^| ]+)\s*\|\s*([A-Z_]+)\s*\|',
+  );
+  for (final String line in status.readAsLinesSync()) {
+    final RegExpMatch? match = taskRow.firstMatch(line);
+    if (match != null) {
+      status.writeAsStringSync(
+        '\n| ${match.group(1)} | READY | duplicate | probe |\n',
+        mode: FileMode.append,
+      );
+      return;
+    }
+  }
+  status.writeAsStringSync(
+    '# Execution Status\n\n'
+    '| GX-FIXTURE | READY | a | probe |\n'
+    '| GX-FIXTURE | READY | b | probe |\n',
+  );
 }
 
 void _writeSource(Directory root, String name, String contents) {
