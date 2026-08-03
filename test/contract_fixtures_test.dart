@@ -51,23 +51,39 @@ void main() {
     });
   });
 
-  group('F0-04 bootstrap response fixture (docs/08 §4.2)', () {
+  group('F0-04 bootstrap response fixture (docs/08 §4.2, real wire)', () {
     test('typed result parses every frozen field from the fixture', () {
       final json = _fixture('bootstrap_response');
       final result = BootstrapResult.fromJson(json);
       expect(result.installationToken, json['installation_token']);
-      expect(result.expiresAt, DateTime.parse(json['expires_at']! as String));
-      expect(result.renewAfter, DateTime.parse(json['renew_after']! as String));
-      expect(result.serverTime, DateTime.parse(json['server_time']! as String));
+      // Wire: unix seconds int64 (flypost BootstrapResult).
+      expect(
+          result.expiresAt,
+          DateTime.fromMillisecondsSinceEpoch(
+            (json['expires_at']! as num).toInt() * 1000,
+            isUtc: true,
+          ));
+      expect(
+          result.renewAfter,
+          DateTime.fromMillisecondsSinceEpoch(
+            (json['renew_after']! as num).toInt() * 1000,
+            isUtc: true,
+          ));
+      expect(
+          result.serverTime,
+          DateTime.fromMillisecondsSinceEpoch(
+            (json['server_time']! as num).toInt() * 1000,
+            isUtc: true,
+          ));
       expect(result.appId, json['app_id']);
       expect(result.installationId, json['installation_id']);
       expect(result.proofAlgorithm, NebulaProofAlgorithm.es256);
       expect(result.attestationState, NebulaAttestationState.notSupported);
       expect(result.minimumSupportedBuild, isNull);
       expect(result.requestId, json['request_id']);
-      // Token TTL sanity: expires 24h after iat per fixture.
+      // Token TTL sanity: expires 24h after server_time per fixture.
       expect(
-        result.expiresAt.difference(DateTime.parse('2026-08-03T18:00:00Z')),
+        result.expiresAt.difference(result.serverTime),
         const Duration(hours: 24),
       );
     });

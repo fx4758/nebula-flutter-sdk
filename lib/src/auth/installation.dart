@@ -158,19 +158,40 @@ final class BootstrapResult {
   factory BootstrapResult.fromJson(Map<String, Object?> json) {
     return BootstrapResult(
       installationToken: json['installation_token'] as String,
-      expiresAt: DateTime.parse(json['expires_at'] as String),
-      renewAfter: DateTime.parse(json['renew_after'] as String),
-      serverTime: DateTime.parse(json['server_time'] as String),
+      // Wire 编码（唯一 wire contract，flypost BootstrapResult）：unix 秒 int64。
+      expiresAt: _unixSeconds(json['expires_at']),
+      renewAfter: _unixSeconds(json['renew_after']),
+      serverTime: _unixSeconds(json['server_time']),
       appId: json['app_id'] as String,
       installationId: json['installation_id'] as String,
-      proofAlgorithm:
-          NebulaProofAlgorithm.values.byName(json['proof_algorithm'] as String),
+      proofAlgorithm: _proofAlgorithmFromWire(
+        json['proof_algorithm'] as String,
+      ),
       attestationState: _attestationStateFromWire(
         json['attestation_state'] as String,
       ),
       minimumSupportedBuild: json['minimum_supported_build'] as String?,
       requestId: json['request_id'] as String,
     );
+  }
+
+  /// Wire 时间：unix 秒（int64）。SDK 解析为 UTC DateTime，不依赖服务器时区。
+  static DateTime _unixSeconds(Object? value) {
+    if (value is! num) {
+      throw FormatException('wire time must be unix seconds (int64): $value');
+    }
+    return DateTime.fromMillisecondsSinceEpoch(
+      value.toInt() * 1000,
+      isUtc: true,
+    );
+  }
+
+  /// Wire 算法值：`ES256`（flypost 冻结大写常量）。
+  static NebulaProofAlgorithm _proofAlgorithmFromWire(String wire) {
+    return switch (wire) {
+      'ES256' => NebulaProofAlgorithm.es256,
+      _ => throw FormatException('unknown proof_algorithm: $wire'),
+    };
   }
 
   /// Maps the server wire value (snake_case, docs/08 §4.2) to the Dart enum.

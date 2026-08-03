@@ -78,14 +78,15 @@ void main() {
     });
 
     test('bootstrap result parses every frozen wire field', () {
+      // Wire facts pinned by flypost BootstrapResult (Unix int64, "ES256").
       final json = <String, Object?>{
         'installation_token': 'tok',
-        'expires_at': '2026-08-04T00:00:00Z',
-        'renew_after': '2026-08-03T20:00:00Z',
-        'server_time': '2026-08-03T18:00:00Z',
+        'expires_at': 1785866400,
+        'renew_after': 1785784320,
+        'server_time': 1785780000,
         'app_id': 'app-a',
         'installation_id': 'inst-1',
-        'proof_algorithm': 'es256',
+        'proof_algorithm': 'ES256',
         'attestation_state': 'verified',
         'minimum_supported_build': '20260701',
         'request_id': 'r-1',
@@ -93,6 +94,7 @@ void main() {
       final result = BootstrapResult.fromJson(json);
       expect(result.appId, 'app-a');
       expect(result.proofAlgorithm, NebulaProofAlgorithm.es256);
+      expect(result.serverTime, DateTime.utc(2026, 8, 3, 18));
       // Unknown fields are tolerated; frozen fields must all be present above.
     });
 

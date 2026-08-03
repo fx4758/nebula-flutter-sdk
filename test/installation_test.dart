@@ -131,16 +131,16 @@ void main() {
     });
   });
 
-  group('BootstrapResult.fromJson (docs/08 §4.2 frozen fields)', () {
-    test('parses the full frozen response', () {
+  group('BootstrapResult.fromJson (docs/08 §4.2, real wire)', () {
+    test('parses the full frozen response (unix seconds + ES256)', () {
       final r = BootstrapResult.fromJson(<String, Object?>{
         'installation_token': 'tok-1',
-        'expires_at': '2026-08-04T18:00:00Z',
-        'renew_after': '2026-08-03T19:00:00Z',
-        'server_time': '2026-08-03T18:00:00Z',
+        'expires_at': 1785866400, // 2026-08-04T18:00:00Z
+        'renew_after': 1785784320, // 2026-08-03T19:12:00Z
+        'server_time': 1785780000, // 2026-08-03T18:00:00Z
         'app_id': 'app-a',
         'installation_id': 'inst-1',
-        'proof_algorithm': 'es256',
+        'proof_algorithm': 'ES256',
         'attestation_state': 'limited',
         'minimum_supported_build': '20260701',
         'request_id': 'req-9',
@@ -150,17 +150,36 @@ void main() {
       expect(r.attestationState, NebulaAttestationState.limited);
       expect(r.minimumSupportedBuild, '20260701');
       expect(r.appId, 'app-a');
+      expect(r.expiresAt, DateTime.utc(2026, 8, 4, 18));
+      expect(r.serverTime, DateTime.utc(2026, 8, 3, 18));
+    });
+
+    test('rejects non-integer wire time (must be unix seconds)', () {
+      expect(
+        () => BootstrapResult.fromJson(<String, Object?>{
+          'installation_token': 'tok',
+          'expires_at': '2026-08-04T18:00:00Z', // wrong wire type
+          'renew_after': 1785784320,
+          'server_time': 1785780000,
+          'app_id': 'app-a',
+          'installation_id': 'inst-1',
+          'proof_algorithm': 'ES256',
+          'attestation_state': 'not_supported',
+          'request_id': 'req-9',
+        }),
+        throwsFormatException,
+      );
     });
 
     test('minimum_supported_build is optional', () {
       final r = BootstrapResult.fromJson(<String, Object?>{
         'installation_token': 'tok-1',
-        'expires_at': '2026-08-04T18:00:00Z',
-        'renew_after': '2026-08-03T19:00:00Z',
-        'server_time': '2026-08-03T18:00:00Z',
+        'expires_at': 1785866400,
+        'renew_after': 1785784320,
+        'server_time': 1785780000,
         'app_id': 'app-a',
         'installation_id': 'inst-1',
-        'proof_algorithm': 'es256',
+        'proof_algorithm': 'ES256',
         'attestation_state': 'not_supported',
         'request_id': 'req-9',
       });
