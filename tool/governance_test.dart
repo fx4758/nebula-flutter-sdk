@@ -151,6 +151,16 @@ void main() {
         _validException('EX-DUPLICATE'),
       ]);
     }),
+    GuardCase.fail(
+      'public API surface drift',
+      'API-SURFACE',
+      (Directory root) {
+        File('${root.path}/lib/src/capabilities.dart').writeAsStringSync(
+          '\nfinal class SurfaceDriftProbe {}\n',
+          mode: FileMode.append,
+        );
+      },
+    ),
   ];
 
   final List<String> failures = <String>[];

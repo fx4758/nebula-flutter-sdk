@@ -22,6 +22,7 @@
     "docs/DECISIONS.md",
     "governance/exceptions.json",
     "governance/public_api.txt",
+    "governance/api_surface.snapshot",
     "tool/governance_test.dart",
     ".github/pull_request_template.md",
     ".github/workflows/governance.yml"

@@ -26,7 +26,7 @@ Last verified: 2026-08-03
 | F0-05 | READY | - | CI/API surface/secret scan |
 | G0-01 | DONE | Codex | Guard PASS; SEC-MOBILE-SECRET negative probe exits 1 |
 | G0-02 | DONE | Codex@4c89302 | 23 isolated pass/fail/false-positive cases; all Rule IDs covered |
-| G0-03 | READY | - | API surface snapshot; F0-04 fixtures DONE |
+| G0-03 | DONE | Codex | API surface snapshot tool + version gate: 63 symbols frozen, API-SURFACE guard rule, drift regression case |
 | G0-04 | DONE | Codex | Fixtures select/insert their own task rows; no architecture or policy change |
 | BR-01 | DONE | Codex | flypost `1bae972`: AI Admin route ownership converged to module/ai; router tests green |
 | F1-01..F6 | BLOCKED | - | Follow dependencies in implementation plan |
@@ -41,4 +41,4 @@ Last verified: 2026-08-03
 
 ## Next recommended task
 
-`G0-03` (API surface compatibility snapshot, now unblocked by F0-04 fixtures) and `F0-05` (CI/API surface/secret scan) — both are tooling tasks; `F0-03` (legacy HMAC sunset plan, docs) is also READY. All F0-02 protocol work (FB-01..05, FS-01/02, FC-01) and F0-04 contract fixtures are DONE.
+`F0-05` (CI/API surface/secret scan — API surface gate is now machine-checkable via G0-03) and `F0-03` (legacy HMAC sunset plan, docs) are the remaining F0-stage tasks, both READY. G0-G2 governance is fully machine-checked (G0-01..04 DONE).

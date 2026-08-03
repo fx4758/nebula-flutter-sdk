@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'api_surface.dart' as api_surface;
+
 final class Finding {
   const Finding(this.ruleId, this.message);
 
@@ -29,6 +31,7 @@ void main() {
   _checkContextBudgets(root, policy, findings);
   _checkTaskStates(root, policy, findings);
   _checkPublicApi(root, policy, findings);
+  _checkApiSurface(root, findings);
   _checkPolicyExamples(policy, findings);
   _checkSources(root, policy, findings);
   _checkExceptions(root, policy, findings);
@@ -241,6 +244,33 @@ void _checkSources(
       }
     }
   }
+}
+
+void _checkApiSurface(Directory root, List<Finding> findings) {
+  final File snapshot = File('${root.path}/${api_surface.snapshotPath}');
+  if (!snapshot.existsSync()) {
+    findings.add(const Finding(
+      'API-SURFACE',
+      'snapshot missing; run: dart run tool/api_surface.dart --update',
+    ));
+    return;
+  }
+  final List<String> current = api_surface.collectApiSurface(root);
+  final Set<String> recorded = snapshot
+      .readAsLinesSync()
+      .map((String line) => line.trim())
+      .where((String line) => line.isNotEmpty && !line.startsWith('#'))
+      .toSet();
+  final List<String> added = current.toSet().difference(recorded).toList()
+    ..sort();
+  final List<String> removed = recorded.difference(current.toSet()).toList()
+    ..sort();
+  if (added.isEmpty && removed.isEmpty) return;
+  findings.add(Finding(
+    'API-SURFACE',
+    'public API surface drift (added=${added.length}, removed=${removed.length}); '
+        'run `dart run tool/api_surface.dart --update` only after compatibility review',
+  ));
 }
 
 void _checkPolicyExamples(
