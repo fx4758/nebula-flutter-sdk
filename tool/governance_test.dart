@@ -161,6 +161,15 @@ void main() {
         );
       },
     ),
+    GuardCase.fail('hard-coded credential value', 'SEC-SCAN', (Directory root) {
+      // 反例密钥拆开拼接：源码字面量不得构成完整密钥（否则扫描器命中自身）。
+      final String fakeAwsKey = 'AKIA${'IOSFODNN7EXAMPLE'}';
+      _writeSource(
+        root,
+        'leak_probe.dart',
+        "final String awsKey = '$fakeAwsKey';",
+      );
+    }),
   ];
 
   final List<String> failures = <String>[];

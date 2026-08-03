@@ -11,7 +11,7 @@ Last verified: 2026-08-03
 | Public API excludes App Secret | DONE | `NebulaOptions` only exposes public `appId` |
 | AI governance G0-G2 baseline | DONE | policy, guard, exception registry, PR/CI gates |
 | Governance regression after task transition | DONE | G0-04: GOV-TASK fixtures select/insert own task rows; 23 cases pass while F0-02 stays DONE |
-| F0 contract tests/CI | IN_PROGRESS | F0-04 fixtures DONE; F0-05 CI/API surface/secret scan pending |
+| F0 contract tests/CI | DONE | F0-04 fixtures + F0-05 CI/API surface/secret scan complete |
 | Real backend integration | BLOCKED | Requires F0 contract freeze and explicit authorization |
 | App migration | BLOCKED | Requires F1/F2 and App repository access |
 
@@ -23,7 +23,7 @@ Last verified: 2026-08-03
 | F0-02 | DONE | Architect@3cb52e5 | Current-vs-target audit, trust/session contract and coding handoff frozen |
 | F0-03 | READY | - | Legacy HMAC compatibility and sunset plan |
 | F0-04 | DONE | Codex | Contract fixtures: real-encoding JSON fixtures (bootstrap req/resp, proof canonical, error mapping) + 8 fixture-driven tests |
-| F0-05 | READY | - | CI/API surface/secret scan |
+| F0-05 | DONE | Codex | CI complete: dart test + api_surface + secret_scan in workflow; SEC-SCAN value-pattern guard (25 regression cases) |
 | G0-01 | DONE | Codex | Guard PASS; SEC-MOBILE-SECRET negative probe exits 1 |
 | G0-02 | DONE | Codex@4c89302 | 23 isolated pass/fail/false-positive cases; all Rule IDs covered |
 | G0-03 | DONE | Codex | API surface snapshot tool + version gate: 63 symbols frozen, API-SURFACE guard rule, drift regression case |
@@ -41,4 +41,4 @@ Last verified: 2026-08-03
 
 ## Next recommended task
 
-`F0-05` (CI/API surface/secret scan — API surface gate is now machine-checkable via G0-03) and `F0-03` (legacy HMAC sunset plan, docs) are the remaining F0-stage tasks, both READY. G0-G2 governance is fully machine-checked (G0-01..04 DONE).
+`F0-03` (legacy HMAC compatibility and sunset plan, docs) is the last remaining F0-stage task (READY). All other F0 work is DONE: contract fixtures (F0-04), CI/API surface/secret scan (F0-05), and the G0-G2 governance baseline (G0-01..04). F1 kernel tasks (F1-01 HTTP transport/envelope/timeout/cancel, F1-02 session auth) are BLOCKED until F0 completes.

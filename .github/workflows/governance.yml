@@ -20,5 +20,9 @@ jobs:
       - run: dart pub get
       - run: dart run tool/governance.dart
       - run: dart run tool/governance_test.dart
+      - run: dart run tool/api_surface.dart
+      - run: dart run tool/secret_scan.dart
       - run: dart format --output=none --set-exit-if-changed .
       - run: dart analyze
+      - run: dart test
+      - run: dart run tool/smoke.dart

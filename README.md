@@ -28,10 +28,15 @@ Nebula 多 App 共用的客户端基础能力工程。业务 App 保留 UI、业
 dart pub get
 dart run tool/governance.dart
 dart run tool/governance_test.dart
+dart run tool/api_surface.dart
+dart run tool/secret_scan.dart
 dart format --output=none --set-exit-if-changed .
 dart analyze
+dart test
 dart run tool/smoke.dart
 ```
+
+`api_surface` 校验公共 API 快照（G0-03）；`secret_scan` 扫描硬编码凭据值（F0-05）。CI（`.github/workflows/governance.yml`）与本地运行完全相同的检查入口。
 
 Flutter 原生插件进入 F3 后再增加 `flutter` 依赖；F0-F2 的网络、身份、配置和分析契约保持纯 Dart，以便测试和服务端 Dart 工具复用。
 

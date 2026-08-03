@@ -28,6 +28,13 @@
     ".github/workflows/governance.yml"
   ],
   "allowed_task_states": ["READY", "IN_PROGRESS", "BLOCKED", "DONE"],
+  "secret_scan_ignore_paths": [
+    ".git",
+    ".dart_tool",
+    "build",
+    "governance/policy.json",
+    "test/fixtures"
+  ],
   "forbidden_source_patterns": [
     {
       "id": "SEC-MOBILE-SECRET",

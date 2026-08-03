@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'api_surface.dart' as api_surface;
+import 'secret_scan.dart' as secret_scan;
 
 final class Finding {
   const Finding(this.ruleId, this.message);
@@ -32,6 +33,7 @@ void main() {
   _checkTaskStates(root, policy, findings);
   _checkPublicApi(root, policy, findings);
   _checkApiSurface(root, findings);
+  _checkSecrets(root, policy, findings);
   _checkPolicyExamples(policy, findings);
   _checkSources(root, policy, findings);
   _checkExceptions(root, policy, findings);
@@ -271,6 +273,23 @@ void _checkApiSurface(Directory root, List<Finding> findings) {
     'public API surface drift (added=${added.length}, removed=${removed.length}); '
         'run `dart run tool/api_surface.dart --update` only after compatibility review',
   ));
+}
+
+void _checkSecrets(
+  Directory root,
+  Map<String, Object?> policy,
+  List<Finding> findings,
+) {
+  final List<Object?> configured =
+      (policy['secret_scan_ignore_paths'] as List<Object?>?)?.toList() ??
+          <Object?>[];
+  final List<String> ignorePaths =
+      configured.map((Object? p) => p! as String).toList();
+  final List<secret_scan.SecretHit> hits =
+      secret_scan.scanForSecrets(root, ignorePaths: ignorePaths);
+  for (final secret_scan.SecretHit hit in hits) {
+    findings.add(Finding(hit.ruleId, '${hit.path}: ${hit.reason}'));
+  }
 }
 
 void _checkPolicyExamples(
