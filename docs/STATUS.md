@@ -36,9 +36,9 @@ Last verified: 2026-08-03
 | FB-04 | DONE | Codex | flypost `77a10cb`: session rotation/logout, jwt jti fix, migration 032 |
 | FB-05 | DONE | Codex | flypost `fd3f799`: router isolation, trusted claims rate/idempotency keys, CORS header allowlist (MB-08/09/11) |
 | FS-01 | DONE | Codex | SDK installation contracts: typed bootstrap/identity, key/token-store/proof Ports, canonicalization tests |
-| FS-02 | BLOCKED | - | SDK session state machine; depends FS-01/FB-04 |
+| FS-02 | DONE | Codex | SDK session state machine: serialized §7 transitions, single-flight refresh, logout cleanup, typed errors |
 | FC-01 | BLOCKED | - | Cross-repository compatibility; depends FB/FS tasks |
 
 ## Next recommended task
 
-`FS-02` in nebula-flutter-sdk (SDK): user session state machine (docs/09 §3) — serialized state machine per docs/08 §7, single-flight refresh, local logout cleanup and session event stream, typed error categories without invented backend codes. Depends on FB-04 fixtures (DONE) and FS-01 (DONE).
+`FC-01` in nebula-flutter-sdk + flypost: cross-repository compatibility and end-to-end fixtures (docs/09 §4) — contract artifacts only, no duplicate production implementation. Depends on FB-01..FB-05 (DONE), FS-01 (DONE) and FS-02 (DONE).
