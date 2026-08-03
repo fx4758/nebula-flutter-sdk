@@ -21,7 +21,7 @@ Last verified: 2026-08-03
 | --- | --- | --- | --- |
 | F0-01 | DONE | Codex | Initial architecture and compilable contract scaffold |
 | F0-02 | DONE | Architect@3cb52e5 | Current-vs-target audit, trust/session contract and coding handoff frozen |
-| F0-03 | READY | - | Legacy HMAC compatibility and sunset plan |
+| F0-03 | DONE | Codex | Legacy HMAC sunset plan: docs/11 — protocol-level keep/adapt/remove, version/store-build cutoff via 12003, P0-P5 stages |
 | F0-04 | DONE | Codex | Contract fixtures: real-encoding JSON fixtures (bootstrap req/resp, proof canonical, error mapping) + 8 fixture-driven tests |
 | F0-05 | DONE | Codex | CI complete: dart test + api_surface + secret_scan in workflow; SEC-SCAN value-pattern guard (25 regression cases) |
 | G0-01 | DONE | Codex | Guard PASS; SEC-MOBILE-SECRET negative probe exits 1 |
@@ -41,4 +41,4 @@ Last verified: 2026-08-03
 
 ## Next recommended task
 
-`F0-03` (legacy HMAC compatibility and sunset plan, docs) is the last remaining F0-stage task (READY). All other F0 work is DONE: contract fixtures (F0-04), CI/API surface/secret scan (F0-05), and the G0-G2 governance baseline (G0-01..04). F1 kernel tasks (F1-01 HTTP transport/envelope/timeout/cancel, F1-02 session auth) are BLOCKED until F0 completes.
+`F1-01` in nebula-flutter-sdk: HTTP transport, envelope, timeout and cancellation (docs/03 F1, network) — the F0 stage is now fully DONE (F0-01..05: architecture, frozen contract, sunset plan, fixtures, CI/secret scan; G0-01..04 governance baseline). F1 kernel can start.
