@@ -31,7 +31,7 @@ Last verified: 2026-08-03
 | BR-01 | DONE | Codex | flypost `1bae972`: AI Admin route ownership converged to module/ai; router tests green |
 | F1-01..F6 | BLOCKED | - | Follow dependencies in implementation plan |
 | FB-01 | DONE | Codex | flypost `d3f6502`: fixtures frozen, 12001-12004 allocated, envelope reconciled; targets not-implemented |
-| FB-02 | BLOCKED | - | Installation identity owner module; depends FB-01 |
+| FB-02 | DONE | Codex | flypost `71eff85`: installation owner module, migration 030, /mobile/bootstrap implemented |
 | FB-03 | BLOCKED | - | Installation proof/replay middleware; depends FB-02 |
 | FB-04 | BLOCKED | - | App-bound session rotation/logout; depends FB-01/FB-02 |
 | FB-05 | BLOCKED | - | Router and abuse isolation; depends FB-03/FB-04 |
@@ -41,4 +41,4 @@ Last verified: 2026-08-03
 
 ## Next recommended task
 
-`FB-02` in flypost: installation identity owner module (docs/09). BR-01 restored the flypost router test baseline; FB-01 froze the target protocol fixtures, error codes 12001-12004 and the `{code,data}` envelope.
+`FB-03` in flypost: installation proof and replay middleware (docs/09). BR-01 restored the flypost router test baseline; FB-01 froze the target protocol fixtures, error codes 12001-12004 and the `{code,data}` envelope; FB-02 implemented the installation owner module and `/api/v1/mobile/bootstrap`.
