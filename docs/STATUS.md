@@ -34,11 +34,11 @@ Last verified: 2026-08-03
 | FB-02 | DONE | Codex | flypost `71eff85`: installation owner module, migration 030, /mobile/bootstrap implemented |
 | FB-03 | DONE | Codex | flypost `c7f022a`: proof/replay middleware, pkg/proof, migration 031 public key |
 | FB-04 | DONE | Codex | flypost `77a10cb`: session rotation/logout, jwt jti fix, migration 032 |
-| FB-05 | BLOCKED | - | Router and abuse isolation; depends FB-03/FB-04 |
+| FB-05 | DONE | Codex | flypost `fd3f799`: router isolation, trusted claims rate/idempotency keys, CORS header allowlist (MB-08/09/11) |
 | FS-01 | BLOCKED | - | SDK installation contracts; depends FB-01 fixtures |
 | FS-02 | BLOCKED | - | SDK session state machine; depends FS-01/FB-04 |
 | FC-01 | BLOCKED | - | Cross-repository compatibility; depends FB/FS tasks |
 
 ## Next recommended task
 
-`FB-05` in flypost: router and abuse isolation (docs/09). BR-01 restored the flypost router test baseline; FB-01 froze the target protocol fixtures, error codes 12001-12004 and the `{code,data}` envelope; FB-02 implemented the installation owner module and `/api/v1/mobile/bootstrap`; FB-03 delivered the installation proof and replay middleware; FB-04 implemented App-bound session rotation and logout (migration 032).
+`FS-01` in nebula-flutter-sdk (SDK): installation contracts and secure adapters (docs/09 §3). FB-05 closed the flypost-side router work for the F0-02 target protocol (BR-01 baseline, FB-01 fixtures/error codes/envelope, FB-02 installation owner module, FB-03 proof/replay middleware, FB-04 session rotation/logout, FB-05 trusted-claims rate/idempotency keys + CORS allowlist MB-08/09/11). FS-01 depends on FB-01 frozen fixtures, which are DONE — SDK foundation contracts (typed bootstrap/installation identity, key/signing Port, secure token store Port, request proof Port) are now unblocked.
