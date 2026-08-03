@@ -36,4 +36,10 @@ Decision: AI 默认只读取任务路由页；blocking 规则集中在机器策�
 
 Reason: 保持多轮协作一致性的同时，限制规则复制、上下文增长和 Token 成本。
 
+## ADR-F007 — Installation proof replaces mobile App Secret
+
+Decision: 新移动端采用 public App ID、installation identity、ES256 proof 和 App/installation-bound user session；旧 HMAC 只保留隔离的迁移链路。
+
+Reason: 移动二进制无法保护共享 Secret；App、installation、user、session 四个作用域必须来自可验证的服务端信任链。
+
 修改任何已冻结决策必须新增 ADR：背景、选项、决定、迁移、回滚和影响，禁止静默改写历史。

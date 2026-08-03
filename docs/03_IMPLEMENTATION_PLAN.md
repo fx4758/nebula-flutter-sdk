@@ -9,6 +9,7 @@ Sprint ID 使用 `F` 前缀，避免与 flypost 生产化 `E0-E6` 冲突。一�
 | G0-01 | 任务路由、治理策略、守卫、例外和 CI 门禁 | governance/docs/tooling | F0-01 |
 | G0-02 | 为守卫增加正例、反例和误报回归测试 | governance tests | G0-01 |
 | G0-03 | API surface 兼容快照和版本门禁 | tooling/API | F0-04 |
+| G0-04 | 消除治理回归对具体任务状态文本的耦合 | governance tests | G0-02 |
 
 Exit：AI 默认上下文受预算约束；G0-G2 可机器执行；例外可追踪且会到期；治理规则没有复制到各模块。
 
@@ -19,12 +20,14 @@ Exit：AI 默认上下文受预算约束；G0-G2 可机器执行；例外可追�
 | ID | 任务 | Ownership | Depends |
 | --- | --- | --- | --- |
 | F0-01 | 初始化工程、AI 文档和最小公共契约 | whole repo | - |
-| F0-02 | 冻结 Mobile Bootstrap/User Session 契约 | docs, auth contracts | F0-01 |
+| F0-02 | 冻结 Mobile Bootstrap/User Session 架构契约（不编码） | docs/08 + docs/09 | F0-01 |
 | F0-03 | 设计旧 HMAC SDK 的兼容与下线计划 | docs | F0-02 |
 | F0-04 | 建立 API contract fixture 与错误码映射 | contract tests | F0-02 |
 | F0-05 | 建立 CI、API surface 和 secret scan | CI/tooling | F0-01 |
 
 Exit：Flutter 无 App Secret/Admin API；契约与 flypost 事实逐项对账；兼容截止日期明确。
+
+F0-02 的实现拆分为 `FB-01..05 / FS-01..02 / FC-01`，所有 ownership、依赖和验收以 `docs/09_F0_02_IMPLEMENTATION_HANDOFF.md` 为准。架构冻结和编码交付不得混在同一任务。
 
 ## F1 — SDK kernel
 
