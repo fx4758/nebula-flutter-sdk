@@ -9,6 +9,10 @@ src/auth/session_endpoints.dart
 src/auth/session_errors.dart
 src/auth/token_store.dart
 src/capabilities.dart
+src/config/config_client.dart
+src/config/config_endpoints.dart
+src/config/effective_config.dart
+src/config/nebula_config.dart
 src/foundation/error_classification.dart
 src/foundation/errors.dart
 src/foundation/logging.dart
@@ -22,3 +26,4 @@ src/storage/storage_namespace.dart
 src/storage/secure_storage.dart
 src/storage/cache_storage.dart
 src/testing/fake_transport.dart
+src/transport/proof_headers.dart

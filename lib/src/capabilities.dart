@@ -43,11 +43,6 @@ abstract interface class NebulaAuth {
   Future<void> signOut();
 }
 
-abstract interface class NebulaConfig {
-  Future<void> refresh();
-  bool isEnabled(String key, {bool fallback = false});
-}
-
 abstract interface class NebulaAnalytics {
   Future<void> track(String event, {Map<String, Object?> properties});
   Future<void> flush();

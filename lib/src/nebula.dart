@@ -1,4 +1,5 @@
 import 'capabilities.dart';
+import 'config/nebula_config.dart';
 import 'foundation/options.dart';
 import 'transport.dart';
 

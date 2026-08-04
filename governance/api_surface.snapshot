@@ -1,4 +1,3 @@
-src/auth/auth_proof.dart function _secureNonce
 src/auth/installation.dart class BootstrapRequest
 src/auth/installation.dart class BootstrapResult
 src/auth/installation.dart class InstallationIdentity
@@ -53,9 +52,23 @@ src/capabilities.dart class NebulaAi
 src/capabilities.dart class NebulaAnalytics
 src/capabilities.dart class NebulaAsset
 src/capabilities.dart class NebulaAuth
-src/capabilities.dart class NebulaConfig
 src/capabilities.dart class NebulaNotification
 src/capabilities.dart class NebulaPayment
+src/config/config_client.dart class NebulaConfigClient
+src/config/config_client.dart const kRuntimeConfigCacheKey
+src/config/config_endpoints.dart class ConfigEndpoints
+src/config/effective_config.dart class NebulaCachePolicy
+src/config/effective_config.dart class NebulaConfigItem
+src/config/effective_config.dart class NebulaEffectiveConfig
+src/config/effective_config.dart class NebulaFeatureFlag
+src/config/effective_config.dart class NebulaVersionPolicy
+src/config/effective_config.dart const kMaxConfigItems
+src/config/effective_config.dart const kMaxFeatureItems
+src/config/effective_config.dart const kMaxKeyLength
+src/config/effective_config.dart const kMaxValueBytes
+src/config/effective_config.dart enum NebulaVersionAction
+src/config/effective_config.dart function _malformed
+src/config/nebula_config.dart class NebulaConfig
 src/foundation/error_classification.dart enum NebulaErrorCategory
 src/foundation/error_classification.dart function classifyNebulaError
 src/foundation/errors.dart class NebulaApiException
@@ -89,3 +102,4 @@ src/transport/cancellation_token.dart class NebulaCancellationToken
 src/transport/http_transport.dart class ApiEnvelope
 src/transport/http_transport.dart class HttpTransport
 src/transport/http_transport.dart typedef HttpClientFactory
+src/transport/proof_headers.dart function _secureNonce
