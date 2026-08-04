@@ -1,0 +1,536 @@
+{
+  "code": 0,
+  "data": {
+    "revision": "rev-over",
+    "server_time": 1785770000,
+    "configs": {
+      "k000": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k001": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k002": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k003": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k004": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k005": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k006": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k007": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k008": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k009": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k010": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k011": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k012": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k013": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k014": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k015": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k016": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k017": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k018": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k019": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k020": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k021": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k022": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k023": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k024": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k025": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k026": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k027": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k028": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k029": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k030": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k031": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k032": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k033": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k034": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k035": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k036": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k037": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k038": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k039": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k040": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k041": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k042": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k043": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k044": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k045": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k046": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k047": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k048": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k049": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k050": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k051": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k052": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k053": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k054": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k055": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k056": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k057": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k058": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k059": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k060": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k061": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k062": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k063": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k064": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k065": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k066": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k067": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k068": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k069": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k070": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k071": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k072": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k073": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k074": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k075": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k076": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k077": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k078": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k079": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k080": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k081": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k082": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k083": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k084": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k085": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k086": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k087": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k088": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k089": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k090": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k091": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k092": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k093": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k094": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k095": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k096": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k097": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k098": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k099": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k100": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k101": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k102": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k103": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k104": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k105": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k106": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k107": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k108": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k109": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k110": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k111": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k112": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k113": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k114": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k115": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k116": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k117": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k118": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k119": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k120": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k121": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k122": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k123": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k124": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k125": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k126": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k127": {
+        "value": "v",
+        "updated_at": 1700000000
+      },
+      "k128": {
+        "value": "v",
+        "updated_at": 1700000000
+      }
+    },
+    "features": [],
+    "version_policy": {
+      "minimum_supported_build": 0,
+      "latest_build": 0,
+      "action": "none",
+      "message_key": ""
+    },
+    "cache_policy": {
+      "ttl_seconds": 300,
+      "stale_if_error_seconds": 86400
+    }
+  }
+}

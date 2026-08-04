@@ -1,0 +1,40 @@
+{
+  "code": 0,
+  "data": {
+    "revision": "rev-3-1785770000000000000",
+    "server_time": 1785770000,
+    "configs": {
+      "feature_payment": {
+        "value": {
+          "max_amount": 500000
+        },
+        "updated_at": 1785769000
+      },
+      "welcome": {
+        "value": "hi",
+        "updated_at": 1785768000
+      }
+    },
+    "features": [
+      {
+        "key": "payment_v2",
+        "enabled": true
+      },
+      {
+        "key": "nfc_export",
+        "enabled": false,
+        "security_critical": true
+      }
+    ],
+    "version_policy": {
+      "minimum_supported_build": 120,
+      "latest_build": 121,
+      "action": "none",
+      "message_key": ""
+    },
+    "cache_policy": {
+      "ttl_seconds": 300,
+      "stale_if_error_seconds": 86400
+    }
+  }
+}

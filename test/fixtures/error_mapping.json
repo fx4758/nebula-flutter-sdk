@@ -1,5 +1,5 @@
 {
-  "comment": "Frozen SDK error-code mapping (docs/08 §8 categories, FB-01 allocation 12001-12004 + stable legacy codes, F0-04). Unknown codes are preserved with integer code + requestId and classify as authentication_required.",
+  "comment": "Frozen SDK error-code mapping (docs/08 §8 categories, FB-01 allocation 12001-12004 + stable legacy codes, F0-04; FC-02 adds the runtime_config section for docs/12 §7). Unknown codes are preserved with integer code + requestId and classify as authentication_required. Note: 50001 falls through the session classifier's unknown fallback (AuthenticationRequiredError) but maps to the server category in the general classifyNebulaError (F1-04).",
   "version": 1,
   "table": [
     {
@@ -43,6 +43,44 @@
       "category": "rate_limited",
       "action": "honor Retry-After; no immediate loop",
       "sdk_class": "RateLimitedError"
+    }
+  ],
+  "runtime_config": [
+    {
+      "code": 12001,
+      "category": "invalid_installation",
+      "action": "clear installation token; re-bootstrap once",
+      "sdk_class": "InvalidInstallationError"
+    },
+    {
+      "code": 12003,
+      "category": "client_outdated",
+      "action": "upgrade per version_policy (forced_upgrade is security-critical, never served stale)",
+      "sdk_class": "ClientOutdatedError"
+    },
+    {
+      "code": 12004,
+      "category": "temporarily_unavailable",
+      "action": "bounded backoff; keep valid snapshot; security-critical never stale; do not cache disabled state",
+      "sdk_class": "TemporarilyUnavailableError"
+    },
+    {
+      "code": 40002,
+      "category": "rate_limited",
+      "action": "honor Retry-After; no retry storm",
+      "sdk_class": "RateLimitedError"
+    },
+    {
+      "code": 50001,
+      "category": "server_error",
+      "action": "retry per global policy; not default for non-idempotent",
+      "sdk_class": "AuthenticationRequiredError"
+    },
+    {
+      "code": 30001,
+      "category": "invalid_request",
+      "action": "contract drift (client sends no params); register defect",
+      "sdk_class": "InvalidRequestError"
     }
   ]
 }

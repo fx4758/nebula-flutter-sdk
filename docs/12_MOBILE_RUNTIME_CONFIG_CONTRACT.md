@@ -224,13 +224,22 @@ X-App-Build: 100                 # 可选：客户端构建号（服务端计算
 
 1. Fixture 集与 flypost 契约逐项对账（对齐 FC-01 流程）：成功快照（全 section）、
    `forced_upgrade`/`upgrade`/`none` 三版本策略、304/ETag、`12001`/`12003`/`12004`/`40002`/`50001`
-   错误 fixture、超限/畸形响应 fixture。
-2. 错误码映射表冻结：扩展 `test/fixtures/error_mapping.json`（复用现有码，不新增）。
-3. SDK 集成测试（FakeTransport 驱动，F1-05 基础）：冻结快照 1:1 映射为客户端模型
-   （revision/configs/features/version_policy/cache_policy）；stale-if-error 与安全关键字段 no-stale
-   行为；并发刷新单飞（一次网络调用）；kill-switch 响应 → 可分类错误且不缓存关闭状态。
+   错误 fixture、超限/畸形响应 fixture。落地于 `test/fixtures/runtime_config/`。
+2. 错误码映射表冻结：扩展 `test/fixtures/error_mapping.json`（复用现有码，不新增；
+   新增 `runtime_config` 小节覆盖 §7 全部码，session `table` 不动）。
+3. 契约测试（`test/runtime_config_contract_test.dart`，wire/结构层，FC-02 交付）：
+   - 快照顶层与各 section 字段恰为冻结集合；`features` 仅含 `{key, enabled, security_critical?}`；
+   - 控制面字段（`rules_json`/`rollout_percentage`/`created_by`/`updated_by` 等）在任意 fixture 中
+     递归不得出现；
+   - 错误 fixture 均为合法信封且 code ∈ 冻结集，与 `error_mapping.json` 对账；
+   - 分类：`classifyNebulaError`/`classifySessionError` 对 §7 各码的可恢复类别断言；
+   - 客户端硬上限（§8.3）的**可执行定义**：超限快照必须被判定为畸形（拒绝，绝不部分信任）。
+   - **边界（F2-01）**：客户端模型 1:1 映射（`NebulaEffectiveConfig` 等）与缓存行为
+     （stale-if-error、安全关键字段 no-stale、并发刷新单飞）由 F2-01 实现并在 F2-01
+     消费本批 fixtures 的测试中验证——FC-02 不实现生产模型。
 4. 跨仓一致：`nebula-flutter-sdk/test/fixtures/` 与 flypost contract fixture 同名同值（revision 除外），
-   任何漂移使 CI 失败。
+   任何漂移使 CI 失败（flypost 锚点：`internal/module/runtimeconfig`、`sdk/CONTRACT.md` §4.7、
+   `internal/router/runtime_config_http_test.go`）。
 
 ## 12. 客户端契约映射（F2-01 冻结范围，待 FB-06/FC-02 后实现）
 

@@ -1,0 +1,24 @@
+{
+  "code": 0,
+  "data": {
+    "revision": "rev-4-1785770001000000000",
+    "server_time": 1785770001,
+    "configs": {
+      "welcome": {
+        "value": "hi",
+        "updated_at": 1785768000
+      }
+    },
+    "features": [],
+    "version_policy": {
+      "minimum_supported_build": 120,
+      "latest_build": 121,
+      "action": "forced_upgrade",
+      "message_key": "upgrade_v3"
+    },
+    "cache_policy": {
+      "ttl_seconds": 300,
+      "stale_if_error_seconds": 86400
+    }
+  }
+}
