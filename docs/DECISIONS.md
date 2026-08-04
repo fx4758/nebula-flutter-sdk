@@ -70,3 +70,21 @@ Background: ADR-F008 将 `/api/v1/mobile/auth/device/bind` 列入 target 端点�
 Decision: 正式移出 F0 契约。`/api/v1/mobile/auth/device/bind` 标记为 F1 实现（docs/08 §3 target 表注记）；F0 不注册该路由，mobile_contract_test 的 not-implemented 断言保留至 F1。这不改变任何已冻结 wire 语义，仅调整 scope 边界。
 
 Migration/Rollback: 无代码影响；F1 实现时恢复注册并按 docs/08 §3 语义落地。
+
+## ADR-F010 — Public export budget raised to 40
+
+Background: ADR-F002 决定 F0-F4 保持单 package，公共出口只有 `lib/nebula_sdk.dart`。F1 逐层落地 transport/auth/storage/foundation 的公共 Port 后，导出文件数在 F1-03 恰好达到 `max_public_exports=20`（policy.json 预算）；F1-04 新增脱敏日志/错误分类/request ID 三个 foundation 文件，导出数到 23，触发 API-BUDGET。F2-F4 还会继续增加 config/analytics/asset/notification/payment/ai 公共 Port，20 的上限与冻结路线图不匹配。docs/07 §4 的"一个任务不超过一个新的公共导出文件"约束是针对单任务作用域蔓延的，不应被解读为冻结整条路线图的导出总量。
+
+Options:
+- A. 将 `max_public_exports` 从 20 提升到 40（推荐）：容纳冻结的 F1-F4 公共 Port，API-BUDGET 仍作为公共面扩张的预警线；
+- B. 维持 20，每加一个模块就拆独立 package：直接违反 ADR-F002 的单一 package 决策；
+- C. 为 API-BUDGET 登记滚动例外：例外机制只解决临时放行（≤30 天），公共面增长是长期事实，用例外会制造永续豁免。
+
+Decision: 采用 A。`governance/policy.json` 的 `limits.max_public_exports` 改为 40；公共 barrel 仍是唯一稳定出口，每个导出文件继续受 `governance/public_api.txt` allowlist 与 api_surface snapshot 双重门禁。
+
+Consequences:
+- API-BUDGET 从"总量封顶"退化为"公共面增长预警"，避免误伤冻结路线图；
+- 导出准入成本不变：新增公共文件必须同时更新 barrel 与 allowlist，否则 API-EXPORT 失败；
+- governance_test 的 API-BUDGET 反例自行把 temp policy 的 limit 改为 1 构造违规，不依赖真实上限值，无需改动。
+
+Migration/Rollback: 纯配置变更；回滚 = 将 `max_public_exports` 还原为 20，若导出数继续超限会立即触发守卫。

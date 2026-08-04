@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import '../foundation/error_classification.dart';
 import '../foundation/errors.dart';
+import '../foundation/logging.dart';
+import '../foundation/request_id.dart';
 import '../transport.dart';
 import 'cancellation_token.dart';
 
@@ -20,7 +23,9 @@ typedef HttpClientFactory = HttpClient Function();
 ///  * propagate [NebulaCancellationToken] into the socket — cancellation tears
 ///    down the underlying connection, it does not merely drop the [Future];
 ///  * map non-zero business `code` to [NebulaApiException] (preserving `code`
-///    and `requestId`), and transport failures to [NebulaHttpException].
+///    and `requestId`), and transport failures to [NebulaHttpException];
+///  * attach a generated `X-Request-Id` correlation id and emit a redacted
+///    [NebulaLogEvent] through [logger] when one is supplied (F1-04).
 ///
 /// No third-party HTTP dependency is introduced: the SDK ships zero runtime
 /// dependencies (see `pubspec.yaml`), so the kernel uses the platform client.
@@ -30,6 +35,7 @@ final class HttpTransport implements NebulaTransport {
     this.connectTimeout = const Duration(seconds: 10),
     this.receiveTimeout = const Duration(seconds: 30),
     Map<String, String> defaultHeaders = const <String, String>{},
+    this.logger,
     HttpClientFactory? clientFactory,
   })  : _defaultHeaders = Map<String, String>.unmodifiable(defaultHeaders),
         _clientFactory = clientFactory ?? _defaultClientFactory;
@@ -45,6 +51,10 @@ final class HttpTransport implements NebulaTransport {
   /// Maximum time for the response headers *and* body to arrive.
   final Duration receiveTimeout;
 
+  /// Optional redacted logger (F1-04). When null, the SDK emits no logs
+  /// (privacy-by-default). Supplied by the host at the composition root.
+  final NebulaLogger? logger;
+
   final Map<String, String> _defaultHeaders;
   final HttpClientFactory _clientFactory;
 
@@ -52,6 +62,9 @@ final class HttpTransport implements NebulaTransport {
 
   @override
   Future<NebulaResponse> send(NebulaRequest request) async {
+    final Stopwatch sw = Stopwatch()..start();
+    final String clientRequestId = NebulaRequestId.generate().toString();
+
     final NebulaCancellationToken? token = request.cancellationToken;
     if (token?.isCancelled ?? false) {
       throw const NebulaCancelledException();
@@ -76,25 +89,40 @@ final class HttpTransport implements NebulaTransport {
 
     try {
       final Object result = await Future.any<Object>(<Future<Object>>[
-        _perform(client, request),
+        _perform(client, request, clientRequestId),
         cancelCompleter.future,
       ]);
       if (result is NebulaCancelledException) {
         // Cancellation won the race: propagate as an error, not a value.
+        _emitLog(clientRequestId, request, NebulaErrorCategory.cancelled, sw);
         throw result;
       }
+      _emitLog(clientRequestId, request, NebulaErrorCategory.success, sw);
       return result as NebulaResponse;
     } on NebulaCancelledException {
+      rethrow;
+    } on NebulaException catch (e) {
+      _emitLog(
+        clientRequestId,
+        request,
+        classifyNebulaError(e),
+        sw,
+        e.message,
+      );
       rethrow;
     } on Object catch (e) {
       // Ensure a hung connection is released even if the abort races the error.
       client.close(force: true);
-      if (e is NebulaTimeoutException ||
-          e is NebulaHttpException ||
-          e is NebulaApiException) {
-        rethrow;
-      }
-      throw NebulaHttpException('Transport failure: $e');
+      final NebulaHttpException wrapped =
+          NebulaHttpException('Transport failure: $e', requestId: clientRequestId);
+      _emitLog(
+        clientRequestId,
+        request,
+        NebulaErrorCategory.network,
+        sw,
+        wrapped.message,
+      );
+      throw wrapped;
     } finally {
       token?.offCancel(onCancel);
       // Idempotent: a force-close above already released the sockets.
@@ -102,8 +130,33 @@ final class HttpTransport implements NebulaTransport {
     }
   }
 
+  void _emitLog(
+    String clientRequestId,
+    NebulaRequest request,
+    NebulaErrorCategory result,
+    Stopwatch sw, [
+    String? message,
+  ]) {
+    if (logger == null) return;
+    logger!.log(
+      NebulaLogEvent(
+        requestId: clientRequestId,
+        endpoint: '${request.method.name.toUpperCase()} ${request.path}',
+        result: result,
+        duration: sw.elapsed,
+        level: result == NebulaErrorCategory.success
+            ? NebulaLogLevel.info
+            : NebulaLogLevel.warning,
+        message: message,
+      ),
+    );
+  }
+
   Future<NebulaResponse> _perform(
-      HttpClient client, NebulaRequest request) async {
+    HttpClient client,
+    NebulaRequest request,
+    String clientRequestId,
+  ) async {
     final Uri uri = _resolveUri(request);
 
     final HttpClientRequest httpReq;
@@ -127,6 +180,11 @@ final class HttpTransport implements NebulaTransport {
     request.headers.forEach(httpReq.headers.set);
     if (request.idempotencyKey != null) {
       httpReq.headers.set('idempotency-key', request.idempotencyKey!);
+    }
+    // F1-04: attach a client-generated correlation id unless the caller already
+    // set one. A compliant server echoes it back as `request_id` (docs/08 §8).
+    if (!request.headers.containsKey('x-request-id')) {
+      httpReq.headers.set('x-request-id', clientRequestId);
     }
 
     if (request.body != null) {

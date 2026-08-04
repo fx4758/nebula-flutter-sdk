@@ -9,8 +9,11 @@ src/auth/session_endpoints.dart
 src/auth/session_errors.dart
 src/auth/token_store.dart
 src/capabilities.dart
+src/foundation/error_classification.dart
 src/foundation/errors.dart
+src/foundation/logging.dart
 src/foundation/options.dart
+src/foundation/request_id.dart
 src/nebula.dart
 src/transport.dart
 src/transport/cancellation_token.dart
