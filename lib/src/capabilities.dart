@@ -43,11 +43,6 @@ abstract interface class NebulaAuth {
   Future<void> signOut();
 }
 
-abstract interface class NebulaAnalytics {
-  Future<void> track(String event, {Map<String, Object?> properties});
-  Future<void> flush();
-}
-
 /// Marker contract. Concrete asset operations are frozen in Sprint F3.
 abstract interface class NebulaAsset {}
 

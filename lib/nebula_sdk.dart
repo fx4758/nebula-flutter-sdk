@@ -1,6 +1,10 @@
 /// Stable public API for the Nebula multi-app client foundation.
 library;
 
+export 'src/analytics/analytics_client.dart';
+export 'src/analytics/consent.dart';
+export 'src/analytics/event.dart';
+export 'src/analytics/nebula_analytics.dart';
 export 'src/auth/auth_proof.dart';
 export 'src/auth/installation.dart';
 export 'src/auth/key_store.dart';

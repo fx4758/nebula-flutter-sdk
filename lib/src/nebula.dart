@@ -1,3 +1,4 @@
+import 'analytics/nebula_analytics.dart';
 import 'capabilities.dart';
 import 'config/nebula_config.dart';
 import 'foundation/options.dart';

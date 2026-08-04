@@ -1,3 +1,14 @@
+src/analytics/analytics_client.dart class NebulaAnalyticsClient
+src/analytics/consent.dart class CacheConsentStore
+src/analytics/consent.dart class InMemoryConsentStore
+src/analytics/consent.dart class NebulaConsentStore
+src/analytics/consent.dart enum NebulaConsent
+src/analytics/event.dart class NebulaAnalyticsEvent
+src/analytics/event.dart const kMaxEventBytes
+src/analytics/event.dart const kMaxEventNameLength
+src/analytics/event.dart const kMaxEventPropertyCount
+src/analytics/event.dart enum NebulaEventPrivacy
+src/analytics/nebula_analytics.dart class NebulaAnalytics
 src/auth/installation.dart class BootstrapRequest
 src/auth/installation.dart class BootstrapResult
 src/auth/installation.dart class InstallationIdentity
@@ -49,7 +60,6 @@ src/auth/token_store.dart const tokenKeyInstallation
 src/auth/token_store.dart const tokenKeyRefresh
 src/auth/token_store.dart function tokenNamespace
 src/capabilities.dart class NebulaAi
-src/capabilities.dart class NebulaAnalytics
 src/capabilities.dart class NebulaAsset
 src/capabilities.dart class NebulaAuth
 src/capabilities.dart class NebulaNotification
