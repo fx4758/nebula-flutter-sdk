@@ -28,6 +28,7 @@ import '../foundation/error_classification.dart';
 import '../foundation/errors.dart';
 import '../foundation/logging.dart';
 import '../foundation/options.dart';
+import '../foundation/sha256.dart';
 import '../storage/cache_storage.dart';
 import '../storage/storage_namespace.dart';
 import '../transport.dart';
@@ -37,8 +38,18 @@ import 'config_endpoints.dart';
 import 'effective_config.dart';
 import 'nebula_config.dart';
 
-/// 持久化缓存键（namespace 内）。
+/// 持久化缓存键前缀（namespace 内）。F2-R1：键派生加入 installation 身份、
+/// build 与 schema version，避免跨安装/跨构建命中陈旧缓存。
 const String kRuntimeConfigCacheKey = 'runtime_config';
+
+/// 持久化缓存格式版本：升级格式须递增并使旧缓存失效。
+const int kRuntimeConfigSchemaVersion = 1;
+
+/// 客户端可接受的快照总字节上限（docs/12 §8.3 64 KiB；紧凑编码近似）。
+const int kMaxSnapshotBytes = 64 * 1024;
+
+/// 持久化缓存条目字节上限（docs/12 §8.3 缓存上限；超限不落盘，防存储放大）。
+const int kMaxCacheBytes = 64 * 1024;
 
 final class NebulaConfigClient implements NebulaConfig {
   NebulaConfigClient({
@@ -90,6 +101,16 @@ final class NebulaConfigClient implements NebulaConfig {
   @override
   String? get revision => _snapshot?.revision;
 
+  /// 派生持久化缓存键（F2-R1，docs/12 §6）：installation 身份哈希 + build +
+  /// schema version——重装/安装轮换或 App 升级后不会命中上一身份的 fresh 缓存。
+  Future<String> _cacheKey() async {
+    final String instHash =
+        sha256Hex(utf8.encode(await _installationToken())).substring(0, 16);
+    final String build = appBuild?.toString() ?? 'na';
+    return '$kRuntimeConfigCacheKey/v$kRuntimeConfigSchemaVersion/'
+        'i$instHash/b$build/snapshot';
+  }
+
   @override
   Future<void> clearCache() async {
     _snapshot = null;
@@ -97,7 +118,7 @@ final class NebulaConfigClient implements NebulaConfig {
     _inflight = null;
     final CacheStorage? store = cacheStorage;
     if (store != null) {
-      await store.delete(namespace: _namespace, key: kRuntimeConfigCacheKey);
+      await store.delete(namespace: _namespace, key: await _cacheKey());
     }
   }
 
@@ -113,7 +134,7 @@ final class NebulaConfigClient implements NebulaConfig {
 
     final Future<NebulaEffectiveConfig>? inflight = _inflight;
     if (inflight != null) return inflight;
-    final Future<NebulaEffectiveConfig> future = _load();
+    final Future<NebulaEffectiveConfig> future = _load(cancellationToken);
     _inflight = future;
     try {
       return await future;
@@ -124,10 +145,13 @@ final class NebulaConfigClient implements NebulaConfig {
 
   // --- internals -----------------------------------------------------------
 
-  Future<NebulaEffectiveConfig> _load() async {
+  Future<NebulaEffectiveConfig> _load(
+    NebulaCancellationToken? cancellationToken,
+  ) async {
     final NebulaEffectiveConfig? cached = _snapshot;
     try {
-      final NebulaEffectiveConfig? result = await _fetchOrRevalidate();
+      final NebulaEffectiveConfig? result =
+          await _fetchOrRevalidate(cancellationToken);
       if (result != null) return result;
       throw const NebulaHttpException(
         'runtime-config revalidation without any cache',
@@ -145,16 +169,24 @@ final class NebulaConfigClient implements NebulaConfig {
   /// Fetches once (with bounded idempotent retry); on HTTP 304 revalidates the
   /// cached snapshot (returns it). Retries only transient transport failures
   /// (docs/02 §3), never 429/40002/business codes/parse errors/cancellation.
-  Future<NebulaEffectiveConfig?> _fetchOrRevalidate() async {
+  Future<NebulaEffectiveConfig?> _fetchOrRevalidate(
+    NebulaCancellationToken? cancellationToken,
+  ) async {
     int attempt = 0;
     while (true) {
       final String? etag = _snapshot?.revision;
       try {
-        final NebulaResponse resp = await _send(etag);
+        final NebulaResponse resp = await _send(etag, cancellationToken);
         final Object? data = resp.data;
         if (data is! Map<String, Object?>) {
           throw const NebulaConfigParseException(
             'runtime-config data is not an object',
+          );
+        }
+        // 总响应字节上限（docs/12 §8.3 64 KiB，紧凑编码近似；F2-R1）。
+        if (utf8.encode(jsonEncode(data)).length > kMaxSnapshotBytes) {
+          throw const NebulaConfigParseException(
+            'runtime-config snapshot exceeds 64 KiB',
           );
         }
         final NebulaEffectiveConfig cfg = NebulaEffectiveConfig.fromJson(data);
@@ -202,7 +234,10 @@ final class NebulaConfigClient implements NebulaConfig {
     return Future<void>.delayed(Duration(milliseconds: exp + jitter));
   }
 
-  Future<NebulaResponse> _send(String? etag) async {
+  Future<NebulaResponse> _send(
+    String? etag,
+    NebulaCancellationToken? cancellationToken,
+  ) async {
     final String resolvedPath = _resolvePath(endpoints.runtimeConfig);
     final Map<String, String> headers = await buildAuthHeaders(
       method: NebulaHttpMethod.get,
@@ -221,6 +256,7 @@ final class NebulaConfigClient implements NebulaConfig {
       method: NebulaHttpMethod.get,
       path: endpoints.runtimeConfig,
       headers: headers,
+      cancellationToken: cancellationToken, // F2-R1：公开参数真正生效
     ));
   }
 
@@ -252,11 +288,13 @@ final class NebulaConfigClient implements NebulaConfig {
     final CacheStorage? store = cacheStorage;
     if (store == null) return null;
     final Uint8List? raw =
-        await store.read(namespace: _namespace, key: kRuntimeConfigCacheKey);
+        await store.read(namespace: _namespace, key: await _cacheKey());
     if (raw == null) return null;
     try {
       final Object? json = jsonDecode(utf8.decode(raw));
       if (json is! Map<String, Object?>) return null;
+      // F2-R1：schema version 不匹配的旧格式一律视为无缓存。
+      if (json['schema_version'] != kRuntimeConfigSchemaVersion) return null;
       final Object? data = json['data'];
       final Object? receivedRaw = json['received_at'];
       if (data is! Map<String, Object?> || receivedRaw is! int) return null;
@@ -278,14 +316,18 @@ final class NebulaConfigClient implements NebulaConfig {
     final CacheStorage? store = cacheStorage;
     if (store == null) return;
     final String payload = jsonEncode(<String, Object?>{
+      'schema_version': kRuntimeConfigSchemaVersion,
       'revision': cfg.revision,
       'received_at': receivedAt.millisecondsSinceEpoch ~/ 1000,
       'data': data,
     });
+    final Uint8List bytes = Uint8List.fromList(utf8.encode(payload));
+    // F2-R1：缓存条目字节上限（docs/12 §8.3），超限不落盘防存储放大。
+    if (bytes.length > kMaxCacheBytes) return;
     await store.write(
       namespace: _namespace,
-      key: kRuntimeConfigCacheKey,
-      value: Uint8List.fromList(utf8.encode(payload)),
+      key: await _cacheKey(),
+      value: bytes,
     );
   }
 

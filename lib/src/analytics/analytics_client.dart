@@ -155,30 +155,33 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
     try {
       _expireOldEvents();
       while (_queue.isNotEmpty) {
-        final List<NebulaAnalyticsEvent> batch = _takeBatch();
-        if (batch.isEmpty) break;
-        if (!await _sendWithRetry(sender, batch)) {
-          // 失败：整批回队首并中止本轮（数据保留，靠退避 + 下次 flush + TTL）。
-          _queue.insertAll(0, batch.map((e) => _Queued(e, _now().toUtc())));
-          _queuedBytes +=
-              batch.fold<int>(0, (sum, e) => sum + e.estimatedBytes);
+        final List<_Queued> taken = _takeBatch();
+        if (taken.isEmpty) break;
+        if (!await _sendWithRetry(
+            sender, taken.map((q) => q.event).toList(growable: false))) {
+          // F2-R1：失败整批以**原 _Queued（保留 enqueuedAt）**回队首——
+          // 反复失败不会重置 TTL，事件仍按原入队时间过期（docs/02 §4）。
+          _queue.insertAll(0, taken);
+          for (final _Queued q in taken) {
+            _queuedBytes += q.event.estimatedBytes;
+          }
           break;
         }
-        _sent += batch.length;
+        _sent += taken.length;
       }
     } finally {
       _flushing = false;
     }
   }
 
-  List<NebulaAnalyticsEvent> _takeBatch() {
+  List<_Queued> _takeBatch() {
     final int n = _batchSize < _queue.length ? _batchSize : _queue.length;
     final List<_Queued> taken = _queue.sublist(0, n);
     _queue.removeRange(0, n);
     for (final _Queued q in taken) {
       _queuedBytes -= q.event.estimatedBytes;
     }
-    return taken.map((q) => q.event).toList(growable: false);
+    return taken;
   }
 
   /// 剔除 TTL 过期事件（docs/02 §4：队列有 TTL 上限），计入丢弃。

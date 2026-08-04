@@ -7,6 +7,8 @@
 /// updated_by) are structurally impossible in these models.
 library;
 
+import 'dart:convert';
+
 import '../foundation/errors.dart';
 
 /// 一等版本策略 action（docs/12 §5）：服务端按 X-App-Build 计算。
@@ -123,6 +125,9 @@ final class NebulaEffectiveConfig {
     final Object? configsRaw = json['configs'];
     final Object? featuresRaw = json['features'];
     if (revision is! String || revision.isEmpty) throw _malformed('revision');
+    if (revision.length > kMaxRevisionLength) {
+      throw _malformed('revision exceeds 128 chars'); // F2-R1 §8.3
+    }
     if (serverTime is! int) throw _malformed('server_time');
     if (configsRaw is! Map<String, Object?> || featuresRaw is! List) {
       throw _malformed('configs/features');
@@ -143,7 +148,9 @@ final class NebulaEffectiveConfig {
       final Object? value = item['value'];
       final Object? updatedAt = item['updated_at'];
       if (updatedAt is! int) throw _malformed('config item updated_at');
-      if (value is String && value.length > kMaxValueBytes) {
+      // F2-R1：单值字节上限对任意 JSON（含嵌套）生效，不只 String。
+      if (value != null &&
+          utf8.encode(jsonEncode(value)).length > kMaxValueBytes) {
         throw _malformed('config value exceeds 8 KiB');
       }
       configs[entry.key] = NebulaConfigItem(
@@ -188,6 +195,7 @@ const int kMaxConfigItems = 128;
 const int kMaxFeatureItems = 256;
 const int kMaxKeyLength = 64;
 const int kMaxValueBytes = 8 * 1024;
+const int kMaxRevisionLength = 128;
 
 NebulaConfigParseException _malformed(String detail) =>
     NebulaConfigParseException('runtime-config snapshot malformed: $detail');

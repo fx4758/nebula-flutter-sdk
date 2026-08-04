@@ -64,12 +64,16 @@ X-Proof-Nonce: <随机 hex>
 X-Device-Proof: <签名>
 If-None-Match: "rev-42"          # 可选
 X-App-Build: 100                 # 可选：客户端构建号（服务端计算 version_policy.action）
+X-App-Platform: ios              # 可选：客户端平台（版本/缓存策略作用域，F2-R1）
 ```
 
 - 请求体为空。所有作用域来自令牌与部署事实（§2）。
 - `X-App-Build`（FB-06 实现细节冻结）：可选非负整数构建号。服务端据其计算
   `version_policy.action`（§5）；缺失/非法视为未上报（action=none，服务端不作断言，
   客户端仍可用 minimum/latest 本地比对）。
+- `X-App-Platform`（F2-R1 实现细节冻结）：可选平台标识（ios/android/harmony/...）。
+  一等运行时策略按 (app, platform, environment) 选择，缺省回退 `all`；客户端不得
+  通过它影响区域/环境/安装身份等信任作用域。
 
 ## 4. 响应模型（单一版本快照）
 
@@ -109,7 +113,7 @@ X-App-Build: 100                 # 可选：客户端构建号（服务端计算
 
 | 字段 | 类型 | 语义 |
 | --- | --- | --- |
-| `revision` | string（≤128 字符，不透明） | 快照版本。单调递增（发布/回滚/应急变更都会变）。用于 ETag、If-None-Match 与客户端缓存键 |
+| `revision` | string（≤128 字符，不透明） | 快照版本。**F2-R1：由完整作用域+版本事实哈希生成**（app/env/region/platform/build/installation + 有效配置/Feature 的 version/updated_at/rollout + 策略版本）——任一作用域或内容事实变化都会使 revision 变化，正确失效 304/ETag。用于 ETag、If-None-Match 与客户端缓存键 |
 | `server_time` | int（Unix 秒） | 服务端时间，客户端校时（时钟偏差校正），不得作为业务值使用 |
 | `configs` | map<string, {value, updated_at}> | 可下发配置。`value` 为任意合法 JSON；`updated_at` 为该项最近生效时间。键由「可下发字段白名单」限定（§8） |
 | `features` | array<{key, enabled}> | Feature 最终状态。`enabled` 已含灰度分桶结果；**无** `rules_json`/`rollout_percentage`/`updated_by` 等控制面字段 |
@@ -133,6 +137,11 @@ X-App-Build: 100                 # 可选：客户端构建号（服务端计算
 | `forced_upgrade` | `build < minimum_supported_build` | 阻塞/强提示升级（安全关键） |
 
 - `minimum_supported_build` / `latest_build` 为 App 平台相关构建号（整数）。
+- **一等策略模型（F2-R1）**：版本策略、缓存策略与 `security_critical` 列表按
+  **(app, platform, environment)** 作用域存储（`product_runtime_policy`），
+  取代任何全局键；不同 App/平台互不影响，iOS/Android/Harmony 可有独立构建号。
+  服务端按 `X-App-Platform`（缺省回退 `all`）选择；无记录用默认策略
+  （min=0/latest=0/ttl=300/stale=0）。
 - `action` 由服务端按请求头 `X-App-Build`（§3）计算；客户端未上报时服务端不作断言
   （action=none），合规客户端仍可依据 minimum/latest 本地比对。
 - 与业务码 `12003`（client_outdated）的关系：`runtime-config` 的 `version_policy` 是启动时权威来源；
@@ -175,15 +184,18 @@ X-App-Build: 100                 # 可选：客户端构建号（服务端计算
 
 ## 8. 安全与成本边界
 
-1. **可下发字段白名单**：每个 config/feature 键在发布时登记白名单；不在白名单的键**不得**进入响应。
+1. **可下发字段白名单（F2-R1 双重拒绝）**：每个 config/feature 键在发布时登记
+   App 级白名单（`product_delivery_allowlist`）；**发布阶段**拒绝未登记键的发布，
+   **读取阶段**未登记键不下发——密钥/内部地址/Provider 配置即使被误发布也到不了客户端。
 2. **禁止字段（永不下发）**：密钥、Provider 配置（渠道密钥/回调密钥）、内部地址/主机名、`rules_json`、
    `rollout_percentage`、`created_by`/`updated_by`、内部自增 ID、审核状态、`environment`/`region` 原始配置。
 3. **响应硬上限**（服务端强制 + 客户端校验，超限客户端按畸形响应处理并记日志，绝不部分信任）：
-   - 总响应体 ≤ 64 KiB；
+   - 总响应体 ≤ 64 KiB（客户端以紧凑编码近似校验）；
    - `configs` 项数 ≤ 128；
-   - 单个 `value` ≤ 8 KiB；
+   - 单个 `value` ≤ 8 KiB（**任意 JSON 含嵌套**，客户端按序列化字节校验）；
    - `features` 项数 ≤ 256；
-   - 键长度 ≤ 64，`revision` ≤ 128 字符。
+   - 键长度 ≤ 64，`revision` ≤ 128 字符；
+   - 客户端持久化缓存条目 ≤ 64 KiB（超限不落盘，防存储放大）。
 4. **限流**：per-IP（ClientIP，内存，反伪造）与 per-installation（以令牌内 `installation_id` 为键）
    双重限流；使用与 bootstrap/auth 不同的资源池语义（docs/02 §3），攻击高成本接口不得耗尽普通入口。
 5. **存储故障隔离**：Redis/DB 异常时该端点快速失败（`12004`），不得挂起、不得拖垮普通接口；

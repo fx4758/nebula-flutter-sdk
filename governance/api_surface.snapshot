@@ -66,7 +66,10 @@ src/capabilities.dart class NebulaAuth
 src/capabilities.dart class NebulaNotification
 src/capabilities.dart class NebulaPayment
 src/config/config_client.dart class NebulaConfigClient
+src/config/config_client.dart const kMaxCacheBytes
+src/config/config_client.dart const kMaxSnapshotBytes
 src/config/config_client.dart const kRuntimeConfigCacheKey
+src/config/config_client.dart const kRuntimeConfigSchemaVersion
 src/config/config_endpoints.dart class ConfigEndpoints
 src/config/effective_config.dart class NebulaCachePolicy
 src/config/effective_config.dart class NebulaConfigItem
@@ -76,6 +79,7 @@ src/config/effective_config.dart class NebulaVersionPolicy
 src/config/effective_config.dart const kMaxConfigItems
 src/config/effective_config.dart const kMaxFeatureItems
 src/config/effective_config.dart const kMaxKeyLength
+src/config/effective_config.dart const kMaxRevisionLength
 src/config/effective_config.dart const kMaxValueBytes
 src/config/effective_config.dart enum NebulaVersionAction
 src/config/effective_config.dart function _malformed
