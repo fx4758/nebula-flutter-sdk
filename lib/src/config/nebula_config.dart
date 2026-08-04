@@ -15,12 +15,19 @@ import 'effective_config.dart';
 abstract interface class NebulaConfig {
   /// Returns the current effective config, fetching or serving cache as the
   /// cache semantics (§6) dictate. Concurrent callers share one in-flight
-  /// fetch (single-flight); a kill-switch response (12004) is surfaced as a
-  /// classified error and never cached.
+  /// fetch (single-flight); idempotent GET is bounded-retried (docs/02 §3,
+  /// max 2 attempts, exponential backoff + jitter); a kill-switch response
+  /// (12004) is surfaced as a classified error and never cached.
   Future<NebulaEffectiveConfig> getEffectiveConfig({
     NebulaCancellationToken? cancellationToken,
   });
 
   /// Last known revision, or null before the first successful fetch.
   String? get revision;
+
+  /// Discards the cached snapshot (memory + optional [CacheStorage]) so the
+  /// next call refetches. Hosts call this on environment/App switch or
+  /// sign-out hygiene (docs/02 §2: switching environments must not reuse
+  /// cached state).
+  Future<void> clearCache();
 }

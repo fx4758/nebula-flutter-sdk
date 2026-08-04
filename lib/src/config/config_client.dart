@@ -20,6 +20,7 @@ library;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import '../auth/proof.dart';
@@ -49,6 +50,8 @@ final class NebulaConfigClient implements NebulaConfig {
     this.cacheStorage,
     this.logger,
     this.appBuild,
+    this.maxRetries = 1,
+    this.retryBaseDelay = const Duration(milliseconds: 250),
   })  : _options = options,
         _transport = transport,
         _proofSigner = proofSigner,
@@ -70,6 +73,14 @@ final class NebulaConfigClient implements NebulaConfig {
   /// （docs/12 §3/§5）。
   final int? appBuild;
 
+  /// 幂等 GET 的有界重试次数（docs/02 §3：配置/幂等 GET 最多 2 次尝试，
+  /// 指数退避 + jitter）。仅在瞬时传输类失败（超时/连接/5xx）时重试；
+  /// 限流(429/40002)、业务码、畸形响应、取消一律不重试。
+  final int maxRetries;
+
+  /// 重试退避基值：第 n 次重试等待 `base << (n-1)` + jitter。
+  final Duration retryBaseDelay;
+
   final String _namespace;
 
   NebulaEffectiveConfig? _snapshot;
@@ -78,6 +89,17 @@ final class NebulaConfigClient implements NebulaConfig {
 
   @override
   String? get revision => _snapshot?.revision;
+
+  @override
+  Future<void> clearCache() async {
+    _snapshot = null;
+    _receivedAt = null;
+    _inflight = null;
+    final CacheStorage? store = cacheStorage;
+    if (store != null) {
+      await store.delete(namespace: _namespace, key: kRuntimeConfigCacheKey);
+    }
+  }
 
   @override
   Future<NebulaEffectiveConfig> getEffectiveConfig({
@@ -120,30 +142,64 @@ final class NebulaConfigClient implements NebulaConfig {
     }
   }
 
-  /// Fetches once; on HTTP 304 revalidates the cached snapshot (returns it).
+  /// Fetches once (with bounded idempotent retry); on HTTP 304 revalidates the
+  /// cached snapshot (returns it). Retries only transient transport failures
+  /// (docs/02 §3), never 429/40002/business codes/parse errors/cancellation.
   Future<NebulaEffectiveConfig?> _fetchOrRevalidate() async {
-    final String? etag = _snapshot?.revision;
-    try {
-      final NebulaResponse resp = await _send(etag);
-      final Object? data = resp.data;
-      if (data is! Map<String, Object?>) {
-        throw NebulaHttpException('runtime-config data is not an object');
+    int attempt = 0;
+    while (true) {
+      final String? etag = _snapshot?.revision;
+      try {
+        final NebulaResponse resp = await _send(etag);
+        final Object? data = resp.data;
+        if (data is! Map<String, Object?>) {
+          throw const NebulaConfigParseException(
+            'runtime-config data is not an object',
+          );
+        }
+        final NebulaEffectiveConfig cfg = NebulaEffectiveConfig.fromJson(data);
+        final DateTime receivedAt = DateTime.now().toUtc();
+        _snapshot = cfg;
+        _receivedAt = receivedAt;
+        await _persist(cfg, data, receivedAt);
+        _log(cfg, NebulaErrorCategory.success, null);
+        return cfg;
+      } on NebulaHttpException catch (e) {
+        if (e.statusCode == 304) {
+          // 条件命中：快照未变，续期（docs/12 §6.6）。
+          if (_snapshot != null) _receivedAt = DateTime.now().toUtc();
+          return _snapshot;
+        }
+        if (attempt < maxRetries && _isRetryableHttp(e)) {
+          attempt++;
+          await _retryDelay(attempt);
+          continue;
+        }
+        rethrow;
+      } on NebulaTimeoutException {
+        if (attempt < maxRetries) {
+          attempt++;
+          await _retryDelay(attempt);
+          continue;
+        }
+        rethrow;
       }
-      final NebulaEffectiveConfig cfg = NebulaEffectiveConfig.fromJson(data);
-      final DateTime receivedAt = DateTime.now().toUtc();
-      _snapshot = cfg;
-      _receivedAt = receivedAt;
-      await _persist(cfg, data, receivedAt);
-      _log(cfg, NebulaErrorCategory.success, null);
-      return cfg;
-    } on NebulaHttpException catch (e) {
-      if (e.statusCode == 304) {
-        // 条件命中：快照未变，续期（docs/12 §6.6）。
-        if (_snapshot != null) _receivedAt = DateTime.now().toUtc();
-        return _snapshot;
-      }
-      rethrow;
     }
+  }
+
+  /// 仅在瞬时传输类失败时重试：连接层（statusCode 为 null）或 5xx。
+  /// 429/4xx 不重试（尊重限流，docs/02 §3）；畸形响应/业务码/取消不重试。
+  bool _isRetryableHttp(NebulaHttpException e) {
+    final int? status = e.statusCode;
+    if (status == null) return true;
+    return status >= 500;
+  }
+
+  Future<void> _retryDelay(int attempt) {
+    final int base = retryBaseDelay.inMilliseconds;
+    final int exp = base * (1 << (attempt - 1));
+    final int jitter = Random().nextInt(exp ~/ 4 + 1);
+    return Future<void>.delayed(Duration(milliseconds: exp + jitter));
   }
 
   Future<NebulaResponse> _send(String? etag) async {

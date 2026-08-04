@@ -72,6 +72,9 @@ NebulaErrorCategory classifyNebulaError(Object error) {
   if (error is NebulaConfigurationException) {
     return NebulaErrorCategory.client;
   }
+  if (error is NebulaConfigParseException) {
+    return NebulaErrorCategory.client;
+  }
   if (error is NebulaApiException) {
     final int code = error.code;
     if (code == 429 || code == 40002) return NebulaErrorCategory.rateLimited;

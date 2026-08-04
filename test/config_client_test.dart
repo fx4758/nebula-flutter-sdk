@@ -130,17 +130,19 @@ void main() {
         ..enqueue(FakeTransport.ok(_fixtureData('over_limit_snapshot')));
       await expectLater(
         _client(transport).getEffectiveConfig(),
-        throwsA(isA<NebulaHttpException>()),
+        throwsA(isA<NebulaConfigParseException>()),
       );
     });
 
-    test('rejects non-object data as malformed', () async {
+    test('rejects non-object data as malformed (never retried)', () async {
       final transport = FakeTransport()
         ..enqueue(FakeTransport.ok('not-an-object'));
       await expectLater(
         _client(transport).getEffectiveConfig(),
-        throwsA(isA<NebulaHttpException>()),
+        throwsA(isA<NebulaConfigParseException>()),
       );
+      expect(transport.requests, hasLength(1),
+          reason: 'malformed responses are never retried');
     });
   });
 
@@ -189,8 +191,10 @@ void main() {
 
     test('stale-if-error serves the cached snapshot on network failure',
         () async {
+      // 第二次调用：初次超时 → 有界重试 1 次再超时 → 重试耗尽 → stale 兜底。
       final transport = FakeTransport()
         ..enqueue(FakeTransport.ok(_snapshot(ttl: 0, stale: 3600)))
+        ..enqueueError(const NebulaTimeoutException('down'))
         ..enqueueError(const NebulaTimeoutException('down'));
       final client = _client(transport);
 
@@ -198,13 +202,14 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 20));
       final b = await client.getEffectiveConfig(); // ttl=0 → stale path
       expect(b.revision, a.revision);
-      expect(transport.requests, hasLength(2));
+      expect(transport.requests, hasLength(3)); // 1 + (初次 + 1 次重试)
     });
 
     test('security-critical snapshot is never served stale', () async {
       final transport = FakeTransport()
         ..enqueue(FakeTransport.ok(
             _snapshot(ttl: 0, stale: 3600, action: 'forced_upgrade')))
+        ..enqueueError(const NebulaTimeoutException('down'))
         ..enqueueError(const NebulaTimeoutException('down'));
       final client = _client(transport);
 

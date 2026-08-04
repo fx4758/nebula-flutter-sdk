@@ -58,3 +58,14 @@ final class NebulaHttpException extends NebulaException {
   /// The HTTP status code, when the failure occurred after a response arrived.
   final int? statusCode;
 }
+
+/// Raised when a capability rejects a response body that is malformed or
+/// exceeds the frozen hard caps (e.g. runtime-config snapshot, docs/12 §8.3).
+///
+/// Distinct from [NebulaHttpException] so bounded-retry logic (docs/02 §3)
+/// can tell "transient transport failure — retry" apart from "server sent
+/// garbage — retrying is pointless". Never retried; classified as a client
+/// error by [NebulaErrorCategory.client].
+final class NebulaConfigParseException extends NebulaException {
+  const NebulaConfigParseException(super.message);
+}

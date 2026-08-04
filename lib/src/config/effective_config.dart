@@ -189,6 +189,5 @@ const int kMaxFeatureItems = 256;
 const int kMaxKeyLength = 64;
 const int kMaxValueBytes = 8 * 1024;
 
-NebulaHttpException _malformed(String detail) => NebulaHttpException(
-      'runtime-config snapshot malformed: $detail',
-    );
+NebulaConfigParseException _malformed(String detail) =>
+    NebulaConfigParseException('runtime-config snapshot malformed: $detail');

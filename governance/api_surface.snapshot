@@ -73,6 +73,7 @@ src/foundation/error_classification.dart enum NebulaErrorCategory
 src/foundation/error_classification.dart function classifyNebulaError
 src/foundation/errors.dart class NebulaApiException
 src/foundation/errors.dart class NebulaCancelledException
+src/foundation/errors.dart class NebulaConfigParseException
 src/foundation/errors.dart class NebulaConfigurationException
 src/foundation/errors.dart class NebulaException
 src/foundation/errors.dart class NebulaHttpException
