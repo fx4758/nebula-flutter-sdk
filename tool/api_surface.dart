@@ -153,28 +153,147 @@ List<String> _symbolsIn(String relative, String source) {
   return result;
 }
 
+/// Removes Dart comments while preserving line structure.
+///
+/// This is a character-level scanner, not a line-level `indexOf` scan: a naive
+/// search for `/*` mistakes URL/path wildcards inside doc comments and string
+/// literals (e.g. ``/// endpoints live under `/api/v1/mobile/auth/*` ``) for a
+/// block-comment opener and silently swallows every declaration that follows,
+/// which surfaces as a bogus API-SURFACE "removed symbol" drift. Comment
+/// openers are therefore only honoured in real code context.
+///
+/// Handled: `//` line comments, `/* */` block comments (Dart allows nesting),
+/// single/double-quoted strings, triple-quoted strings, raw (`r'...'`) strings,
+/// backslash escapes and `${...}` interpolation (which may nest strings).
+/// Newlines are always preserved so callers can keep matching per line.
 String _stripComments(String source) {
-  final StringBuffer buffer = StringBuffer();
-  final List<String> lines = source.split('\n');
-  bool inBlock = false;
-  for (final String line in lines) {
-    if (inBlock) {
-      final int end = line.indexOf('*/');
-      if (end >= 0) {
-        inBlock = false;
-        buffer.writeln(line.substring(end + 2));
+  final StringBuffer out = StringBuffer();
+  final int length = source.length;
+  int index = 0;
+  int blockDepth = 0;
+
+  while (index < length) {
+    final String char = source[index];
+
+    if (blockDepth > 0) {
+      if (_matchesAt(source, index, '/*')) {
+        blockDepth++;
+        index += 2;
+        continue;
+      }
+      if (_matchesAt(source, index, '*/')) {
+        blockDepth--;
+        index += 2;
+        continue;
+      }
+      // Keep newlines so line-based matching stays aligned with the source.
+      if (char == '\n') out.write('\n');
+      index++;
+      continue;
+    }
+
+    if (_matchesAt(source, index, '//')) {
+      while (index < length && source[index] != '\n') {
+        index++;
       }
       continue;
     }
-    final int blockStart = line.indexOf('/*');
-    if (blockStart >= 0) {
-      inBlock = true;
-      buffer.writeln(line.substring(0, blockStart));
+    if (_matchesAt(source, index, '/*')) {
+      blockDepth = 1;
+      index += 2;
       continue;
     }
-    buffer.writeln(line);
+    if (_startsStringLiteral(source, index)) {
+      index = _copyStringLiteral(source, index, out);
+      continue;
+    }
+
+    out.write(char);
+    index++;
   }
-  return buffer.toString();
+  return out.toString();
+}
+
+bool _matchesAt(String source, int index, String token) =>
+    source.startsWith(token, index);
+
+bool _isIdentifierChar(String char) =>
+    RegExp(r'[A-Za-z0-9_$]').hasMatch(char);
+
+/// True when [index] opens a string literal, including the `r` of a raw string.
+bool _startsStringLiteral(String source, int index) {
+  final String char = source[index];
+  if (char == "'" || char == '"') return true;
+  if (char != 'r' || index + 1 >= source.length) return false;
+  // `r` is a raw-string prefix only when it is not part of an identifier.
+  if (index > 0 && _isIdentifierChar(source[index - 1])) return false;
+  final String next = source[index + 1];
+  return next == "'" || next == '"';
+}
+
+/// Copies the string literal beginning at [start] verbatim into [out] and
+/// returns the index just past its closing delimiter.
+int _copyStringLiteral(String source, int start, StringBuffer out) {
+  final int length = source.length;
+  int index = start;
+  bool raw = false;
+
+  if (source[index] == 'r') {
+    raw = true;
+    out.write('r');
+    index++;
+  }
+
+  final String quote = source[index];
+  String delimiter = quote;
+  if (_matchesAt(source, index, quote * 3)) {
+    delimiter = quote * 3;
+  }
+  out.write(delimiter);
+  index += delimiter.length;
+
+  while (index < length) {
+    final String char = source[index];
+    if (!raw && char == r'\' && index + 1 < length) {
+      out.write(source.substring(index, index + 2));
+      index += 2;
+      continue;
+    }
+    if (!raw && _matchesAt(source, index, r'${')) {
+      out.write(r'${');
+      index = _copyInterpolation(source, index + 2, out);
+      continue;
+    }
+    if (_matchesAt(source, index, delimiter)) {
+      out.write(delimiter);
+      return index + delimiter.length;
+    }
+    out.write(char);
+    index++;
+  }
+  return length; // Unterminated literal: consume to EOF rather than mis-parse.
+}
+
+/// Copies a `${...}` interpolation body (nested strings/braces included) and
+/// returns the index just past its closing brace.
+int _copyInterpolation(String source, int start, StringBuffer out) {
+  final int length = source.length;
+  int index = start;
+  int depth = 1;
+
+  while (index < length) {
+    final String char = source[index];
+    if (_startsStringLiteral(source, index)) {
+      index = _copyStringLiteral(source, index, out);
+      continue;
+    }
+    if (char == '{') depth++;
+    if (char == '}') depth--;
+    out.write(char);
+    index++;
+    if (depth == 0) return index;
+  }
+  return length;
 }
 
 const Set<String> _keywords = <String>{

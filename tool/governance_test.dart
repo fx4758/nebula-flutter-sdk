@@ -161,6 +161,19 @@ void main() {
         );
       },
     ),
+    // 回归：注释/字符串里的路径通配符 `/*` 不得被 comment stripper 误判为块注释
+    // 开头。误判会吞掉其后全部声明，表现为 API-SURFACE 假报 "removed symbol"。
+    GuardCase.pass('path wildcard in comments and strings', (Directory root) {
+      _prependSource(
+        File('${root.path}/lib/src/capabilities.dart'),
+        '// Mobile auth endpoints live under `/api/v1/mobile/auth/*` '
+            '(ADR-F008);\n'
+            '// the legacy `/api/v1/auth/*` prefix is reserved.\n'
+            '/// Doc-comment form must behave identically: `/api/v1/**/*`.\n'
+            "final String _pathWildcardProbe = '/api/v1/mobile/auth/*';\n"
+            "final String _blockLikeProbe = '/* still a string */';\n",
+      );
+    }),
     GuardCase.fail('hard-coded credential value', 'SEC-SCAN', (Directory root) {
       // 反例密钥拆开拼接：源码字面量不得构成完整密钥（否则扫描器命中自身）。
       final String fakeAwsKey = 'AKIA${'IOSFODNN7EXAMPLE'}';
@@ -297,6 +310,14 @@ void _duplicateTaskId(File status) {
 
 void _writeSource(Directory root, String name, String contents) {
   File('${root.path}/lib/src/$name').writeAsStringSync('$contents\n');
+}
+
+/// 在已导出源文件顶部插入 [prefix]，使其后的既有声明成为“可被吞掉”的目标。
+void _prependSource(File file, String prefix) {
+  if (!file.existsSync()) {
+    throw StateError('fixture source not found: ${file.path}');
+  }
+  file.writeAsStringSync('$prefix${file.readAsStringSync()}');
 }
 
 void _editPolicy(
