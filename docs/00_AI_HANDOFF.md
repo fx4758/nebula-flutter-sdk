@@ -20,6 +20,7 @@
 | 更改冻结决策 | `DECISIONS.md`，新增 ADR 后才能修改 |
 | 修改治理规则/例外 | `07_AI_GOVERNANCE.md`、`governance/README.md` |
 | Mobile Bootstrap/Auth Session | `08_MOBILE_BOOTSTRAP_SESSION_CONTRACT.md`；编码任务再读 `09_F0_02_IMPLEMENTATION_HANDOFF.md` |
+| Mobile Runtime Config/Feature/Version | `12_MOBILE_RUNTIME_CONFIG_CONTRACT.md`（F2-00 冻结契约；FB-06/FC-02/F2-01 必读） |
 
 ## 执行协议
 

@@ -88,3 +88,21 @@ Consequences:
 - governance_test 的 API-BUDGET 反例自行把 temp policy 的 limit 改为 1 构造违规，不依赖真实上限值，无需改动。
 
 Migration/Rollback: 纯配置变更；回滚 = 将 `max_public_exports` 还原为 20，若导出数继续超限会立即触发守卫。
+
+## ADR-F011 — Mobile runtime config: single aggregate endpoint, server-trusted scope
+
+Background: 移动端「配置/Feature 下发」在 `flypost/sdk/CONTRACT.md` 列为待办；已注册的 config/feature 路由均为管理端/产品控制面（`/products/:id/effective-configs` 等，`PermProductManage`），按 ADR-F005 不得进移动 SDK。F2-01 因此 BLOCKED（2026-08-04 核验）。架构决定以 F2-00 冻结移动端配置契约（docs/12），并以 FB-06/FC-02 落地。
+
+Options:
+- A. 单聚合端点 `GET /api/v1/mobile/runtime-config`，一次返回同一 revision 快照（configs+features+version_policy+cache_policy+revision+server_time）（推荐）；
+- B. 双端点（effective-configs / effective-features 拆分）：跨 section 版本不一致，客户端需两段缓存与两次拉取；
+- C. 复用管理端 DTO：违反 ADR-F005，且暴露 `rules_json`/`rollout_percentage`/`updated_by` 等控制面数据。
+
+Decision: 采用 A。端点归入 ADR-F008 `/api/v1/mobile/*` 隔离组（Installation Token + Installation Proof，不挂 AdminToken/RBAC/legacy HMAC）。`app_id`/`installation_id` 只来自可信令牌；`environment` 由服务端部署决定；`region` 来自服务端可信绑定，**不信任** query/header——这是对 legacy §1「X-Region 透传」的定向豁免，仅适用于 `/api/v1/mobile/*` 配置类端点。Feature 灰度由服务端稳定分桶，客户端只收到最终 `enabled`；版本策略使用一等模型；安全关键字段（forced_upgrade/灾难开关）不得无限期使用旧缓存；配置经可下发字段白名单，密钥/Provider 配置/内部地址禁入响应；对 IP 与 installation 分别限流；响应大小/项数/长度有硬上限。
+
+Consequences:
+- 冻结契约落于 `docs/12_MOBILE_RUNTIME_CONFIG_CONTRACT.md`（端点/信任作用域/响应模型/版本策略/缓存语义/安全成本边界/FB-06/FC-02 验收）；
+- FB-06 在 flypost 实现端点并登记 `sdk/CONTRACT.md`；FC-02 同步跨仓 fixture 与集成测试；之后解除 F2-01 BLOCKED；
+- 管理端/产品控制面 DTO 继续禁止进入移动 SDK。
+
+Migration/Rollback: 新端点无既有流量，直接发布；回滚 = 移除路由注册（legacy 不受影响）。契约任何字段变更须新增 ADR。

@@ -45,7 +45,10 @@ Exit：无真实后端也能用 fake transport 验证所有异常路径；并发
 
 | ID | 任务 | Ownership | Depends |
 | --- | --- | --- | --- |
-| F2-01 | Effective config/feature/version API 契约 | config | flypost contract |
+| F2-00 | 冻结 Mobile Runtime Config 架构契约（docs/12，不编码） | docs | ADR-F011 |
+| FB-06 | flypost 移动端运行时配置接口 `/api/v1/mobile/runtime-config` | flypost backend | F2-00 |
+| FC-02 | 跨仓契约 fixture 与集成测试（runtime-config） | contract tests | FB-06 |
+| F2-01 | Effective config/feature/version API 契约（客户端实现，解除 BLOCKED） | config | FB-06 + FC-02 |
 | F2-02 | TTL cache、stale fallback、刷新去重 | config | F1 |
 | F2-03 | Consent 与事件 schema | analytics | F1 |
 | F2-04 | 有界队列、批量、退避和丢弃策略 | analytics | F2-03 |
