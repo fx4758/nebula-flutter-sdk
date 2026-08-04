@@ -65,6 +65,11 @@ src/foundation/errors.dart class NebulaTimeoutException
 src/foundation/options.dart class NebulaOptions
 src/foundation/options.dart enum NebulaEnvironment
 src/nebula.dart class Nebula
+src/storage/cache_storage.dart class CacheStorage
+src/storage/cache_storage.dart class InMemoryCacheStorage
+src/storage/secure_storage.dart class InMemorySecureStorage
+src/storage/secure_storage.dart class SecureStorage
+src/storage/storage_namespace.dart class StorageNamespace
 src/transport.dart class NebulaRequest
 src/transport.dart class NebulaResponse
 src/transport.dart class NebulaTransport

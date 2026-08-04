@@ -15,3 +15,6 @@ src/nebula.dart
 src/transport.dart
 src/transport/cancellation_token.dart
 src/transport/http_transport.dart
+src/storage/storage_namespace.dart
+src/storage/secure_storage.dart
+src/storage/cache_storage.dart
