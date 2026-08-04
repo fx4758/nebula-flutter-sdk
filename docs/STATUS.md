@@ -1,6 +1,6 @@
 # Execution Status
 
-Last verified: 2026-08-03
+Last verified: 2026-08-04
 
 ## Current baseline
 
@@ -11,7 +11,7 @@ Last verified: 2026-08-03
 | Public API excludes App Secret | DONE | `NebulaOptions` only exposes public `appId` |
 | AI governance G0-G2 baseline | DONE | policy, guard, exception registry, PR/CI gates |
 | Governance regression after task transition | DONE | G0-04: GOV-TASK fixtures select/insert own task rows; 23 cases pass while F0-02 stays DONE |
-| F0 contract tests/CI | DONE | F0-R9 Security Closure complete (review 2, 2026-08-03): 10-item rework verified; HTTP success-path integration requires NEBULA_TEST_DSN |
+| F0 contract tests/CI | DONE | F0-R9 Security Closure complete (review 3, 2026-08-04): 11-item closure verified incl. self-contained HTTP success-path (testsupport SQLite+miniredis, no DSN); barrier concurrency + iss/aud negatives added |
 | Real backend integration | BLOCKED | Requires F0 contract freeze and explicit authorization |
 | App migration | BLOCKED | Requires F1/F2 and App repository access |
 
@@ -38,7 +38,8 @@ Last verified: 2026-08-03
 | FS-01 | DONE | Codex | SDK installation contracts: typed bootstrap/identity, key/token-store/proof Ports, canonicalization tests |
 | FS-02 | DONE | Codex | SDK session state machine: serialized §7 transitions, single-flight refresh, logout cleanup, typed errors |
 | FC-01 | DONE | Codex | TestE2EMobileTrustClosure renamed TestServiceTrustFlow; HTTP proof flow + chunked tests added; fixtures synced |
+| R3-CLOSURE | DONE | Codex | Third-review (2026-08-04) 11-item security closure — no R10 introduced: coarse IP limiter (ClientIP only, anti-spoof), refresh cannot resurrect session (TouchIfExists EXPIRE, not SET), user/admin/refresh parser+midware separation, Token() fail-closed (503 on DB err/nil), barrier concurrent refresh (exactly-one-wins), access invalidation via Token middleware, HTTP 50001 must-fail, chunked body-limit proof, iss/aud true-negatives, self-contained HTTP closure (testsupport), SDK proof.dart path ADR-F008, committed+pus |
 
 ## Next recommended task
 
-`F1-01` in nebula-flutter-sdk: HTTP transport, envelope, timeout and cancellation (docs/03 F1, network). F0-R9 Security Closure (review 2) complete — 10/10 items verified. Residual: HTTP success-path integration (bootstrap→login→refresh→logout with persistence) requires NEBULA_TEST_DSN; service-layer closure proven by TestServiceTrustFlow. F1 can start.
+`F1-01` in nebula-flutter-sdk: HTTP transport, envelope, timeout and cancellation (docs/03 F1, network). F0-R9 Security Closure (review 3) complete — 11/11 items verified. The prior residual (HTTP success-path integration requiring NEBULA_TEST_DSN) is now CLOSED: `TestMobileAuthHTTPClosure` / `TestMobileAuthHTTPLogoutClosure` run the full bootstrap→login→refresh→logout success path against self-contained in-process SQLite + miniredis (no external DSN), proving the target chain truly works end-to-end. F1 can start.

@@ -35,7 +35,9 @@ final class ProofCanonicalInput {
   /// HTTP method verb, upper case (e.g. `POST`).
   final String method;
 
-  /// Full request path including any API prefix (e.g. `/api/v1/auth/login`).
+  /// Full request path including any API prefix (e.g. `/api/v1/mobile/auth/login`).
+  /// Mobile auth endpoints live under `/api/v1/mobile/auth/*` (ADR-F008); the
+  /// legacy `/api/v1/auth/*` prefix is reserved and must never be used here.
   /// URL query is excluded by contract — ambiguous query strings must be
   /// canonicalized separately by the endpoint or rejected (docs/08 §5).
   final String path;
