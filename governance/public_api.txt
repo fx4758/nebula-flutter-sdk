@@ -21,3 +21,4 @@ src/transport/http_transport.dart
 src/storage/storage_namespace.dart
 src/storage/secure_storage.dart
 src/storage/cache_storage.dart
+src/testing/fake_transport.dart

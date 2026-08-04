@@ -79,6 +79,8 @@ src/storage/cache_storage.dart class InMemoryCacheStorage
 src/storage/secure_storage.dart class InMemorySecureStorage
 src/storage/secure_storage.dart class SecureStorage
 src/storage/storage_namespace.dart class StorageNamespace
+src/testing/fake_transport.dart class FakeTransport
+src/testing/fake_transport.dart typedef FakeTransportHandler
 src/transport.dart class NebulaRequest
 src/transport.dart class NebulaResponse
 src/transport.dart class NebulaTransport

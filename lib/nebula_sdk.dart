@@ -21,6 +21,7 @@ export 'src/nebula.dart';
 export 'src/storage/cache_storage.dart';
 export 'src/storage/secure_storage.dart';
 export 'src/storage/storage_namespace.dart';
+export 'src/testing/fake_transport.dart';
 export 'src/transport.dart';
 export 'src/transport/cancellation_token.dart';
 export 'src/transport/http_transport.dart';
