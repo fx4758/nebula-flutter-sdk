@@ -2,6 +2,7 @@
 library;
 
 export 'src/analytics/analytics_client.dart';
+export 'src/analytics/analytics_sender.dart';
 export 'src/analytics/consent.dart';
 export 'src/analytics/event.dart';
 export 'src/analytics/nebula_analytics.dart';

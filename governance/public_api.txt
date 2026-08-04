@@ -9,6 +9,7 @@ src/auth/session_endpoints.dart
 src/auth/session_errors.dart
 src/auth/token_store.dart
 src/analytics/analytics_client.dart
+src/analytics/analytics_sender.dart
 src/analytics/consent.dart
 src/analytics/event.dart
 src/analytics/nebula_analytics.dart
