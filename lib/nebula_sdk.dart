@@ -12,3 +12,5 @@ export 'src/foundation/errors.dart';
 export 'src/foundation/options.dart';
 export 'src/nebula.dart';
 export 'src/transport.dart';
+export 'src/transport/cancellation_token.dart';
+export 'src/transport/http_transport.dart';

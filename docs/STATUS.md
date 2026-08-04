@@ -1,6 +1,6 @@
 # Execution Status
 
-Last verified: 2026-08-03
+Last verified: 2026-08-04
 
 ## Current baseline
 
@@ -29,7 +29,8 @@ Last verified: 2026-08-03
 | G0-03 | DONE | Codex | API surface snapshot tool + version gate: 63 symbols frozen, API-SURFACE guard rule, drift regression case |
 | G0-04 | DONE | Codex | Fixtures select/insert their own task rows; no architecture or policy change |
 | BR-01 | DONE | Codex | flypost `1bae972`: AI Admin route ownership converged to module/ai; router tests green |
-| F1-01..F6 | BLOCKED | - | Follow dependencies in implementation plan |
+| F1-01 | DONE | Codex | SDK kernel network layer: `HttpTransport` (dart:io, zero runtime deps) — envelope decode `{code,data,request_id}`, connect+receive timeout, cancellation via `Future.any` + `client.close(force)` (propagates to socket, not future-drop), business-code→`NebulaApiException` mapping; `NebulaCancellationToken` + `NebulaTimeoutException`/`NebulaCancelledException`/`NebulaHttpException`; 10 new tests; api_surface 70 symbols, governance PASS, secret_scan PASS, dart analyze clean, 68 tests pass |
+| F1-02..F6 | BLOCKED | - | Follow dependencies in implementation plan |
 | FB-01 | DONE | Codex | flypost `d3f6502`: fixtures frozen, 12001-12004 allocated, envelope reconciled; targets not-implemented |
 | FB-02 | DONE | Codex | flypost `71eff85`: installation owner module, migration 030, /mobile/bootstrap implemented |
 | FB-03 | DONE | Codex | Middleware order fixed (coarse rate + BodyLimit before Proof); io.Copy bounded; TestHTTPProofFlowPenetratesToHandler |
@@ -43,4 +44,4 @@ Last verified: 2026-08-03
 
 ## Next recommended task
 
-`F1-01` in nebula-flutter-sdk: HTTP transport, envelope, timeout and cancellation (docs/03 F1, network). **F0 sign-off is complete**: F0-R9 fourth-review closure (2026-08-03) verified 3/3 items (P0 Admin subject split + HTTP isolation, CI-blocker Governance dashboard PASS, P1 trusted-proxy CIDR config) — all gates green (go test ./..., dart test 58, dart analyze, governance/api_surface/secret_scan PASS; ArchGuard 0 blocking/7 warning, Sentinel 0). F0 can formally sign into F1.
+`F1-02` in nebula-flutter-sdk: user session, single-flight refresh, sign-out (docs/03 F1, auth, depends on F1-01). **F1-01 is complete**: `HttpTransport` implements HTTP transport + envelope + timeout + cancellation against `dart:io` with zero runtime dependencies; all gates green (dart test 68, dart analyze, governance/api_surface/secret_scan PASS; api_surface 70 symbols; ArchGuard/Sentinel not applicable to SDK). F0 sign-off complete; F1-01 closure verified.

@@ -1,3 +1,5 @@
+import 'transport/cancellation_token.dart';
+
 enum NebulaHttpMethod { get, post, put, patch, delete }
 
 final class NebulaRequest {
@@ -8,6 +10,7 @@ final class NebulaRequest {
     this.query = const <String, String>{},
     this.body,
     this.idempotencyKey,
+    this.cancellationToken,
   });
 
   final NebulaHttpMethod method;
@@ -16,6 +19,10 @@ final class NebulaRequest {
   final Map<String, String> query;
   final Object? body;
   final String? idempotencyKey;
+
+  /// Optional cooperative cancel signal. When cancelled mid-flight the transport
+  /// aborts the underlying connection (see [NebulaCancellationToken]).
+  final NebulaCancellationToken? cancellationToken;
 }
 
 final class NebulaResponse {
