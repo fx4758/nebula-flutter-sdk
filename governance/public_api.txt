@@ -1,7 +1,11 @@
+src/auth/auth_proof.dart
 src/auth/installation.dart
 src/auth/key_store.dart
+src/auth/login_request.dart
 src/auth/proof.dart
 src/auth/session.dart
+src/auth/session_auth.dart
+src/auth/session_endpoints.dart
 src/auth/session_errors.dart
 src/auth/token_store.dart
 src/capabilities.dart

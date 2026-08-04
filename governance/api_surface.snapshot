@@ -1,3 +1,4 @@
+src/auth/auth_proof.dart function _secureNonce
 src/auth/installation.dart class BootstrapRequest
 src/auth/installation.dart class BootstrapResult
 src/auth/installation.dart class InstallationIdentity
@@ -10,6 +11,8 @@ src/auth/installation.dart enum NebulaProofAlgorithm
 src/auth/key_store.dart class FakeInstallationKeyPort
 src/auth/key_store.dart class InstallationKeyPair
 src/auth/key_store.dart class InstallationKeyPort
+src/auth/login_request.dart class NebulaLoginRequest
+src/auth/login_request.dart enum NebulaLoginProvider
 src/auth/proof.dart class ProofCanonicalInput
 src/auth/proof.dart class RecordingProofSigner
 src/auth/proof.dart class RequestProofSigner
@@ -23,6 +26,8 @@ src/auth/session.dart class SessionTokenPair
 src/auth/session.dart enum NebulaSessionState
 src/auth/session.dart typedef RefreshExecutor
 src/auth/session.dart typedef RemoteLogout
+src/auth/session_auth.dart class NebulaSessionAuth
+src/auth/session_endpoints.dart class SessionEndpoints
 src/auth/session_errors.dart class AuthenticationRequiredError
 src/auth/session_errors.dart class ClientOutdatedError
 src/auth/session_errors.dart class InvalidInstallationError
