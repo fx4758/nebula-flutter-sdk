@@ -63,9 +63,13 @@ X-Proof-Timestamp: 1785780000
 X-Proof-Nonce: <随机 hex>
 X-Device-Proof: <签名>
 If-None-Match: "rev-42"          # 可选
+X-App-Build: 100                 # 可选：客户端构建号（服务端计算 version_policy.action）
 ```
 
 - 请求体为空。所有作用域来自令牌与部署事实（§2）。
+- `X-App-Build`（FB-06 实现细节冻结）：可选非负整数构建号。服务端据其计算
+  `version_policy.action`（§5）；缺失/非法视为未上报（action=none，服务端不作断言，
+  客户端仍可用 minimum/latest 本地比对）。
 
 ## 4. 响应模型（单一版本快照）
 
@@ -129,6 +133,8 @@ If-None-Match: "rev-42"          # 可选
 | `forced_upgrade` | `build < minimum_supported_build` | 阻塞/强提示升级（安全关键） |
 
 - `minimum_supported_build` / `latest_build` 为 App 平台相关构建号（整数）。
+- `action` 由服务端按请求头 `X-App-Build`（§3）计算；客户端未上报时服务端不作断言
+  （action=none），合规客户端仍可依据 minimum/latest 本地比对。
 - 与业务码 `12003`（client_outdated）的关系：`runtime-config` 的 `version_policy` 是启动时权威来源；
   `12003` 是已冻结的 enforcement 信号（FB-01），用于登录/刷新等受保护端点上提示客户端过旧。两者语义一致，均不得伪造。
 - `forced_upgrade` 为**安全关键字段**：不得无限期使用旧缓存（§6 fail-safe 规则）。
