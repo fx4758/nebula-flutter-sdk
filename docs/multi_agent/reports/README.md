@@ -1,0 +1,14 @@
+# MA0 Agent Reports
+
+每个 Agent 只写入其 Task Pack 指定的报告文件。
+
+当前预留：
+
+- `MA0_A01_PLATFORM_API_AUDIT.md`
+- `MA0_B01_SDK_BASELINE.md`
+- `MA0_C01_BACKEND_CAPABILITY_AUDIT.md`
+- `MA0_D01_NFC_APP_INTEGRATION_AUDIT.md`
+- `MA0_Q01_PARALLEL_WORK_PLAN.md`
+- `MA0_S01_SECURITY_BASELINE.md`
+
+报告未经过验收前，不得将 Story 状态改为 DONE。

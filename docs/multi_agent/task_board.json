@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "updated_at": "2026-08-06T23:45:00+08:00",
+  "ssot": "docs/multi_agent",
+  "current_sprint": "MA0",
+  "status_values": ["BACKLOG", "READY", "IN_PROGRESS", "REVIEW", "BLOCKED", "DONE"],
+  "stories": [
+    {"id":"MA0-A01","epic":"EPIC-GOV","points":2,"owner_role":"Contract Agent","status":"READY","depends":[],"task_pack":"task_packs/MA0-A01-platform-api-audit.md","deliverable":"reports/MA0_A01_PLATFORM_API_AUDIT.md"},
+    {"id":"MA0-B01","epic":"EPIC-GOV","points":2,"owner_role":"SDK Architect Agent","status":"READY","depends":[],"task_pack":"task_packs/MA0-B01-sdk-baseline.md","deliverable":"reports/MA0_B01_SDK_BASELINE.md"},
+    {"id":"MA0-C01","epic":"EPIC-GOV","points":2,"owner_role":"Backend Architect Agent","status":"READY","depends":[],"task_pack":"task_packs/MA0-C01-backend-capability-audit.md","deliverable":"reports/MA0_C01_BACKEND_CAPABILITY_AUDIT.md"},
+    {"id":"MA0-D01","epic":"EPIC-GOV","points":2,"owner_role":"APK Integration Agent","status":"READY","depends":[],"task_pack":"task_packs/MA0-D01-nfc-app-integration-audit.md","deliverable":"reports/MA0_D01_NFC_APP_INTEGRATION_AUDIT.md"},
+    {"id":"MA0-Q01","epic":"EPIC-GOV","points":2,"owner_role":"Quality/Governance Agent","status":"READY","depends":[],"task_pack":"task_packs/MA0-Q01-parallel-work-plan.md","deliverable":"reports/MA0_Q01_PARALLEL_WORK_PLAN.md"},
+    {"id":"MA0-S01","epic":"EPIC-GOV","points":2,"owner_role":"Security Architect Agent","status":"READY","depends":[],"task_pack":"task_packs/MA0-S01-security-baseline.md","deliverable":"reports/MA0_S01_SECURITY_BASELINE.md"}
+  ],
+  "milestones": [
+    {"id":"M1","name":"SDK enters APK","target_sprint":"S3"},
+    {"id":"M2","name":"Platform API baseline formed","target_sprint":"S6"},
+    {"id":"M3","name":"Security and release candidate","target_sprint":"S8"}
+  ]
+}

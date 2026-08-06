@@ -1,5 +1,10 @@
 # Execution Status
 
+## Active Multi-Agent Delivery Plan (2026-08-06)
+
+当前跨仓主计划已切换到 `docs/multi_agent/README.md`。新 Agent 必须先读取该入口并只领取一个 READY Story；当前仅开放 MA0 审计任务，不得抢跑业务实现。
+
+
 Last verified: 2026-08-04
 
 ## Current baseline
