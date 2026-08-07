@@ -1,6 +1,6 @@
 # Execution Status
 
-Last verified: 2026-08-03
+Last verified: 2026-08-07
 
 ## Current baseline
 
@@ -19,7 +19,7 @@ Last verified: 2026-08-03
 | ID | State | Owner | Notes |
 | --- | --- | --- | --- |
 | F0-01 | DONE | Codex | Initial architecture and compilable contract scaffold |
-| F0-02 | READY | - | Freeze bootstrap/session sequence with flypost |
+| F0-02 | DONE | WorkBuddy@3cb52e5 | Mobile Bootstrap/User Session contract frozen (docs/08); backend-paired, no App Secret; attestation & oauth/login reserved as BLOCKED/RESERVED |
 | F0-03 | READY | - | Legacy HMAC compatibility and sunset plan |
 | F0-04 | READY | - | Contract fixtures/error mapping |
 | F0-05 | READY | - | CI/API surface/secret scan |
@@ -30,4 +30,4 @@ Last verified: 2026-08-03
 
 ## Next recommended task
 
-`F0-02`: compare flypost routes, middleware and `sdk/CONTRACT.md`; produce a Mobile Bootstrap/User Session contract without changing backend code. Any missing backend endpoint must be recorded as a dependency, not invented in this SDK.
+`F0-03`: design the legacy HMAC App Secret SDK compatibility and sunset plan. Source: `flypost/sdk/dart` (confirmed embeds `appSecret` in `client.dart`, mismatched `auth.login` body, no bootstrap) + `flypost/sdk/CONTRACT.md` §2. Deliverable: per-capability `keep/adapt/remove` conclusion (DEBT-F001) and a dated sunset path. No App Secret may enter the new SDK (ADR-F004).
