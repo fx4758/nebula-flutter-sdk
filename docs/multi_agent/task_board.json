@@ -1,150 +1,152 @@
 {
-  "schema": "TASK_BOARD_SCHEMA_V4.md",
-  "schema_version": 4,
-  "execution_ssot": true,
-  "governance_policy": "governance/AGENT_EXECUTION_SOURCE_POLICY.md",
-  "active_sprint": "S1-A Foundation Integration",
-  "execution_epoch": 2,
-  "incident": "GOV-P0-EXEC-SSOT-20260807",
-  "ma0_status": {
-    "MA0-A01": "DONE",
-    "MA0-B01": "DONE",
-    "MA0-C01": "DONE",
-    "MA0-D01": "DONE",
-    "MA0-A02": "DONE",
-    "MA0-A03": "DONE",
-    "MA0-Q01": "DONE",
-    "MA0-S01": "DONE"
+ "schema": "TASK_BOARD_SCHEMA_V4.md",
+ "schema_version": 4,
+ "execution_ssot": true,
+ "governance_policy": "governance/AGENT_EXECUTION_SOURCE_POLICY.md",
+ "active_sprint": "S1-A Foundation Integration",
+ "execution_epoch": 2,
+ "incident": "GOV-P0-EXEC-SSOT-20260807",
+ "ma0_status": {
+  "MA0-A01": "DONE",
+  "MA0-B01": "DONE",
+  "MA0-C01": "DONE",
+  "MA0-D01": "DONE",
+  "MA0-A02": "DONE",
+  "MA0-A03": "DONE",
+  "MA0-Q01": "DONE",
+  "MA0-S01": "DONE"
+ },
+ "parse_engine": {
+  "status": "RESOLVED_WITH_REMAINING_ACTION",
+  "main_flow_block_cleared": true
+ },
+ "sprint1_entry": {
+  "status": "READY",
+  "note": "17:06 launch invalidated: LAN agents read legacy main/F0 router; S1 worktrees clean; reset for epoch 2."
+ },
+ "story_tracking": {
+  "S1-F01-001": {
+   "status": "DELIVERED",
+   "owner": "Flutter Integration Agent",
+   "agent": "A",
+   "reviewer": "Architecture Review Agent",
+   "branch": "s1/f01-adapter",
+   "worktree": "wt-s1f01",
+   "task_pack": "task_packs/S1-F01-001_APK_NEBULA_ADAPTER_BOUNDARY.md",
+   "platform_api_mode": "NONE",
+   "sdk_public_api_mode": "READ_ONLY",
+   "product_adapter_rule": "ADAPTER_FIRST",
+   "claimed_by": "WorkBuddy",
+   "claimed_at": "2026-08-07T19:55:00+08:00",
+   "delivered_at": "2026-08-07T21:05:00+08:00",
+   "delivery_note": "NFCWriter dev ef3d0f5: lib/platform/nebula boundary (contracts/adapter/pending_ports) + ARCH-010 guard registered RULES_INDEX; 22 tests green; analyzer 48<49/318=318; validate_rules 25 OK. Reviewers: verify boundary tests + adapter tests, push-gate blocked by PRE-EXISTING navigation_stack_test failure."
   },
-  "parse_engine": {
-    "status": "RESOLVED_WITH_REMAINING_ACTION",
-    "main_flow_block_cleared": true
+  "S1-F01-002": {
+   "status": "READY",
+   "owner": "Flutter Integration Agent",
+   "agent": "A",
+   "reviewer": "Architecture Review Agent",
+   "branch": "s1/f01-adapter",
+   "worktree": "wt-s1f01",
+   "task_pack": "task_packs/S1-F01-002_BOOTSTRAP_LIFECYCLE.md",
+   "depends_on": [
+    "S1-F01-001"
+   ],
+   "platform_api_mode": "NONE",
+   "sdk_public_api_mode": "READ_ONLY",
+   "product_adapter_rule": "ADAPTER_FIRST"
   },
-  "sprint1_entry": {
-    "status": "READY",
-    "note": "17:06 launch invalidated: LAN agents read legacy main/F0 router; S1 worktrees clean; reset for epoch 2."
+  "S1-F02-001": {
+   "status": "READY",
+   "owner": "Backend Runtime Config Agent",
+   "agent": "B",
+   "reviewer": "Backend Review Agent",
+   "branch": "s1/f02-runtime-config",
+   "worktree": "wt-s1f02",
+   "task_pack": "task_packs/S1-F02-001_BACKEND_RUNTIME_CONFIG.md",
+   "platform_api_mode": "READ_ONLY",
+   "sdk_public_api_mode": "NONE",
+   "product_adapter_rule": "ADAPTER_FIRST",
+   "backend_repo": "../flypost_backend",
+   "backend_baseline_commit": "8ec212f5233e815229965977dedfca7a1ca2ffd0",
+   "platform_read_only_scope": "audit + tests/docs only; production Platform API changes forbidden",
+   "gap_behavior": "raise ACR + follow-up Story; do not repair in current Story"
   },
-  "story_tracking": {
-    "S1-F01-001": {
-      "status": "IN_PROGRESS",
-      "owner": "Flutter Integration Agent",
-      "agent": "A",
-      "reviewer": "Architecture Review Agent",
-      "branch": "s1/f01-adapter",
-      "worktree": "wt-s1f01",
-      "task_pack": "task_packs/S1-F01-001_APK_NEBULA_ADAPTER_BOUNDARY.md",
-      "platform_api_mode": "NONE",
-      "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST",
-      "claimed_by": "WorkBuddy",
-      "claimed_at": "2026-08-07T19:55:00+08:00"
-    },
-    "S1-F01-002": {
-      "status": "READY",
-      "owner": "Flutter Integration Agent",
-      "agent": "A",
-      "reviewer": "Architecture Review Agent",
-      "branch": "s1/f01-adapter",
-      "worktree": "wt-s1f01",
-      "task_pack": "task_packs/S1-F01-002_BOOTSTRAP_LIFECYCLE.md",
-      "depends_on": [
-        "S1-F01-001"
-      ],
-      "platform_api_mode": "NONE",
-      "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
-    },
-    "S1-F02-001": {
-      "status": "READY",
-      "owner": "Backend Runtime Config Agent",
-      "agent": "B",
-      "reviewer": "Backend Review Agent",
-      "branch": "s1/f02-runtime-config",
-      "worktree": "wt-s1f02",
-      "task_pack": "task_packs/S1-F02-001_BACKEND_RUNTIME_CONFIG.md",
-      "platform_api_mode": "READ_ONLY",
-      "sdk_public_api_mode": "NONE",
-      "product_adapter_rule": "ADAPTER_FIRST",
-      "backend_repo": "../flypost_backend",
-      "backend_baseline_commit": "8ec212f5233e815229965977dedfca7a1ca2ffd0",
-      "platform_read_only_scope": "audit + tests/docs only; production Platform API changes forbidden",
-      "gap_behavior": "raise ACR + follow-up Story; do not repair in current Story"
-    },
-    "S1-F02-002": {
-      "status": "READY",
-      "owner": "SDK Config Agent",
-      "agent": "B",
-      "reviewer": "SDK Review Agent",
-      "branch": "s1/f02-runtime-config",
-      "worktree": "wt-s1f02",
-      "task_pack": "task_packs/S1-F02-002_SDK_RUNTIME_CONFIG_CLIENT.md",
-      "depends_on": [
-        "S1-F02-001"
-      ],
-      "platform_api_mode": "NONE",
-      "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
-    },
-    "S1-F03-001": {
-      "status": "READY",
-      "owner": "SDK Governance Agent",
-      "agent": "C",
-      "reviewer": "Governance Review Agent",
-      "branch": "s1/f03-release",
-      "worktree": "wt-s1f03",
-      "task_pack": "task_packs/S1-F03-001_SDK_RELEASE_WORKFLOW.md",
-      "platform_api_mode": "NONE",
-      "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
-    },
-    "S1-F03-002": {
-      "status": "READY",
-      "owner": "SDK Governance Agent",
-      "agent": "C",
-      "reviewer": "Governance Review Agent",
-      "branch": "s1/f03-release",
-      "worktree": "wt-s1f03",
-      "task_pack": "task_packs/S1-F03-002_API_SURFACE_CI_GATE.md",
-      "depends_on": [
-        "S1-F03-001"
-      ],
-      "platform_api_mode": "NONE",
-      "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
-    }
+  "S1-F02-002": {
+   "status": "READY",
+   "owner": "SDK Config Agent",
+   "agent": "B",
+   "reviewer": "SDK Review Agent",
+   "branch": "s1/f02-runtime-config",
+   "worktree": "wt-s1f02",
+   "task_pack": "task_packs/S1-F02-002_SDK_RUNTIME_CONFIG_CLIENT.md",
+   "depends_on": [
+    "S1-F02-001"
+   ],
+   "platform_api_mode": "NONE",
+   "sdk_public_api_mode": "READ_ONLY",
+   "product_adapter_rule": "ADAPTER_FIRST"
   },
-  "non_executable_roadmaps": [
-    "docs/STATUS.md",
-    "docs/03_IMPLEMENTATION_PLAN.md",
-    "historical F0/F1/F2/F3/FB/FS/FC IDs"
-  ],
-  "forbidden_until_explicitly_unblocked": [
-    "Asset SDK",
-    "Upload API",
-    "Payment live refund",
-    "Advanced Risk Engine"
-  ],
-  "platform_api_governance": {
-    "policy": "governance/PLATFORM_API_CHANGE_POLICY.md",
-    "default_mode": "READ_ONLY",
-    "backend_authority": "../flypost_backend",
-    "write_authority": "Coordinator/Architecture Owner only",
-    "allowed_modes": [
-      "NONE",
-      "READ_ONLY",
-      "IMPLEMENT_FROZEN_CONTRACT",
-      "CONTRACT_CHANGE"
-    ],
-    "adapter_first": true,
-    "second_consumer_required_for_contract_change": true,
-    "sprint1_backend_baseline_commit": "8ec212f5233e815229965977dedfca7a1ca2ffd0",
-    "protected_runtime_config_paths": [
-      "internal/router/",
-      "internal/module/runtimeconfig/",
-      "sdk/CONTRACT.md"
-    ],
-    "read_only_test_exceptions": [
-      "internal/module/runtimeconfig/*_test.go"
-    ]
+  "S1-F03-001": {
+   "status": "READY",
+   "owner": "SDK Governance Agent",
+   "agent": "C",
+   "reviewer": "Governance Review Agent",
+   "branch": "s1/f03-release",
+   "worktree": "wt-s1f03",
+   "task_pack": "task_packs/S1-F03-001_SDK_RELEASE_WORKFLOW.md",
+   "platform_api_mode": "NONE",
+   "sdk_public_api_mode": "READ_ONLY",
+   "product_adapter_rule": "ADAPTER_FIRST"
+  },
+  "S1-F03-002": {
+   "status": "READY",
+   "owner": "SDK Governance Agent",
+   "agent": "C",
+   "reviewer": "Governance Review Agent",
+   "branch": "s1/f03-release",
+   "worktree": "wt-s1f03",
+   "task_pack": "task_packs/S1-F03-002_API_SURFACE_CI_GATE.md",
+   "depends_on": [
+    "S1-F03-001"
+   ],
+   "platform_api_mode": "NONE",
+   "sdk_public_api_mode": "READ_ONLY",
+   "product_adapter_rule": "ADAPTER_FIRST"
   }
+ },
+ "non_executable_roadmaps": [
+  "docs/STATUS.md",
+  "docs/03_IMPLEMENTATION_PLAN.md",
+  "historical F0/F1/F2/F3/FB/FS/FC IDs"
+ ],
+ "forbidden_until_explicitly_unblocked": [
+  "Asset SDK",
+  "Upload API",
+  "Payment live refund",
+  "Advanced Risk Engine"
+ ],
+ "platform_api_governance": {
+  "policy": "governance/PLATFORM_API_CHANGE_POLICY.md",
+  "default_mode": "READ_ONLY",
+  "backend_authority": "../flypost_backend",
+  "write_authority": "Coordinator/Architecture Owner only",
+  "allowed_modes": [
+   "NONE",
+   "READ_ONLY",
+   "IMPLEMENT_FROZEN_CONTRACT",
+   "CONTRACT_CHANGE"
+  ],
+  "adapter_first": true,
+  "second_consumer_required_for_contract_change": true,
+  "sprint1_backend_baseline_commit": "8ec212f5233e815229965977dedfca7a1ca2ffd0",
+  "protected_runtime_config_paths": [
+   "internal/router/",
+   "internal/module/runtimeconfig/",
+   "sdk/CONTRACT.md"
+  ],
+  "read_only_test_exceptions": [
+   "internal/module/runtimeconfig/*_test.go"
+  ]
+ }
 }
