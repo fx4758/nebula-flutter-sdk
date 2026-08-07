@@ -6,10 +6,11 @@
   "parse_engine": {"status":"RESOLVED_WITH_REMAINING_ACTION","main_flow_block_cleared":true},
   "sprint1_entry": {"status":"READY","stories": ["S1-F01-001","S1-F02-001","S1-F02-002","S1-F03-001","S1-F03-002"]},
   "story_tracking": {
-    "S1-F01-001": {"status":"READY","owner":"Flutter Integration Agent","reviewer":"Architecture Review Agent"},
-    "S1-F02-001": {"status":"READY","owner":"Backend Runtime Config Agent","reviewer":"Backend Review Agent"},
-    "S1-F02-002": {"status":"READY","owner":"SDK Config Agent","reviewer":"SDK Review Agent"},
-    "S1-F03-001": {"status":"READY","owner":"SDK Governance Agent","reviewer":"Governance Review Agent"},
-    "S1-F03-002": {"status":"READY","owner":"SDK Governance Agent","reviewer":"Governance Review Agent"}
-  }
+    "S1-F01-001": {"status":"IN_PROGRESS","owner":"Flutter Integration Agent","agent":"A","reviewer":"Architecture Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f01"},
+    "S1-F02-001": {"status":"IN_PROGRESS","owner":"Backend Runtime Config Agent","agent":"B","reviewer":"Backend Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f02"},
+    "S1-F02-002": {"status":"IN_PROGRESS","owner":"SDK Config Agent","agent":"B","reviewer":"SDK Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f02"},
+    "S1-F03-001": {"status":"IN_PROGRESS","owner":"SDK Governance Agent","agent":"C","reviewer":"Governance Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f03"},
+    "S1-F03-002": {"status":"IN_PROGRESS","owner":"SDK Governance Agent","agent":"C","reviewer":"Governance Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f03"}
+  },
+  "sprint1_execution": {"launched_at":"2026-08-07 17:06 CST","baseline_commit":"b4d90494364e2b34dbf7e337d6f7ccc652f2b15a","agents":{"A":"wt-s1f01 (s1/f01-adapter)","B":"wt-s1f02 (s1/f02-runtime-config)","C":"wt-s1f03 (s1/f03-release)"},"note":"3 parallel worktrees; agent summary is NOT acceptance evidence; coordinator verifies + moves REVIEW->DONE."}
 }
