@@ -13,3 +13,13 @@
 - Adapter-first：如果 App 需求与现有 SDK/Platform 模型不一致，先在 Adapter 映射；不得为了减少映射代码要求 SDK/Platform 增产品字段。
 - Gap rule：确实无法适配时只提交证据 + ACR；本 Story 不得改 Platform API 或 SDK public API。
 - Evidence：changed files、import scan、adapter tests、`flutter analyze`、无跨仓 Platform diff。
+
+## Review Rework R1（Blocking）
+
+Independent Reviewer found that `NebulaAdapter.debugClient` publicly returns SDK type `Nebula`; `@visibleForTesting` is not access control. This bypasses the intended Adapter boundary through type inference even without a direct SDK import.
+
+Required:
+- remove/private-test-hook the SDK-typed public member;
+- add ARCH-010 regression that prevents public Adapter signatures from exposing SDK types;
+- keep `lib/platform/nebula/**` as the only SDK import location;
+- no new capability / Backend / SDK public API change.

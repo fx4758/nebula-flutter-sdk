@@ -26,7 +26,7 @@
   },
   "story_tracking": {
     "S1-F01-001": {
-      "status": "REVIEW",
+      "status": "IN_PROGRESS",
       "owner": "Flutter Integration Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -54,12 +54,18 @@
         "review_branch_tip": "bddb0f8",
         "lan_dev_quarantine_tip": "00c0dc0"
       },
-      "review_state": "CHANGES_REQUIRED",
+      "review_state": "CHANGES_REQUIRED_REWORK_R1",
       "review_branch_tip": "bddb0f8",
       "lan_dev_quarantine_tip": "00c0dc0",
       "review_findings": [
         "P1 ARCH-010 boundary can be bypassed: public NebulaAdapter.debugClient returns SDK Nebula type; @visibleForTesting is not access control and business code can use inferred SDK API without importing package:nebula_sdk.",
         "R-NEB-1 only scans direct imports, so it does not detect SDK types leaking through public Adapter signatures. Add a boundary regression that prevents public SDK-typed members."
+      ],
+      "rework_round": 1,
+      "rework_required": [
+        "Remove or privatize NebulaAdapter.debugClient so no public Adapter member exposes a nebula_sdk type.",
+        "Add ARCH-010 regression coverage that fails when a public Adapter API exposes SDK types, not only when business files directly import package:nebula_sdk.",
+        "Re-run targeted adapter/boundary tests, analyzer baseline, and rule-index validation. Return Delivery Note only; do not edit SDK Task Board or push shared dev."
       ]
     },
     "S1-F01-002": {
