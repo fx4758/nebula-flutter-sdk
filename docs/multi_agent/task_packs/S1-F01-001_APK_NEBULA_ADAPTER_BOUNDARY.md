@@ -23,3 +23,14 @@ Required:
 - add ARCH-010 regression that prevents public Adapter signatures from exposing SDK types;
 - keep `lib/platform/nebula/**` as the only SDK import location;
 - no new capability / Backend / SDK public API change.
+
+## Review Rework R2（Blocking）
+
+R1 removed `debugClient`, but independent negative probes proved ARCH-010 still has false negatives. Current code also retains public SDK-typed seams.
+
+Required:
+- no public top-level/member signature in the App-facing Nebula boundary may expose `nebula_sdk` types; specifically close `nebulaSessionStatusOf(NebulaSessionState)`;
+- close or mechanically isolate `PendingProofSigner implements RequestProofSigner` / `ProofCanonicalInput` so business code cannot consume that SDK seam;
+- replace the single-line/class-only R-NEB-5 scan with a surface-oriented guard covering top-level declarations, multiline signatures, and all business-reachable Nebula boundary files;
+- negative probes must include getter return, top-level function, multiline parameter, and internal pending-port import; each forbidden case must fail the guard;
+- no SDK/Backend/Task Board change by the implementation Agent.

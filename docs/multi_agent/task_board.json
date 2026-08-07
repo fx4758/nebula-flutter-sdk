@@ -41,31 +41,36 @@
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
       "execution_base_commit": "b4ba98d1c7cfbbe8efe18959af4f9468a7eae4f1",
-      "delivery_commit": "ef3d0f5bfc36e26cd403e117d86bda7c62256a34",
+      "delivery_commit": "efb5b68fd738a6847e60fef72b52cd73d069872f",
       "delivery_evidence": {
         "verified_by": "Architecture Coordinator",
-        "verified_at": "2026-08-07T21:18:00+08:00",
+        "verified_at": "2026-08-07T22:29:00+08:00",
         "branch": "lan/s1/f01-001-adapter",
-        "changed_files": 11,
-        "targeted_tests": "22 passed",
-        "analyzer": "WARNING 48<49; INFO 318=318",
+        "delivery_commit": "efb5b68fd738a6847e60fef72b52cd73d069872f",
+        "r1_changed_files": 4,
+        "targeted_tests": "23 passed",
+        "analyzer_baseline": "WARNING 48<49; INFO 318=318",
         "rules": "25 rules OK",
-        "governance_incident": "Agent also mutated SDK task_board and directly pushed LAN dev; implementation isolated for separate review",
-        "review_branch_tip": "bddb0f8",
-        "lan_dev_quarantine_tip": "00c0dc0"
+        "flutter_analyze": "366 existing issues; raw exit 1, no baseline regression",
+        "shared_dev": "lan/dev remains 00c0dc0; delivery isolated on feature branch",
+        "negative_probe": "Injected multiline public method with required Nebula parameter; ARCH-010 still passed 7/7, proving false negative"
       },
-      "review_state": "CHANGES_REQUIRED_REWORK_R1",
-      "review_branch_tip": "bddb0f8",
+      "review_state": "CHANGES_REQUIRED_REWORK_R2",
+      "review_branch_tip": "efb5b68",
       "lan_dev_quarantine_tip": "00c0dc0",
       "review_findings": [
-        "P1 ARCH-010 boundary can be bypassed: public NebulaAdapter.debugClient returns SDK Nebula type; @visibleForTesting is not access control and business code can use inferred SDK API without importing package:nebula_sdk.",
-        "R-NEB-1 only scans direct imports, so it does not detect SDK types leaking through public Adapter signatures. Add a boundary regression that prevents public SDK-typed members."
+        "P1: adapter.dart still exposes top-level public nebulaSessionStatusOf(NebulaSessionState), so an SDK type remains in a public boundary signature.",
+        "P1: nebula_pending_ports.dart exposes public PendingProofSigner implements RequestProofSigner and signProof(ProofCanonicalInput), another SDK-typed public seam outside NebulaAdapter.",
+        "P1: R-NEB-5 scans only exactly-two-space, single-line members inside NebulaAdapter. It ignores top-level declarations, other nebula boundary files, and multiline parameter types.",
+        "Negative probe reproduced: a multiline public method leakSdkType({ required Nebula client }) was injected and nebula_boundary_guard_test.dart still passed 7/7."
       ],
-      "rework_round": 1,
+      "rework_round": 2,
       "rework_required": [
-        "Remove or privatize NebulaAdapter.debugClient so no public Adapter member exposes a nebula_sdk type.",
-        "Add ARCH-010 regression coverage that fails when a public Adapter API exposes SDK types, not only when business files directly import package:nebula_sdk.",
-        "Re-run targeted adapter/boundary tests, analyzer baseline, and rule-index validation. Return Delivery Note only; do not edit SDK Task Board or push shared dev."
+        "Remove all SDK-typed public boundary symbols, including top-level nebulaSessionStatusOf; do not keep public test-only SDK-typed helpers.",
+        "Close PendingProofSigner/ProofCanonicalInput public seam: make pending implementation truly internal/private, or enforce an equivalent mechanically-closed internal boundary without exposing SDK types to App consumers.",
+        "Replace R-NEB-5 with a surface-oriented guard that covers top-level declarations, multiline signatures, and all business-reachable files under lib/platform/nebula, not only single-line NebulaAdapter members.",
+        "Add negative regression probes for: public getter SDK return, top-level SDK-typed function, multiline SDK-typed parameter, and business import of internal pending-port seam. Each must FAIL before the fix and PASS only after closure.",
+        "Keep scope to NFC Writer feature branch only; no SDK/Backend/Task Board changes by Implementation Agent. Re-run targeted tests, analyzer baseline, rules validation and return Delivery Note only."
       ]
     },
     "S1-F01-002": {

@@ -4,7 +4,7 @@
 
 | Story | State | Execution Repo | Execution Branch | Platform API | SDK Public API |
 |---|---|---|---|---|---|
-| S1-F01-001 Adapter Boundary | IN_PROGRESS / REWORK-R1 | Flutter NFC Writer | `s1/f01-001-adapter` | NONE | READ_ONLY |
+| S1-F01-001 Adapter Boundary | IN_PROGRESS / REWORK-R2 | Flutter NFC Writer | `s1/f01-001-adapter` | NONE | READ_ONLY |
 | S1-F01-002 Bootstrap Lifecycle | READY after F01-001 DONE | Flutter NFC Writer | `s1/f01-002-bootstrap` | NONE | READ_ONLY |
 | S1-F02-001 Backend Runtime Config Audit | READY | flypost_backend | `s1/f02-001-runtime-config-audit` | READ_ONLY | NONE |
 | S1-F02-002 SDK Config Closure | READY after F02-001 DONE | nebula-flutter-sdk | `s1/f02-002-sdk-config` | NONE | READ_ONLY |
