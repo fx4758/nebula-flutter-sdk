@@ -65,9 +65,11 @@ git push git://192.168.31.137:9419/nebula-flutter-sdk work/你的名字-s1-f01
 
 ## 6. 服务维护
 
-- Daemon 以后台任务运行于本机（192.168.31.137:9419），`receive-pack` 已启用。
+- Daemon 以 **setsid 游离进程**运行于本机（192.168.31.137:9419），`receive-pack` 已启用。
 - 本机 bare 仓库：`/Users/sean/git-server/nebula-flutter-sdk.git`（所有分支的权威落点）。
-- 如需重启 daemon：`/usr/bin/git daemon --reuseaddr --base-path=/Users/sean/git-server --export-all --enable=receive-pack --port=9419 --verbose`。
+- **重启命令（唯一正确方式）**：`bash /Users/sean/git-server/start-lan-git.sh`
+  - ⚠️ 切勿用 `nohup ... &` 或 Bash 后台任务直接跑 daemon：命令/回合结束即被回收（9419 曾因此拒连）。
+  - 必须 `setsid` 脱离进程组（脚本已封装）。
 - 服务端 SSH 等强认证方案未启用；当前信任局域网环境，若需收严再评估。
 
 ## 7. 其他仓库
