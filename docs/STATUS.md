@@ -4,10 +4,10 @@
 
 ## Active Multi-Agent Delivery Plan (2026-08-06)
 
-当前跨仓主计划已切换到 `docs/multi_agent/README.md`。新 Agent 必须先读取该入口并只领取一个 READY Story；当前仅开放 MA0 审计任务，不得抢跑业务实现。
+当前跨仓执行已进入 **S1-A Foundation Integration**。本文件仅保留 SDK 内部历史；新 Agent 必须从 `docs/multi_agent/task_board.json` 获取精确 Story ID，并通过 `tool/task_source_guard.dart` 后才能开工。
 
 
-Last verified: 2026-08-04
+Last verified: 2026-08-07
 
 ## Current baseline
 
