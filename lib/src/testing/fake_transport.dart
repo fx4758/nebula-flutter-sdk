@@ -12,8 +12,8 @@ import 'dart:async';
 import '../transport.dart';
 
 /// A handler that produces the response for one [NebulaRequest].
-typedef FakeTransportHandler =
-    FutureOr<NebulaResponse> Function(NebulaRequest request);
+typedef FakeTransportHandler = FutureOr<NebulaResponse> Function(
+    NebulaRequest request);
 
 /// Deterministic, scripted [NebulaTransport] for tests.
 ///

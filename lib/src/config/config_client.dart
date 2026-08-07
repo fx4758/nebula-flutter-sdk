@@ -264,8 +264,7 @@ final class NebulaConfigClient implements NebulaConfig {
     final DateTime? received = _receivedAt;
     if (received == null) return false;
     final int ttl = cfg.cachePolicy.ttlSeconds;
-    return DateTime.now().toUtc().difference(received) <
-        Duration(seconds: ttl);
+    return DateTime.now().toUtc().difference(received) < Duration(seconds: ttl);
   }
 
   /// 是否允许 stale 兜底（docs/12 §6.3/§6.5/§6.7）：
@@ -278,8 +277,8 @@ final class NebulaConfigClient implements NebulaConfig {
     if (cfg.hasSecurityCritical) return false; // 安全关键绝不 stale
     final DateTime? received = _receivedAt;
     if (received == null) return false;
-    final int staleWindow = cfg.cachePolicy.ttlSeconds +
-        cfg.cachePolicy.staleIfErrorSeconds;
+    final int staleWindow =
+        cfg.cachePolicy.ttlSeconds + cfg.cachePolicy.staleIfErrorSeconds;
     return DateTime.now().toUtc().difference(received) <
         Duration(seconds: staleWindow);
   }
@@ -299,8 +298,8 @@ final class NebulaConfigClient implements NebulaConfig {
       final Object? receivedRaw = json['received_at'];
       if (data is! Map<String, Object?> || receivedRaw is! int) return null;
       final NebulaEffectiveConfig cfg = NebulaEffectiveConfig.fromJson(data);
-      _receivedAt = DateTime.fromMillisecondsSinceEpoch(receivedRaw * 1000,
-          isUtc: true);
+      _receivedAt =
+          DateTime.fromMillisecondsSinceEpoch(receivedRaw * 1000, isUtc: true);
       return cfg;
     } on Object {
       // 缓存损坏即视为无缓存，走网络；绝不因坏缓存崩溃。
@@ -351,9 +350,8 @@ final class NebulaConfigClient implements NebulaConfig {
     final String b = base.endsWith('/') && base.isNotEmpty
         ? base.substring(0, base.length - 1)
         : base;
-    final String p = endpointPath.startsWith('/')
-        ? endpointPath
-        : '/$endpointPath';
+    final String p =
+        endpointPath.startsWith('/') ? endpointPath : '/$endpointPath';
     return '$b$p';
   }
 }

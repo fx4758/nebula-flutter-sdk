@@ -1,0 +1,26 @@
+{
+  "recovery": {
+    "source": ["02_SPRINT_BOARD.md", "reports/*", "contracts/*", "adrs/*"],
+    "reason": "task_board.json was found empty and repository recovery was unavailable",
+    "status": "RECOVERED_CANDIDATE"
+  },
+  "ma0": {
+    "MA0-A01": "DONE",
+    "MA0-B01": "DONE",
+    "MA0-C01": "DONE",
+    "MA0-D01": "DONE",
+    "MA0-A02": "DONE",
+    "MA0-A03": "DONE",
+    "MA0-Q01": "DONE",
+    "MA0-S01": "DONE"
+  },
+  "parse_engine": {
+    "status": "RESOLVED_WITH_REMAINING_ACTION",
+    "main_flow_block_cleared": true
+  },
+  "sprint1": {
+    "status": "ENTRY_READY",
+    "governance": "SPRINT1_GOVERNANCE_UPDATE.md",
+    "task_board": "SPRINT1_TASK_BOARD_v1.1.md"
+  }
+}

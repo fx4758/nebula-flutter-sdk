@@ -113,8 +113,9 @@ final class HttpTransport implements NebulaTransport {
     } on Object catch (e) {
       // Ensure a hung connection is released even if the abort races the error.
       client.close(force: true);
-      final NebulaHttpException wrapped =
-          NebulaHttpException('Transport failure: $e', requestId: clientRequestId);
+      final NebulaHttpException wrapped = NebulaHttpException(
+          'Transport failure: $e',
+          requestId: clientRequestId);
       _emitLog(
         clientRequestId,
         request,

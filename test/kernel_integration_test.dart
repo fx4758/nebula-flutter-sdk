@@ -41,8 +41,8 @@ void main() {
       final NebulaSessionAuth auth = buildAuth(transport, store: store);
       await install(auth);
 
-      await auth
-          .login(NebulaLoginRequest.phone(phone: '13800000000', code: '123456'));
+      await auth.login(
+          NebulaLoginRequest.phone(phone: '13800000000', code: '123456'));
 
       expect(auth.state, NebulaSessionState.authenticated);
       expect(auth.accessToken, 'a1');
@@ -124,12 +124,13 @@ void main() {
       expect(auth.state, NebulaSessionState.recoverableFailure);
     });
 
-    test('unexpected transport failure -> recoverable state, raw error surfaced',
+    test(
+        'unexpected transport failure -> recoverable state, raw error surfaced',
         () async {
       // `login` maps unexpected errors for the state machine (RECOVERABLE_FAILURE)
       // but rethrows the original error to the caller (never a silent success).
-      final FakeTransport transport =
-          FakeTransport()..enqueueError(Exception('boom'));
+      final FakeTransport transport = FakeTransport()
+        ..enqueueError(Exception('boom'));
       final NebulaSessionAuth auth = buildAuth(transport);
       await install(auth);
 
@@ -214,8 +215,8 @@ void main() {
       final InMemoryTokenStore store = InMemoryTokenStore();
       final NebulaSessionAuth auth = buildAuth(transport, store: store);
       await install(auth);
-      await auth
-          .login(NebulaLoginRequest.phone(phone: '13800000000', code: '123456'));
+      await auth.login(
+          NebulaLoginRequest.phone(phone: '13800000000', code: '123456'));
 
       await auth.signOut();
 
@@ -233,8 +234,7 @@ void main() {
     test('unexpected request throws StateError (exact assertions)', () async {
       final FakeTransport transport = FakeTransport();
       await expectLater(
-        transport.send(
-            NebulaRequest(method: NebulaHttpMethod.get, path: '/x')),
+        transport.send(NebulaRequest(method: NebulaHttpMethod.get, path: '/x')),
         throwsStateError,
       );
       expect(transport.requests, hasLength(1));
@@ -263,8 +263,8 @@ void main() {
             throw const NebulaApiException('nope', code: 401),
       );
       await expectLater(
-        transport.send(
-            NebulaRequest(method: NebulaHttpMethod.get, path: '/fail')),
+        transport
+            .send(NebulaRequest(method: NebulaHttpMethod.get, path: '/fail')),
         throwsA(isA<NebulaApiException>()),
       );
       expect(transport.requests, hasLength(2));

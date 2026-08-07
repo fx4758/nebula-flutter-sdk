@@ -58,7 +58,10 @@ class _FakeTransport implements NebulaTransport {
       }
       return const NebulaResponse(
         statusCode: 200,
-        data: <String, Object?>{'access_token': 'a-login', 'refresh_token': 'r-login'},
+        data: <String, Object?>{
+          'access_token': 'a-login',
+          'refresh_token': 'r-login'
+        },
         requestId: 'req-login',
       );
     }
@@ -134,7 +137,8 @@ void main() {
       });
     });
 
-    test('business error maps to a typed NebulaSessionError with code/requestId',
+    test(
+        'business error maps to a typed NebulaSessionError with code/requestId',
         () async {
       final transport = _FakeTransport(errorCode: 12004);
       final auth = _auth(transport);
@@ -180,7 +184,9 @@ void main() {
     });
   });
 
-  group('NebulaSessionAuth.restoreSession + single-flight refresh (docs/08 §6.3)', () {
+  group(
+      'NebulaSessionAuth.restoreSession + single-flight refresh (docs/08 §6.3)',
+      () {
     test('returns false when no refresh token is stored', () async {
       final auth = _auth(_FakeTransport());
       expect(await auth.restoreSession(), isFalse);
@@ -220,7 +226,8 @@ void main() {
       expect(results.every((String t) => t == 'a-refresh'), isTrue,
           reason: 'all callers share the same refreshed token');
       // Refresh token rotated in place in secure storage.
-      expect(await store.read(namespace: _ns, key: tokenKeyRefresh), 'r-refresh');
+      expect(
+          await store.read(namespace: _ns, key: tokenKeyRefresh), 'r-refresh');
       // Proof headers attached on the single refresh request.
       expect(transport.lastRefresh.headers['X-Device-Proof'], isNotEmpty);
       expect(transport.lastRefresh.headers['X-Installation-Token'], 'inst-123');
@@ -259,9 +266,10 @@ void main() {
       expect(await store.read(namespace: _ns, key: tokenKeyRefresh), isNull);
       expect(transport.logoutCount, 1);
       // Logout carries the user access token as a bearer credential.
-      expect(transport.requests
-          .lastWhere((r) => r.path.endsWith('/logout'))
-          .headers['Authorization'],
+      expect(
+          transport.requests
+              .lastWhere((r) => r.path.endsWith('/logout'))
+              .headers['Authorization'],
           'Bearer a-login');
     });
 

@@ -10,11 +10,13 @@
 
 ## Inputs
 
+- 唯一 Backend Authority：`/Users/sean/Documents/project/forAI/flypost_backend`；BE-Codex/其他副本不作为现状或缺陷来源
 - `nebula-flutter-sdk/docs/02_SECURITY_MODEL.md`
 - `flypost_backend/docs/CODING_RULES_SECURITY.md`
 - `flypost_backend/docs/PRODUCTION_READINESS_AUDIT_2026-08-03.md`
 - identity/appidentity/file/payment/notification/security 相关实现
-- MA0-C01 输出（如已完成）
+- MA0-C01 DONE 输出：Payment = HIGH-RISK PARTIAL；Refund local-only；Reconciliation missing；当前 `module/file` 存在 owner 自声明风险；表已是 `asset_object`
+- MA0-D01 DONE 输出：首个 APK slice 为 runtime-config only；Asset/Notification/Payment/AI 暂不进入首切片
 
 ## Allowed Paths
 
@@ -34,6 +36,8 @@
 3. 为 Asset/Auth/Payment 定义最低安全验收。
 4. 记录已有 WIP 的 Keep/Adapt/Review Later/Candidate Remove。
 5. 定义 S7 的量化回归场景。
+6. 对 Payment 按 charge/callback/subscription/refund/reconciliation 分项定安全等级，禁止整体写成 production-ready。
+7. 对 Asset 明确当前 owner-trust P0 与未来 capability/quota/emergency 的最低门槛，但不得提前设计未冻结的 Asset Contract。
 
 ## Acceptance
 
@@ -42,6 +46,9 @@
 - [ ] 只有 P0 才能阻塞 S1-S3，且有证据。
 - [ ] 不为不存在的反馈/业务入口编造实现任务。
 - [ ] 输出旧安全 WIP 对账策略。
+- [ ] 不引用废弃 backend 副本作为当前安全事实。
+- [ ] Payment refund/reconciliation 不得被误判为已生产闭环。
+- [ ] Asset owner scope 必须列入 MUST-WITH-STORY，但不得因此自行实现 Asset。
 
 ## Deliverable
 

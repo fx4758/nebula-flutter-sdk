@@ -48,8 +48,7 @@ final class CacheConsentStore implements NebulaConsentStore {
     required NebulaEnvironment environment,
     required String appId,
   })  : _storage = storage,
-        _namespace =
-            StorageNamespace.app(environment, appId).toString();
+        _namespace = StorageNamespace.app(environment, appId).toString();
 
   static const String _key = 'analytics_consent';
 

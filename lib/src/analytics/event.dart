@@ -22,7 +22,7 @@ final class NebulaAnalyticsEvent {
     required this.privacy,
     this.properties = const <String, Object?>{},
     DateTime? timestamp,
-  })  : timestamp = timestamp ?? DateTime.now().toUtc() {
+  }) : timestamp = timestamp ?? DateTime.now().toUtc() {
     _validate();
   }
 
@@ -63,8 +63,7 @@ final class NebulaAnalyticsEvent {
       throw ArgumentError.value(properties, 'properties', 'exceeds 64 keys');
     }
     try {
-      final List<int> bytes =
-          utf8.encode(jsonEncode(toJson()));
+      final List<int> bytes = utf8.encode(jsonEncode(toJson()));
       if (bytes.length > kMaxEventBytes) {
         throw ArgumentError.value(name, 'event', 'exceeds 8 KiB');
       }

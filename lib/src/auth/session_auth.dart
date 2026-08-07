@@ -288,9 +288,8 @@ final class NebulaSessionAuth implements NebulaAuth {
     final String b = base.endsWith('/') && base.isNotEmpty
         ? base.substring(0, base.length - 1)
         : base;
-    final String p = endpointPath.startsWith('/')
-        ? endpointPath
-        : '/$endpointPath';
+    final String p =
+        endpointPath.startsWith('/') ? endpointPath : '/$endpointPath';
     return '$b$p';
   }
 

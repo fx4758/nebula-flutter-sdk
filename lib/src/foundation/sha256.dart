@@ -65,8 +65,10 @@ String sha256Hex(List<int> bytes) {
           padded[o + 3];
     }
     for (int i = 16; i < 64; i++) {
-      final int s0 = _rotr(w[i - 15], 7) ^ _rotr(w[i - 15], 18) ^ _shr(w[i - 15], 3);
-      final int s1 = _rotr(w[i - 2], 17) ^ _rotr(w[i - 2], 19) ^ _shr(w[i - 2], 10);
+      final int s0 =
+          _rotr(w[i - 15], 7) ^ _rotr(w[i - 15], 18) ^ _shr(w[i - 15], 3);
+      final int s1 =
+          _rotr(w[i - 2], 17) ^ _rotr(w[i - 2], 19) ^ _shr(w[i - 2], 10);
       w[i] = (w[i - 16] + s0 + w[i - 7] + s1) & 0xFFFFFFFF;
     }
 

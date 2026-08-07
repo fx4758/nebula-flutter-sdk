@@ -76,8 +76,7 @@ final class InMemoryCacheStorage implements CacheStorage {
     required Uint8List value,
     Duration? ttl,
   }) async {
-    final DateTime? expiresAt =
-        ttl == null ? null : DateTime.now().add(ttl);
+    final DateTime? expiresAt = ttl == null ? null : DateTime.now().add(ttl);
     _namespaces.putIfAbsent(namespace, () => <String, _CacheEntry>{})[key] =
         _CacheEntry(value, expiresAt);
   }

@@ -33,7 +33,10 @@ final class NebulaVersionPolicy {
     final Object? latest = json['latest_build'];
     final Object? action = json['action'];
     final Object? messageKey = json['message_key'];
-    if (min is! int || latest is! int || action is! String || messageKey is! String) {
+    if (min is! int ||
+        latest is! int ||
+        action is! String ||
+        messageKey is! String) {
       throw _malformed('version_policy');
     }
     // Wire 值是冻结 snake_case（docs/12 §5）；枚举名是 camelCase，须显式映射。
@@ -139,8 +142,7 @@ final class NebulaEffectiveConfig {
       throw _malformed('snapshot exceeds delivery limits');
     }
 
-    final Map<String, NebulaConfigItem> configs =
-        <String, NebulaConfigItem>{};
+    final Map<String, NebulaConfigItem> configs = <String, NebulaConfigItem>{};
     for (final MapEntry<String, Object?> entry in configsRaw.entries) {
       if (entry.key.length > kMaxKeyLength) throw _malformed('config key');
       final Object? item = entry.value;
@@ -155,8 +157,8 @@ final class NebulaEffectiveConfig {
       }
       configs[entry.key] = NebulaConfigItem(
         value: value,
-        updatedAt: DateTime.fromMillisecondsSinceEpoch(updatedAt * 1000,
-            isUtc: true),
+        updatedAt:
+            DateTime.fromMillisecondsSinceEpoch(updatedAt * 1000, isUtc: true),
       );
     }
 
@@ -176,8 +178,8 @@ final class NebulaEffectiveConfig {
 
     return NebulaEffectiveConfig(
       revision: revision,
-      serverTime: DateTime.fromMillisecondsSinceEpoch(serverTime * 1000,
-          isUtc: true),
+      serverTime:
+          DateTime.fromMillisecondsSinceEpoch(serverTime * 1000, isUtc: true),
       configs: Map<String, NebulaConfigItem>.unmodifiable(configs),
       features: List<NebulaFeatureFlag>.unmodifiable(features),
       versionPolicy: NebulaVersionPolicy.fromJson(

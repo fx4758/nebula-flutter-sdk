@@ -46,7 +46,8 @@ void main() {
       const env = NebulaEnvironment.staging;
       final a = StorageNamespace.app(env, 'com.example.a');
       final b = StorageNamespace.app(env, 'com.example.b');
-      final prod = StorageNamespace.app(NebulaEnvironment.production, 'com.example.a');
+      final prod =
+          StorageNamespace.app(NebulaEnvironment.production, 'com.example.a');
       final u1 = StorageNamespace.user(env, 'com.example.a', 'u1');
       final u2 = StorageNamespace.user(env, 'com.example.a', 'u2');
 
@@ -103,7 +104,8 @@ void main() {
       const nsC = 'staging/com.example.b';
       const nsU = 'staging/com.example.a/u1';
 
-      await store.write(namespace: nsA, key: 'refresh_token', value: 'secret-a');
+      await store.write(
+          namespace: nsA, key: 'refresh_token', value: 'secret-a');
       expect(await store.read(namespace: nsB, key: 'refresh_token'), isNull);
       expect(await store.read(namespace: nsC, key: 'refresh_token'), isNull);
       expect(await store.read(namespace: nsU, key: 'refresh_token'), isNull);

@@ -217,8 +217,7 @@ String _stripComments(String source) {
 bool _matchesAt(String source, int index, String token) =>
     source.startsWith(token, index);
 
-bool _isIdentifierChar(String char) =>
-    RegExp(r'[A-Za-z0-9_$]').hasMatch(char);
+bool _isIdentifierChar(String char) => RegExp(r'[A-Za-z0-9_$]').hasMatch(char);
 
 /// True when [index] opens a string literal, including the `r` of a raw string.
 bool _startsStringLiteral(String source, int index) {

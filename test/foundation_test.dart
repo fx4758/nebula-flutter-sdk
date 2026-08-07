@@ -91,14 +91,14 @@ void main() {
     });
 
     test('unknown error types fall back to unknown', () {
-      expect(classifyNebulaError(Exception('boom')), NebulaErrorCategory.unknown);
+      expect(
+          classifyNebulaError(Exception('boom')), NebulaErrorCategory.unknown);
     });
   });
 
   group('redact (F1-04 privacy)', () {
     test('masks long values but keeps short ones', () {
-      expect(redact('tok_abcdef1234567890'),
-          startsWith('tok_…(redacted '));
+      expect(redact('tok_abcdef1234567890'), startsWith('tok_…(redacted '));
       expect(redact('abcd'), 'abcd');
       expect(redact(''), '');
       expect(redact(null), isNull);

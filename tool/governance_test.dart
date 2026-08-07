@@ -167,11 +167,11 @@ void main() {
       _prependSource(
         File('${root.path}/lib/src/capabilities.dart'),
         '// Mobile auth endpoints live under `/api/v1/mobile/auth/*` '
-            '(ADR-F008);\n'
-            '// the legacy `/api/v1/auth/*` prefix is reserved.\n'
-            '/// Doc-comment form must behave identically: `/api/v1/**/*`.\n'
-            "final String _pathWildcardProbe = '/api/v1/mobile/auth/*';\n"
-            "final String _blockLikeProbe = '/* still a string */';\n",
+        '(ADR-F008);\n'
+        '// the legacy `/api/v1/auth/*` prefix is reserved.\n'
+        '/// Doc-comment form must behave identically: `/api/v1/**/*`.\n'
+        "final String _pathWildcardProbe = '/api/v1/mobile/auth/*';\n"
+        "final String _blockLikeProbe = '/* still a string */';\n",
       );
     }),
     GuardCase.fail('hard-coded credential value', 'SEC-SCAN', (Directory root) {

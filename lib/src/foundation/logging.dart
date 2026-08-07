@@ -108,8 +108,7 @@ String? redact(String? value) {
 ///
 /// Useful for structured logging of e.g. a query/header map where the *names*
 /// are safe but the *values* may contain tokens or identifiers.
-Map<String, String> redactValues(Map<String, String> map) =>
-    <String, String>{
+Map<String, String> redactValues(Map<String, String> map) => <String, String>{
       for (final MapEntry<String, String> e in map.entries)
         e.key: redact(e.value) ?? '',
     };
