@@ -1,74 +1,13 @@
-# Sprint 1 Agent Assignment v1.0
+# Sprint 1 Agent Assignment — Execution Epoch 2
 
-Status: READY
+Status: **READY FOR RELAUNCH AFTER GOV-P0 FIX**
 
-## Global Acceptance Rule
+SSOT: `task_board.json`. Every agent must run `dart run tool/task_source_guard.dart --story <ID>` before editing.
 
-Agent delivery message is not acceptance evidence. Reviewer must verify files, code, configuration and tests.
+- Agent A / `s1/f01-adapter` / `wt-s1f01`: `S1-F01-001`, then `S1-F01-002`.
+- Agent B / `s1/f02-runtime-config` / `wt-s1f02`: `S1-F02-001`, then `S1-F02-002`.
+- Agent C / `s1/f03-release` / `wt-s1f03`: `S1-F03-001`, then `S1-F03-002`.
 
-## Agent A — Flutter Integration
+No agent may substitute `F0-*`, `F1-*`, `F2-*`, `F3-*`, `FB-*`, `FS-*`, or `FC-*` from `STATUS.md`.
 
-Story:
-- S1-F01-001 APK Nebula Adapter Layer
-- S1-F01-002 Bootstrap Lifecycle
-
-Allowed:
-- lib/platform/nebula/**
-- app dependency/bootstrap integration
-- tests/**
-
-Forbidden:
-- parser
-- NFC runtime
-- business feature migration
-- SDK public export changes
-
-Evidence:
-- changed files list
-- import boundary check
-- startup tests
-
-## Agent B — Runtime Config
-
-Story:
-- S1-F02 Runtime Config First Slice
-
-Allowed:
-- backend runtime config API
-- SDK config client
-- related tests
-
-Forbidden:
-- Asset
-- Payment
-- Notification
-- AI
-- business workflow
-
-Evidence:
-- API contract
-- API tests
-- client/cache tests
-
-## Agent C — SDK Governance
-
-Story:
-- S1-F03 SDK Release Workflow
-
-Allowed:
-- docs/**
-- tool/**
-- CI governance files
-
-Forbidden:
-- business source
-- capability expansion
-
-Evidence:
-- release workflow
-- CI gate definition
-- API surface process
-
-## Review Gate
-
-Only reviewer can move REVIEW to DONE.
+Delivery message != acceptance evidence. Reviewer checks repository evidence.

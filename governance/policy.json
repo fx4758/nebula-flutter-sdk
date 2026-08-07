@@ -25,9 +25,18 @@
     "governance/api_surface.snapshot",
     "tool/governance_test.dart",
     ".github/pull_request_template.md",
-    ".github/workflows/governance.yml"
+    ".github/workflows/governance.yml",
+    "docs/multi_agent/task_board.json",
+    "docs/multi_agent/governance/AGENT_EXECUTION_SOURCE_POLICY.md",
+    "docs/multi_agent/governance/TASK_BOARD_SCHEMA_V3.md",
+    "tool/task_source_guard.dart"
   ],
-  "allowed_task_states": ["READY", "IN_PROGRESS", "BLOCKED", "DONE"],
+  "allowed_task_states": [
+    "READY",
+    "IN_PROGRESS",
+    "BLOCKED",
+    "DONE"
+  ],
   "secret_scan_ignore_paths": [
     ".git",
     ".dart_tool",
@@ -41,32 +50,48 @@
       "pattern": "\\b(appSecret|clientSecret|providerSecret)\\b",
       "case_sensitive": false,
       "reason": "Mobile SDK must not expose long-lived shared secrets.",
-      "examples_match": ["final String appSecret;"],
-      "examples_ignore": ["final String appId;"]
+      "examples_match": [
+        "final String appSecret;"
+      ],
+      "examples_ignore": [
+        "final String appId;"
+      ]
     },
     {
       "id": "SEC-CLIENT-CREDENTIALS",
       "pattern": "client_credentials",
       "case_sensitive": false,
       "reason": "OAuth client credentials belong to a trusted server.",
-      "examples_match": ["grantType = 'client_credentials'"],
-      "examples_ignore": ["restoreSession()"]
+      "examples_match": [
+        "grantType = 'client_credentials'"
+      ],
+      "examples_ignore": [
+        "restoreSession()"
+      ]
     },
     {
       "id": "ARCH-DIRECT-PROVIDER",
       "pattern": "\\b(openai|s3\\.amazonaws|aliyun|twilio|sendgrid)\\b",
       "case_sensitive": false,
       "reason": "SDK capabilities must call Nebula platform ports, not providers.",
-      "examples_match": ["openai.createCompletion()"],
-      "examples_ignore": ["nebulaAi.createTask()"]
+      "examples_match": [
+        "openai.createCompletion()"
+      ],
+      "examples_ignore": [
+        "nebulaAi.createTask()"
+      ]
     },
     {
       "id": "DATA-TRUST-BODY-APP-ID",
       "pattern": "['\"]app_id['\"]\\s*:",
       "case_sensitive": false,
       "reason": "Trusted app scope must not be authored by mobile request bodies.",
-      "examples_match": ["{'app_id': appId}"],
-      "examples_ignore": ["options.appId"]
+      "examples_match": [
+        "{'app_id': appId}"
+      ],
+      "examples_ignore": [
+        "options.appId"
+      ]
     }
   ]
 }

@@ -176,32 +176,27 @@
   - `contracts/MOBILE_CAPABILITY_CONTRACT.md`
 - **备注**：MA0 其余审计 Story（B01/C01/D01/Q01/S01）仍可并行推进；S1 进入仅对上列被允许 Agent 开放。
 
-## Sprint 1-A Foundation Integration（READY）
+## Sprint 1-A Foundation Integration（READY — Execution Epoch 2）
 
-状态：IN_PROGRESS（2026-08-07 17:06 CST 已并行启动 3 Agent；git worktree 隔离；baseline b4d9049）
+状态：**READY FOR RELAUNCH**。2026-08-07 17:06 的首次 launch 已判定无效：LAN Agent 从旧 `main` 的 F0 task router 领取了错误任务；三个 S1 worktree 均无 Feature commit/dirty change，因此安全重置。
 
-目标：完成 APK → Nebula SDK Foundation 第一阶段真实接入，不进入业务 Feature。
+唯一任务源：`task_board.json`。启动前必须执行 `dart run tool/task_source_guard.dart --story <ID>`。
 
-| Story | Owner | State | Worktree | Evidence Gate |
-|---|---|---|---|---|
-| S1-F01-001 (+002 Bootstrap) APK Nebula Adapter Layer | Flutter Integration Agent (A) | **IN_PROGRESS** | wt-s1f01 (s1/f01-adapter) | Adapter source + import scan + startup test |
-| S1-F02-001 (Backend) + S1-F02-002 (SDK Config) Runtime Config First Slice | Backend/SDK Agent (B) | **IN_PROGRESS** | wt-s1f02 (s1/f02-runtime-config) | Contract + API test + config client test |
-| S1-F03-001 + S1-F03-002 SDK Release Workflow | SDK Governance Agent (C) | **IN_PROGRESS** | wt-s1f03 (s1/f03-release) | Workflow doc + CI gate evidence |
+| Story | Owner | State | Worktree |
+|---|---|---|---|
+| S1-F01-001 Adapter Boundary | Agent A | READY | wt-s1f01 |
+| S1-F01-002 Bootstrap Lifecycle | Agent A | READY (after 001) | wt-s1f01 |
+| S1-F02-001 Backend Runtime Config | Agent B | READY | wt-s1f02 |
+| S1-F02-002 SDK Runtime Config Client | Agent B | READY (after 001) | wt-s1f02 |
+| S1-F03-001 SDK Release Workflow | Agent C | READY | wt-s1f03 |
+| S1-F03-002 API Surface CI Gate | Agent C | READY (after 001) | wt-s1f03 |
 
-约束：
-- Agent 回复不是验收证据，必须基于文件、代码、配置、测试复核。
-- 禁止 Asset SDK、Upload API、Payment live refund、Advanced Risk Engine 抢跑。
-- Public API、Capability Boundary、Forbidden Paths 继续遵守 MA0 治理冻结。
-- Story 状态必须经过 REVIEW 证据验证后才能 DONE。
+### GOV-P0-EXEC-SSOT Incident Closure
 
-### Sprint 1 Launch Record（2026-08-07 17:06 CST）
-
-- 触发：用户授权「正式启动第一批」3 Agent。
-- 门禁：MA0-A02/A03 已在 `task_board.json` 标记 DONE，`sprint1_entry=READY`，S1 三 Story 硬依赖（MA0-D01/A02/A03、MA0-Q01）全部满足。
-- 隔离策略：每个 Agent 独立 git worktree（baseline `b4d9049`），避免共享工作树竞争；完成后由 Coordinator 复核并 merge 回主线。
-- Agent 分配：A=`wt-s1f01`（S1-F01-001+002）/ B=`wt-s1f02`（S1-F02-001+002，跨 SDK+flypost 双仓）/ C=`wt-s1f03`（S1-F03-001+002）。
-- 已知约束：S1-F02-002（SDK config client）对 S1-F01（Adapter）为**软依赖** → B 按冻结契约（ADR-027 + F3_API_CONTRACT_FREEZE + MOBILE_CAPABILITY_CONTRACT）独立实现，不依赖 A 的未合入代码；若确需 A 输出则停止并报阻塞。
-- 治理铁律：Agent 交付消息 ≠ 验收证据；仅 Reviewer（Coordinator）可将 REVIEW→DONE；禁止 Agent 改 board（`task_board.json` / `02_SPRINT_BOARD.md` 由 Coordinator 持有）。
+- 根因：LAN `main` 停留在旧 F0 任务体系，而跨仓 Sprint 1 在 architect 分支；Agent 按旧 `STATUS.md` 合法地领取了错误 F0 任务。
+- 修复：`main` 发布当前 SSOT；`STATUS.md` 降级为 NON-EXECUTABLE；Task Board/Task Pack 一一对应；启动 Guard + CI self-check 阻断错误 Story。
+- 旧 `F0-02/F0-03` LAN 提交属于错误任务源下的 docs-only 交付，不计入 S1 完成度。
+- 禁止抢跑：Asset SDK / Upload API / Payment live refund / Advanced Risk Engine。
 
 ## 后续 Sprint 摘要
 

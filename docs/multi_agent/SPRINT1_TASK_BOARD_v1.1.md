@@ -1,57 +1,14 @@
-# Sprint 1 Task Board v1.1
+# Sprint 1 Task Board — Human Mirror
 
-## Global Rules
+> **NON-SSOT.** Machine authority: `task_board.json`.
 
-- Feature Agent MUST NOT modify SDK public surface without review.
-- App pages/features MUST NOT directly import Nebula SDK.
-- Runtime Config only provides platform capability, not business workflow.
+| Story | Owner | Dependency | State source |
+|---|---|---|---|
+| S1-F01-001 Adapter Boundary | Agent A | - | task_board.json |
+| S1-F01-002 Bootstrap Lifecycle | Agent A | F01-001 | task_board.json |
+| S1-F02-001 Backend Runtime Config | Agent B | - | task_board.json |
+| S1-F02-002 SDK Config Closure | Agent B | F02-001 | task_board.json |
+| S1-F03-001 SDK Release Workflow | Agent C | - | task_board.json |
+| S1-F03-002 API Surface CI Gate | Agent C | F03-001 | task_board.json |
 
-## S1-F01 APK Nebula Adapter Layer
-
-Owner: Flutter Integration Agent
-Reviewer: Architecture Review Agent
-
-Allowed:
-- lib/platform/nebula/**
-- lib/app/dependency.dart
-- test/**
-- docs/**
-
-Forbidden:
-- lib/features/**
-- lib/pages/**
-- SDK public exports
-
-Evidence required:
-- Adapter source evidence
-- Import scan
-- Flutter tests
-
-## S1-F02 Runtime Config First Slice
-
-Backend owner:
-- Runtime Config API contract
-- OpenAPI
-- API tests
-
-SDK owner:
-- NebulaConfigClient
-- cache/fallback tests
-
-Forbidden:
-- business rules
-- parser rules
-- NFC actions
-
-## S1-F03 SDK Release Workflow
-
-Owner: SDK Governance Agent
-
-Deliverables:
-- version strategy
-- path/tag/release workflow
-- API surface CI gate
-
-## Review Requirement
-Agent summary is not acceptance evidence.
-Reviewer must verify repository files, code, tests and configuration.
+Agent summary is not acceptance evidence. Public API/capability expansion requires architecture review. Parser/NFC/action business remains outside SDK.

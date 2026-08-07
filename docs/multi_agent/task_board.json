@@ -1,16 +1,103 @@
 {
-  "recovered_from": "task_board.recovery.json",
-  "recovery_status": "RECOVERED",
-  "schema": "TASK_BOARD_SCHEMA_V2.md",
-  "ma0_status": {"MA0-A01":"DONE","MA0-B01":"DONE","MA0-C01":"DONE","MA0-D01":"DONE","MA0-A02":"DONE","MA0-A03":"DONE","MA0-Q01":"DONE","MA0-S01":"DONE"},
-  "parse_engine": {"status":"RESOLVED_WITH_REMAINING_ACTION","main_flow_block_cleared":true},
-  "sprint1_entry": {"status":"READY","stories": ["S1-F01-001","S1-F02-001","S1-F02-002","S1-F03-001","S1-F03-002"]},
-  "story_tracking": {
-    "S1-F01-001": {"status":"IN_PROGRESS","owner":"Flutter Integration Agent","agent":"A","reviewer":"Architecture Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f01"},
-    "S1-F02-001": {"status":"IN_PROGRESS","owner":"Backend Runtime Config Agent","agent":"B","reviewer":"Backend Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f02"},
-    "S1-F02-002": {"status":"IN_PROGRESS","owner":"SDK Config Agent","agent":"B","reviewer":"SDK Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f02"},
-    "S1-F03-001": {"status":"IN_PROGRESS","owner":"SDK Governance Agent","agent":"C","reviewer":"Governance Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f03"},
-    "S1-F03-002": {"status":"IN_PROGRESS","owner":"SDK Governance Agent","agent":"C","reviewer":"Governance Review Agent","launched_at":"2026-08-07 17:06 CST","worktree":"wt-s1f03"}
+  "schema": "TASK_BOARD_SCHEMA_V3.md",
+  "schema_version": 3,
+  "execution_ssot": true,
+  "governance_policy": "governance/AGENT_EXECUTION_SOURCE_POLICY.md",
+  "active_sprint": "S1-A Foundation Integration",
+  "execution_epoch": 2,
+  "incident": "GOV-P0-EXEC-SSOT-20260807",
+  "ma0_status": {
+    "MA0-A01": "DONE",
+    "MA0-B01": "DONE",
+    "MA0-C01": "DONE",
+    "MA0-D01": "DONE",
+    "MA0-A02": "DONE",
+    "MA0-A03": "DONE",
+    "MA0-Q01": "DONE",
+    "MA0-S01": "DONE"
   },
-  "sprint1_execution": {"launched_at":"2026-08-07 17:06 CST","baseline_commit":"b4d90494364e2b34dbf7e337d6f7ccc652f2b15a","agents":{"A":"wt-s1f01 (s1/f01-adapter)","B":"wt-s1f02 (s1/f02-runtime-config)","C":"wt-s1f03 (s1/f03-release)"},"note":"3 parallel worktrees; agent summary is NOT acceptance evidence; coordinator verifies + moves REVIEW->DONE."}
+  "parse_engine": {
+    "status": "RESOLVED_WITH_REMAINING_ACTION",
+    "main_flow_block_cleared": true
+  },
+  "sprint1_entry": {
+    "status": "READY",
+    "note": "17:06 launch invalidated: LAN agents read legacy main/F0 router; S1 worktrees clean; reset for epoch 2."
+  },
+  "story_tracking": {
+    "S1-F01-001": {
+      "status": "READY",
+      "owner": "Flutter Integration Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "branch": "s1/f01-adapter",
+      "worktree": "wt-s1f01",
+      "task_pack": "task_packs/S1-F01-001_APK_NEBULA_ADAPTER_BOUNDARY.md"
+    },
+    "S1-F01-002": {
+      "status": "READY",
+      "owner": "Flutter Integration Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "branch": "s1/f01-adapter",
+      "worktree": "wt-s1f01",
+      "task_pack": "task_packs/S1-F01-002_BOOTSTRAP_LIFECYCLE.md",
+      "depends_on": [
+        "S1-F01-001"
+      ]
+    },
+    "S1-F02-001": {
+      "status": "READY",
+      "owner": "Backend Runtime Config Agent",
+      "agent": "B",
+      "reviewer": "Backend Review Agent",
+      "branch": "s1/f02-runtime-config",
+      "worktree": "wt-s1f02",
+      "task_pack": "task_packs/S1-F02-001_BACKEND_RUNTIME_CONFIG.md"
+    },
+    "S1-F02-002": {
+      "status": "READY",
+      "owner": "SDK Config Agent",
+      "agent": "B",
+      "reviewer": "SDK Review Agent",
+      "branch": "s1/f02-runtime-config",
+      "worktree": "wt-s1f02",
+      "task_pack": "task_packs/S1-F02-002_SDK_RUNTIME_CONFIG_CLIENT.md",
+      "depends_on": [
+        "S1-F02-001"
+      ]
+    },
+    "S1-F03-001": {
+      "status": "READY",
+      "owner": "SDK Governance Agent",
+      "agent": "C",
+      "reviewer": "Governance Review Agent",
+      "branch": "s1/f03-release",
+      "worktree": "wt-s1f03",
+      "task_pack": "task_packs/S1-F03-001_SDK_RELEASE_WORKFLOW.md"
+    },
+    "S1-F03-002": {
+      "status": "READY",
+      "owner": "SDK Governance Agent",
+      "agent": "C",
+      "reviewer": "Governance Review Agent",
+      "branch": "s1/f03-release",
+      "worktree": "wt-s1f03",
+      "task_pack": "task_packs/S1-F03-002_API_SURFACE_CI_GATE.md",
+      "depends_on": [
+        "S1-F03-001"
+      ]
+    }
+  },
+  "non_executable_roadmaps": [
+    "docs/STATUS.md",
+    "docs/03_IMPLEMENTATION_PLAN.md",
+    "historical F0/F1/F2/F3/FB/FS/FC IDs"
+  ],
+  "forbidden_until_explicitly_unblocked": [
+    "Asset SDK",
+    "Upload API",
+    "Payment live refund",
+    "Advanced Risk Engine"
+  ]
 }

@@ -1,5 +1,7 @@
 # Execution Status
 
+> **NON-EXECUTABLE SDK INTERNAL HISTORY.** Do NOT select work from this file. Active execution SSOT: `docs/multi_agent/task_board.json`; validate with `dart run tool/task_source_guard.dart --story <ID>`.
+
 ## Active Multi-Agent Delivery Plan (2026-08-06)
 
 当前跨仓主计划已切换到 `docs/multi_agent/README.md`。新 Agent 必须先读取该入口并只领取一个 READY Story；当前仅开放 MA0 审计任务，不得抢跑业务实现。
@@ -20,7 +22,7 @@ Last verified: 2026-08-04
 | Real backend integration | BLOCKED | Requires F0 contract freeze and explicit authorization |
 | App migration | BLOCKED | Requires F1/F2 and App repository access |
 
-## Task board
+## Historical SDK internal roadmap (NON-EXECUTABLE)
 
 | ID | State | Owner | Notes |
 | --- | --- | --- | --- |
@@ -60,6 +62,6 @@ Last verified: 2026-08-04
 | R3-CLOSURE | DONE | Codex | Third-review (2026-08-04) 11-item security closure — no R10 introduced: coarse IP limiter (ClientIP only, anti-spoof), refresh cannot resurrect session (TouchIfExists EXPIRE, not SET), user/admin/refresh parser+midware separation, Token() fail-closed (503 on DB err/nil), barrier concurrent refresh (exactly-one-wins), access invalidation via Token middleware, HTTP 50001 must-fail, chunked body-limit proof, iss/aud true-negatives, self-contained HTTP closure (testsupport), SDK proof.dart path ADR-F008, committed+pus |
 | R4-CLOSURE | DONE | Codex | Fourth-review (2026-08-03) 3-item closure — all gates green: **P0** Admin subject-validator split (`validateUserSubject`→user_global status/token_version; `validateAdminSubject`→sys_admin_user status only, never user_global) + HTTP bidirectional isolation test (6 cases, proven true-positive vs old impl); **CI-blocker** SDK Governance `api_surface` comment-stripper rewritten as char-level scanner + path-wildcard regression test (snAPSHOT untouched, 63 symbols PASS); **P1** reverse-proxy trusted CIDRs (`server.trusted_proxy_cidrs`, default empty=fail-closed, startup validation, misconfig→SetTrustedProxies(nil)) + 3-scenario HTTP bucket test (trusted/non-trusted/spoofed-XFF). Verified: go test ./... , dart test (58), dart analyze, governance/api_surface/secret_scan all PASS; ArchGuard 0 blocking/7 warning (testsupport exempted), Sentinel 0. F0 sign-off ready for F1. |
 
-## Next recommended task
+## Historical SDK internal next-step note (NON-EXECUTABLE)
 
 `F3-01` in nebula-flutter-sdk: asset download contract (docs/03 F3, asset, depends on flypost contract — verify before claiming, docs/01 §6). **F2 is complete**: F2-00..F2-05 + FB-06 + FC-02 all DONE — frozen runtime-config contract, flypost endpoint (pushed 4b9e6e9), cross-repo fixtures, `NebulaConfigClient` (cache semantics + bounded retry), analytics consent/queue/batch/backoff, and the NFC Writer first-launch example. **F2 exit 4/4 met** (offline start / cache expiry / forced upgrade / consent revocation automated tests). Gates green (dart test 176, api_surface 117, governance/secret_scan PASS). F1+F2 client foundation closed.
