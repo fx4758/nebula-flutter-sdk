@@ -85,3 +85,12 @@ Security minimum checks:
 Follow-up dependencies:
 Architecture Change Request:
 ```
+## 8. Platform API Boundary DoD（Blocking）
+
+每个 Story 必须声明 `platform_api_mode` 与 `sdk_public_api_mode`。
+
+- `READ_ONLY`：Reviewer 必须验证 protected production diff = 0；测试通过不能覆盖此门禁。
+- `IMPLEMENT_FROZEN_CONTRACT`：必须有 APPROVED ACR + frozen contract + 独立 Reviewer；行为不得超出 contract。
+- `CONTRACT_CHANGE`：再加 ADR、contract version、第二消费者证据、兼容/回滚、安全成本评审。
+- Product requirement 能由 App Adapter 解决时，Platform 变更自动不满足 DoD。
+- Agent 不能把自己的 Story 从 READ_ONLY 改成写模式后继续实现。

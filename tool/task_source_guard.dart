@@ -29,14 +29,27 @@ void selfCheck(Map<String, dynamic> board) {
       'reviewer',
       'branch',
       'worktree',
-      'task_pack'
+      'task_pack',
+      'platform_api_mode',
+      'sdk_public_api_mode',
+      'product_adapter_rule'
     ]) {
       if ((data[key]?.toString() ?? '').isEmpty) fail('$id missing $key');
     }
     final pack = File('docs/multi_agent/${data['task_pack']}');
     if (!pack.existsSync()) fail('$id task pack missing: ${pack.path}');
-    if (!pack.readAsStringSync().contains('ID：$id'))
-      fail('${pack.path} does not declare $id');
+    final packText = pack.readAsStringSync();
+    if (!packText.contains('ID：$id')) fail('${pack.path} does not declare $id');
+    final platformMatch =
+        RegExp(r'Platform API mode：.*`([A-Z_]+)`').firstMatch(packText);
+    final sdkMatch =
+        RegExp(r'SDK public API mode：.*`([A-Z_]+)`').firstMatch(packText);
+    if (platformMatch?.group(1) != data['platform_api_mode']) {
+      fail('${pack.path} Platform API mode disagrees with task board');
+    }
+    if (sdkMatch?.group(1) != data['sdk_public_api_mode']) {
+      fail('${pack.path} SDK public API mode disagrees with task board');
+    }
     final deps = data['depends_on'];
     if (deps is List)
       for (final dep in deps)
@@ -75,6 +88,16 @@ void main(List<String> args) {
       fail('$id blocked: $dep is ${depData['status']}');
   }
   stdout.writeln('TASK-SOURCE-GUARD: PASS');
-  for (final key in ['owner', 'reviewer', 'branch', 'worktree', 'task_pack'])
+  for (final key in [
+    'owner',
+    'reviewer',
+    'branch',
+    'worktree',
+    'task_pack',
+    'platform_api_mode',
+    'sdk_public_api_mode',
+    'product_adapter_rule'
+  ]) {
     stdout.writeln('$key=${data[key]}');
+  }
 }

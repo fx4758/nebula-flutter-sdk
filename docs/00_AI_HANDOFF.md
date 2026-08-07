@@ -23,5 +23,12 @@
 - `STATUS.md`：SDK 内部历史事实/能力完成记录，**NON-EXECUTABLE**。
 - `03_IMPLEMENTATION_PLAN.md`：历史/长期路线参考，**NON-EXECUTABLE**。
 
+## Platform API blocking gate
+- Product/App Story 默认不能改 Platform API。
+- `task_board.json` 的 `platform_api_mode` 是唯一写权限来源。
+- `READ_ONLY` 只能审计/测试/证据；发现缺口 -> ACR + 新 Story。
+- 先 Adapter，再 SDK internal，再 frozen Platform contract；不能为了 NFC Writer 方便反向污染 SDK/Platform。
+- 规则：`multi_agent/governance/PLATFORM_API_CHANGE_POLICY.md`。
+
 ## 验收
 Agent 交付消息不算证据。Reviewer 必须检查实际 branch/worktree diff、文件、测试与治理命令后给出 PASS / PASS WITH FOLLOW-UP / CHANGES REQUIRED / FAIL。

@@ -2,7 +2,11 @@
 - ID：S1-F01-001
 - Owner：Flutter Integration Agent A
 - Branch/worktree：`s1/f01-adapter` / `wt-s1f01`
+- Platform API mode：`NONE`
+- SDK public API mode：`READ_ONLY`
 - Goal：建立 App 唯一 `platform/nebula` 适配边界；页面/业务不得直接 import SDK。
 - Allowed：Flutter NFC Writer `lib/platform/nebula/**`、`lib/app/dependency.dart`、相关 tests/docs。
-- Forbidden：parser/NFC runtime/action execution、业务 Feature、Asset/Upload/Payment/AI、SDK public surface。
-- Evidence：changed files、import scan、adapter tests、`flutter analyze`。
+- Forbidden：parser/NFC runtime/action execution、业务 Feature、Asset/Upload/Payment/AI、SDK public surface、Backend Platform API。
+- Adapter-first：如果 App 需求与现有 SDK/Platform 模型不一致，先在 Adapter 映射；不得为了减少映射代码要求 SDK/Platform 增产品字段。
+- Gap rule：确实无法适配时只提交证据 + ACR；本 Story 不得改 Platform API 或 SDK public API。
+- Evidence：changed files、import scan、adapter tests、`flutter analyze`、无跨仓 Platform diff。

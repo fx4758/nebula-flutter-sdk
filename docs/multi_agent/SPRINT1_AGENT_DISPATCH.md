@@ -9,3 +9,9 @@ Before any edit: `dart run tool/task_source_guard.dart --story <ID>`.
 - Agent C: `S1-F03-001` -> `S1-F03-002`, branch `s1/f03-release`, worktree `wt-s1f03`.
 
 Do not auto-claim any `F0/F1/F2/F3/FB/FS/FC` ID from `STATUS.md`.
+## Platform API permissions
+- Agent A: Platform API `NONE`; SDK public API `READ_ONLY`; Adapter-first.
+- Agent B / S1-F02-001: Platform API `READ_ONLY`; audit/tests only. Production diff => stop + ACR.
+- Agent B / S1-F02-002: Platform API `NONE`; SDK public API `READ_ONLY`.
+- Agent C: Platform API `NONE`; governance only.
+No Agent may self-promote these modes.

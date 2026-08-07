@@ -3,7 +3,11 @@
 - Owner：Flutter Integration Agent A
 - Depends：S1-F01-001
 - Branch/worktree：`s1/f01-adapter` / `wt-s1f01`
+- Platform API mode：`NONE`
+- SDK public API mode：`READ_ONLY`
 - Goal：把 Nebula bootstrap 接入唯一 Composition Root；失败不得阻塞 App 启动。
 - Allowed：App bootstrap/composition-root、`lib/platform/nebula/**`、tests/docs。
-- Forbidden：业务页面直接 SDK、parser/NFC runtime、Asset/Payment/Notification/AI。
+- Forbidden：业务页面直接 SDK、parser/NFC runtime、Asset/Payment/Notification/AI、Backend Platform API、SDK public surface。
+- Adapter-first：生命周期差异在 App Adapter/Composition Root 解决；不得反向修改 Platform contract 迎合 App 启动流程。
+- Gap rule：发现 frozen contract/SDK public surface 真缺口时，停止并提交 ACR；不能在本 Story 顺手扩接口。
 - Evidence：startup flow、failure fallback test、single composition-root proof、`flutter analyze/test`。

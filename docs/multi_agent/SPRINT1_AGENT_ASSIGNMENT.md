@@ -11,3 +11,9 @@ SSOT: `task_board.json`. Every agent must run `dart run tool/task_source_guard.d
 No agent may substitute `F0-*`, `F1-*`, `F2-*`, `F3-*`, `FB-*`, `FS-*`, or `FC-*` from `STATUS.md`.
 
 Delivery message != acceptance evidence. Reviewer checks repository evidence.
+## Platform API permissions
+- Agent A: Platform API `NONE`; SDK public API `READ_ONLY`; Adapter-first.
+- Agent B / S1-F02-001: Platform API `READ_ONLY`; audit/tests only. Production diff => stop + ACR.
+- Agent B / S1-F02-002: Platform API `NONE`; SDK public API `READ_ONLY`.
+- Agent C: Platform API `NONE`; governance only.
+No Agent may self-promote these modes.

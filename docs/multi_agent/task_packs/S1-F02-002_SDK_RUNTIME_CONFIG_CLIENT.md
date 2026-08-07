@@ -3,7 +3,11 @@
 - Owner：SDK Config Agent B
 - Depends：S1-F02-001
 - Branch/worktree：`s1/f02-runtime-config` / `wt-s1f02`
+- Platform API mode：`NONE`
+- SDK public API mode：**`READ_ONLY`**
 - Goal：复用现有 `NebulaConfigClient`，只做 Sprint 1 接入 closure；禁止重写 F2 已完成能力。
-- Allowed：`lib/src/config/**`（仅必要修正）、tests/docs。
-- Forbidden：业务规则、public capability 扩张、Asset/Payment/Notification/AI。
-- Evidence：reuse map、cache/offline tests、API surface check、dart analyze/test。
+- Allowed：`lib/src/config/**`（仅 public surface 不变的必要内部修正）、tests/docs。
+- Forbidden：业务规则、public capability 扩张、Backend API、Asset/Payment/Notification/AI。
+- Adapter-first：App 产品配置由 App Adapter 从 `NebulaEffectiveConfig` 映射，不把 NFC 字段加进 SDK generic model。
+- Gap rule：若现有 public SDK contract 真不足，按 CAP-F01/ACR 提新 Story，不得在本 Story扩大 `nebula_sdk.dart` public surface。
+- Evidence：reuse map、cache/offline tests、API surface snapshot unchanged、dart analyze/test。

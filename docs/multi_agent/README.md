@@ -23,5 +23,8 @@ MA0 is DONE. Current active sprint is **S1-A Foundation Integration**. Active St
 ## Hard stops
 No Asset SDK, Upload API, Payment live refund, Advanced Risk Engine, or new public capability unless explicitly registered/unblocked in `task_board.json`.
 
+## Platform boundary
+Platform API is read-only by default. Consumer integration never authorizes Backend contract changes. Use `platform_api_mode` from `task_board.json`; any gap in a READ_ONLY Story becomes an ACR + separate authorized Story. Contract changes require second-consumer evidence. See `governance/PLATFORM_API_CHANGE_POLICY.md`.
+
 ## Acceptance
 Agent summary is not evidence. Reviewer independently checks diff/source/config/tests. Only Reviewer/Coordinator moves REVIEW to DONE.

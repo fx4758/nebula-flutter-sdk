@@ -1,8 +1,17 @@
-# S1-F02-001 Backend Runtime Config Contract/API
+# S1-F02-001 Backend Runtime Config Contract Audit
 - ID：S1-F02-001
 - Owner：Backend Runtime Config Agent B
 - Branch/worktree：`s1/f02-runtime-config` / `wt-s1f02`
-- Goal：核对并补齐现有 Mobile Runtime Config 后端契约/API，不重复造已存在能力。
-- Required：`docs/12_MOBILE_RUNTIME_CONFIG_CONTRACT.md` + MA0 backend audit。
-- Forbidden：parser/NFC/card rules、Asset/Payment/Notification/AI。
-- Evidence：backend file:line、contract/API tests、无重复 endpoint 证明。
+- Platform API mode：**`READ_ONLY`**
+- SDK public API mode：`NONE`
+- Backend authority：`../flypost_backend`
+- Backend baseline：`8ec212f5233e815229965977dedfca7a1ca2ffd0`
+- Goal：独立核对现有 Mobile Runtime Config 是否符合冻结 Platform contract；**不是为 NFC Writer 设计/改接口**。
+- Required：`docs/12_MOBILE_RUNTIME_CONFIG_CONTRACT.md`、MA0 backend audit、`governance/PLATFORM_API_CHANGE_POLICY.md`。
+- Allowed：审计证据、现有 contract tests 的补充、测试 fixture/docs；生产 Platform API 默认不可修改。
+- Protected：`internal/router/**`、`internal/module/runtimeconfig/**`（`*_test.go` 除外）、`sdk/CONTRACT.md`。
+- Forbidden：新增/改 endpoint、request/response field、error code、trust scope、runtime-config 语义；parser/NFC/card rules、Asset/Payment/Notification/AI。
+- Gap rule：如果发现真实实现缺口，输出 file:line/test 证据并提交 ACR；Story 进入 BLOCKED/DELIVERED-WITH-GAP，**不得在同 Story 修 production API**。
+- Second-consumer：任何建议进入 Platform 的新语义必须证明除 NFC Writer 外至少一个消费者使用相同语义，并回答 Adapter-first 10 问。
+- Verification：`dart run tool/platform_api_guard.dart --story S1-F02-001 --backend-repo ../flypost_backend` 必须 PASS。
+- Evidence：backend file:line、contract/API tests、无 protected production diff、ACR（仅有缺口时）。

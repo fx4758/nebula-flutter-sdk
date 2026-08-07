@@ -15,6 +15,14 @@
 3. 检查工作树，保留他人修改；一次只处理已分配 Story。
 4. 修改代码前运行 `dart run tool/governance.dart`。
 
+## GOV-P0：Platform API 默认只读
+- Product integration 不授予 Platform API 写权限；App 缺口先走 Adapter。
+- 任何 Platform production API 改动必须由 task_board 明确授予 `IMPLEMENT_FROZEN_CONTRACT` 或 `CONTRACT_CHANGE`。
+- `READ_ONLY` Story 发现缺口只能提交证据 + ACR，不能在当前 Story 顺手修改 Backend。
+- `CONTRACT_CHANGE` 必须 ACR + ADR + contract version + 第二消费者证明 + 独立 Reviewer。
+- 实现 Agent 不得自行提升自己的 `platform_api_mode` 或 `sdk_public_api_mode`。
+- Backend Story 必须运行 `dart run tool/platform_api_guard.dart --story <ID> --backend-repo ../flypost_backend`。
+
 ## 硬边界
 - 公共 SDK 不得出现 FlyPost/NFC Writer/Focus/StarSprout 业务模型。
 - 移动端不得保存 App Secret、Provider Secret 或 `client_credentials`。

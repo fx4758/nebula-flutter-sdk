@@ -182,6 +182,8 @@
 
 唯一任务源：`task_board.json`。启动前必须执行 `dart run tool/task_source_guard.dart --story <ID>`。
 
+**Platform API Blocking Rule**：S1-A 默认 Platform API READ_ONLY。S1-F02-001 仅审计/补测试；任何 production API diff 均 CHANGES REQUIRED。真实缺口必须 ACR 后另建 `IMPLEMENT_FROZEN_CONTRACT`/`CONTRACT_CHANGE` Story，不能在当前 Story 扩 scope。
+
 | Story | Owner | State | Worktree |
 |---|---|---|---|
 | S1-F01-001 Adapter Boundary | Agent A | READY | wt-s1f01 |

@@ -99,3 +99,11 @@
 - 不允许直接在当前 dirty working tree 开始业务实现。
 - 每个 Story 只改 Task Pack 允许的路径。
 - 跨 Owner 文件（如 `nebula.dart`、public export、router）由 Integration Owner 最后串行合并。
+## 5. Platform API Change Ownership（BLOCKING）
+
+- Product/App Integration Agent：**无 Platform API 写权限**；只能 Adapter-first。
+- Backend Platform Agent：只有 `task_board.json` 明确为 `IMPLEMENT_FROZEN_CONTRACT` / `CONTRACT_CHANGE` 时才可改 production Platform API。
+- Contract Agent：可提出 contract 变更，不可自批。
+- Architecture Owner/Coordinator：唯一可创建/提升 Platform write Story。
+- Independent Reviewer：必须与实现 Owner 分离；READ_ONLY Story 发现 production Platform diff 直接 `CHANGES REQUIRED`。
+- `internal/router/**`、mobile handler/DTO/contract surface 属串行高风险路径；不得由产品集成 Story 顺手修改。
