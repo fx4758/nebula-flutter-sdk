@@ -26,7 +26,7 @@
   },
   "story_tracking": {
     "S1-F01-001": {
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "owner": "Flutter Integration Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -35,7 +35,9 @@
       "task_pack": "task_packs/S1-F01-001_APK_NEBULA_ADAPTER_BOUNDARY.md",
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "claimed_by": "WorkBuddy",
+      "claimed_at": "2026-08-07T19:55:00+08:00"
     },
     "S1-F01-002": {
       "status": "READY",
