@@ -20,7 +20,7 @@ Last verified: 2026-08-07
 | --- | --- | --- | --- |
 | F0-01 | DONE | Codex | Initial architecture and compilable contract scaffold |
 | F0-02 | DONE | WorkBuddy@3cb52e5 | Mobile Bootstrap/User Session contract frozen (docs/08); backend-paired, no App Secret; attestation & oauth/login reserved as BLOCKED/RESERVED |
-| F0-03 | READY | - | Legacy HMAC compatibility and sunset plan |
+| F0-03 | DONE | WorkBuddy@851cacb | Legacy HMAC App Secret compatibility + sunset plan (docs/09); full sdk/dart capability inventory keep/adapt/remove |
 | F0-04 | READY | - | Contract fixtures/error mapping |
 | F0-05 | READY | - | CI/API surface/secret scan |
 | G0-01 | DONE | Codex | Guard PASS; SEC-MOBILE-SECRET negative probe exits 1 |
@@ -30,4 +30,4 @@ Last verified: 2026-08-07
 
 ## Next recommended task
 
-`F0-03`: design the legacy HMAC App Secret SDK compatibility and sunset plan. Source: `flypost/sdk/dart` (confirmed embeds `appSecret` in `client.dart`, mismatched `auth.login` body, no bootstrap) + `flypost/sdk/CONTRACT.md` §2. Deliverable: per-capability `keep/adapt/remove` conclusion (DEBT-F001) and a dated sunset path. No App Secret may enter the new SDK (ADR-F004).
+`F0-04`: establish API contract fixtures and error-code mapping. Build the frozen contract fixtures (request/response shapes, error categories, code→exception mapping) for the F0-02/F0-03 frozen contracts, enabling `G0-03` (API surface snapshot + version gate). Source: `flypost/sdk/CONTRACT.md` §5 error codes + `docs/08`/`docs/09`. No fabricated backend fields.

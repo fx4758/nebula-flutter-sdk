@@ -17,7 +17,7 @@
 | 引导/会话/身份契约 | `02_SECURITY_MODEL.md`、`08_MOBILE_BOOTSTRAP_SESSION_CONTRACT.md` |
 | 身份、网络、存储、日志 | `02_SECURITY_MODEL.md`、`06_API_CONTRACT.md` |
 | 领取或关闭 Sprint 任务 | `03_IMPLEMENTATION_PLAN.md`、`04_ACCEPTANCE_CRITERIA.md`、`STATUS.md` |
-| 从旧 SDK 迁移 | `05_MIGRATION_FROM_FLYPOST.md`、`02_SECURITY_MODEL.md` |
+| 从旧 SDK 迁移 | `05_MIGRATION_FROM_FLYPOST.md`、`02_SECURITY_MODEL.md`、`09_LEGACY_HMAC_SUNSET.md` |
 | 更改冻结决策 | `DECISIONS.md`，新增 ADR 后才能修改 |
 | 修改治理规则/例外 | `07_AI_GOVERNANCE.md`、`governance/README.md` |
 
