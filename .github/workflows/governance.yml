@@ -14,12 +14,20 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
       - run: dart pub get
       - run: dart run tool/governance.dart
       - run: dart run tool/task_source_guard.dart --self-check
+      - run: dart run tool/cross_repo_guard.dart --self-check
+      - run: dart run tool/cross_repo_guard_test.dart
+      - run: dart run tool/coordinator_state_guard.dart --self-check
+      - run: dart run tool/coordinator_state_guard_test.dart
+      - if: github.event_name == 'pull_request'
+        run: dart run tool/coordinator_state_guard.dart --base "${{ github.event.pull_request.base.sha }}"
       - run: dart run tool/platform_api_guard.dart --self-check
       - run: dart run tool/platform_api_guard_test.dart
       - run: dart run tool/governance_test.dart

@@ -18,7 +18,8 @@
 
 | Path | Primary Owner | Parallel Write |
 |---|---|---|
-| `docs/multi_agent/**` | Architecture/PM Agent | 否，状态文件需串行更新 |
+| `docs/multi_agent/task_board.json`, Sprint Board/assignment/dispatch | Architecture Coordinator | **Implementation Agent 只读；禁止跨仓写状态** |
+| `docs/multi_agent/task_packs/**`, governance policy | Architecture/PM Agent | 串行更新；实现 Agent 只读 |
 | `docs/06_API_CONTRACT.md`, `docs/12_*` | Contract Agent | 否 |
 | `lib/src/foundation/**` | SDK Architect | 否 |
 | `lib/src/transport/**` | SDK Architect | 否 |
@@ -107,3 +108,11 @@
 - Architecture Owner/Coordinator：唯一可创建/提升 Platform write Story。
 - Independent Reviewer：必须与实现 Owner 分离；READ_ONLY Story 发现 production Platform diff 直接 `CHANGES REQUIRED`。
 - `internal/router/**`、mobile handler/DTO/contract surface 属串行高风险路径；不得由产品集成 Story 顺手修改。
+
+## 6. Cross-Repository Execution Ownership（BLOCKING）
+
+- 每个 Story 只有一个 `execution_repo`；跨仓依赖不是跨仓写权限。
+- App Integration Story 只写 App 仓；Backend Story 只写 Backend 仓；SDK Story 只写 SDK 仓。
+- Task Board / Sprint Board / assignment / dispatch 永远由 Coordinator 落盘。
+- Implementation Agent 只提交 Delivery Note（repo/branch/commit/tests/risk），不得为了 claim/deliver 去改治理仓。
+- shared `main/dev` 禁止作为 Agent delivery branch。

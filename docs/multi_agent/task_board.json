@@ -1,10 +1,10 @@
 {
-  "schema": "TASK_BOARD_SCHEMA_V4.md",
-  "schema_version": 4,
+  "schema": "TASK_BOARD_SCHEMA_V5.md",
+  "schema_version": 5,
   "execution_ssot": true,
   "governance_policy": "governance/AGENT_EXECUTION_SOURCE_POLICY.md",
   "active_sprint": "S1-A Foundation Integration",
-  "execution_epoch": 2,
+  "execution_epoch": 3,
   "incident": "GOV-P0-EXEC-SSOT-20260807",
   "ma0_status": {
     "MA0-A01": "DONE",
@@ -21,44 +21,71 @@
     "main_flow_block_cleared": true
   },
   "sprint1_entry": {
-    "status": "READY",
-    "note": "17:06 launch invalidated: LAN agents read legacy main/F0 router; S1 worktrees clean; reset for epoch 2."
+    "status": "IN_PROGRESS",
+    "note": "Epoch 3: cross-repo execution corrected. S1-F01-001 isolated in App feature branch and under independent review; Task Board state is Coordinator-only."
   },
   "story_tracking": {
     "S1-F01-001": {
-      "status": "READY",
+      "status": "REVIEW",
       "owner": "Flutter Integration Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
-      "branch": "s1/f01-adapter",
-      "worktree": "wt-s1f01",
       "task_pack": "task_packs/S1-F01-001_APK_NEBULA_ADAPTER_BOUNDARY.md",
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": "../flutter NFC Writer",
+      "execution_branch": "s1/f01-001-adapter",
+      "execution_remote": "lan",
+      "execution_worktree": "wt-s1f01-001-app",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "execution_base_commit": "b4ba98d1c7cfbbe8efe18959af4f9468a7eae4f1",
+      "delivery_commit": "ef3d0f5bfc36e26cd403e117d86bda7c62256a34",
+      "delivery_evidence": {
+        "verified_by": "Architecture Coordinator",
+        "verified_at": "2026-08-07T21:18:00+08:00",
+        "branch": "lan/s1/f01-001-adapter",
+        "changed_files": 11,
+        "targeted_tests": "22 passed",
+        "analyzer": "WARNING 48<49; INFO 318=318",
+        "rules": "25 rules OK",
+        "governance_incident": "Agent also mutated SDK task_board and directly pushed LAN dev; implementation isolated for separate review",
+        "review_branch_tip": "bddb0f8",
+        "lan_dev_quarantine_tip": "00c0dc0"
+      },
+      "review_state": "CHANGES_REQUIRED",
+      "review_branch_tip": "bddb0f8",
+      "lan_dev_quarantine_tip": "00c0dc0",
+      "review_findings": [
+        "P1 ARCH-010 boundary can be bypassed: public NebulaAdapter.debugClient returns SDK Nebula type; @visibleForTesting is not access control and business code can use inferred SDK API without importing package:nebula_sdk.",
+        "R-NEB-1 only scans direct imports, so it does not detect SDK types leaking through public Adapter signatures. Add a boundary regression that prevents public SDK-typed members."
+      ]
     },
     "S1-F01-002": {
       "status": "READY",
       "owner": "Flutter Integration Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
-      "branch": "s1/f01-adapter",
-      "worktree": "wt-s1f01",
       "task_pack": "task_packs/S1-F01-002_BOOTSTRAP_LIFECYCLE.md",
       "depends_on": [
         "S1-F01-001"
       ],
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": "../flutter NFC Writer",
+      "execution_branch": "s1/f01-002-bootstrap",
+      "execution_remote": "lan",
+      "execution_worktree": "wt-s1f01-002-app",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false
     },
     "S1-F02-001": {
       "status": "READY",
       "owner": "Backend Runtime Config Agent",
       "agent": "B",
       "reviewer": "Backend Review Agent",
-      "branch": "s1/f02-runtime-config",
-      "worktree": "wt-s1f02",
       "task_pack": "task_packs/S1-F02-001_BACKEND_RUNTIME_CONFIG.md",
       "platform_api_mode": "READ_ONLY",
       "sdk_public_api_mode": "NONE",
@@ -66,49 +93,67 @@
       "backend_repo": "../flypost_backend",
       "backend_baseline_commit": "8ec212f5233e815229965977dedfca7a1ca2ffd0",
       "platform_read_only_scope": "audit + tests/docs only; production Platform API changes forbidden",
-      "gap_behavior": "raise ACR + follow-up Story; do not repair in current Story"
+      "gap_behavior": "raise ACR + follow-up Story; do not repair in current Story",
+      "execution_repo": "../flypost_backend",
+      "execution_branch": "s1/f02-001-runtime-config-audit",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-s1f02-001-backend",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false
     },
     "S1-F02-002": {
       "status": "READY",
       "owner": "SDK Config Agent",
       "agent": "B",
       "reviewer": "SDK Review Agent",
-      "branch": "s1/f02-runtime-config",
-      "worktree": "wt-s1f02",
       "task_pack": "task_packs/S1-F02-002_SDK_RUNTIME_CONFIG_CLIENT.md",
       "depends_on": [
         "S1-F02-001"
       ],
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "s1/f02-002-sdk-config",
+      "execution_remote": "lan",
+      "execution_worktree": "wt-s1f02-002-sdk",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false
     },
     "S1-F03-001": {
       "status": "READY",
       "owner": "SDK Governance Agent",
       "agent": "C",
       "reviewer": "Governance Review Agent",
-      "branch": "s1/f03-release",
-      "worktree": "wt-s1f03",
       "task_pack": "task_packs/S1-F03-001_SDK_RELEASE_WORKFLOW.md",
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "s1/f03-001-release",
+      "execution_remote": "lan",
+      "execution_worktree": "wt-s1f03-001-sdk",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false
     },
     "S1-F03-002": {
       "status": "READY",
       "owner": "SDK Governance Agent",
       "agent": "C",
       "reviewer": "Governance Review Agent",
-      "branch": "s1/f03-release",
-      "worktree": "wt-s1f03",
       "task_pack": "task_packs/S1-F03-002_API_SURFACE_CI_GATE.md",
       "depends_on": [
         "S1-F03-001"
       ],
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
-      "product_adapter_rule": "ADAPTER_FIRST"
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "s1/f03-002-api-gate",
+      "execution_remote": "lan",
+      "execution_worktree": "wt-s1f03-002-sdk",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false
     }
   },
   "non_executable_roadmaps": [
@@ -144,5 +189,24 @@
     "read_only_test_exceptions": [
       "internal/module/runtimeconfig/*_test.go"
     ]
-  }
+  },
+  "cross_repo_governance": {
+    "policy": "governance/CROSS_REPO_EXECUTION_POLICY.md",
+    "governance_repo": "nebula-flutter-sdk",
+    "state_write_authority": "COORDINATOR_ONLY",
+    "implementation_agent_task_board_write": false,
+    "one_execution_repo_per_story": true,
+    "shared_branch_direct_push_forbidden": true,
+    "incident": "reports/GOV_P0_CROSS_REPO_STATE_INCIDENT_20260807.md",
+    "coordinator_owned_paths": [
+      "docs/multi_agent/task_board.json",
+      "docs/multi_agent/02_SPRINT_BOARD.md",
+      "docs/multi_agent/SPRINT1_AGENT_ASSIGNMENT.md",
+      "docs/multi_agent/SPRINT1_AGENT_DISPATCH.md"
+    ]
+  },
+  "incidents": [
+    "GOV-P0-EXEC-SSOT-20260807",
+    "GOV-P0-CROSS-REPO-STATE-20260807"
+  ]
 }

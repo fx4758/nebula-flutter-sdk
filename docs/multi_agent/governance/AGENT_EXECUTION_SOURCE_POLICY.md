@@ -20,7 +20,7 @@ If the Story ID is absent/not active or the guard fails: **STOP. Do not substitu
 `F0-*`, `F1-*`, `F2-*`, `F3-*`, `FB-*`, `FS-*`, `FC-*` are SDK/backend internal history unless explicitly registered in `task_board.json`.
 
 ## State authority
-Implementation Agent: own Story `READY -> IN_PROGRESS -> DELIVERED`. Reviewer/Coordinator owns `REVIEW -> DONE`, sprint state, dependencies and global blockers. Agent messages are not acceptance evidence.
+`task_board.json` is Coordinator-owned state. Implementation Agents **never edit it** and do not persist claim/delivery state in the governance repo. Agent returns a Delivery Note; Coordinator independently verifies it and owns all persisted transitions `READY -> IN_PROGRESS -> DELIVERED -> REVIEW -> DONE/BLOCKED`. Agent messages are not acceptance evidence. See `governance/CROSS_REPO_EXECUTION_POLICY.md`.
 
 ## Branch authority
 `main` is the canonical LAN clone entry and MUST contain the active task router/guard. Feature code stays on assigned feature branches/worktrees until evidence-based review.

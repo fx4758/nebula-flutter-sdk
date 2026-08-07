@@ -27,9 +27,12 @@ void selfCheck(Map<String, dynamic> board) {
       'status',
       'owner',
       'reviewer',
-      'branch',
-      'worktree',
       'task_pack',
+      'execution_repo',
+      'execution_branch',
+      'execution_remote',
+      'state_write_authority',
+      'agent_may_edit_task_board',
       'platform_api_mode',
       'sdk_public_api_mode',
       'product_adapter_rule'
@@ -44,11 +47,26 @@ void selfCheck(Map<String, dynamic> board) {
         RegExp(r'Platform API mode：.*`([A-Z_]+)`').firstMatch(packText);
     final sdkMatch =
         RegExp(r'SDK public API mode：.*`([A-Z_]+)`').firstMatch(packText);
+    final repoMatch = RegExp(r'Execution repo：`([^`]+)`').firstMatch(packText);
+    final branchMatch =
+        RegExp(r'Execution branch：`([^`]+)`').firstMatch(packText);
     if (platformMatch?.group(1) != data['platform_api_mode']) {
       fail('${pack.path} Platform API mode disagrees with task board');
     }
     if (sdkMatch?.group(1) != data['sdk_public_api_mode']) {
       fail('${pack.path} SDK public API mode disagrees with task board');
+    }
+    if (repoMatch?.group(1) != data['execution_repo']) {
+      fail('${pack.path} execution repo disagrees with task board');
+    }
+    if (branchMatch?.group(1) != data['execution_branch']) {
+      fail('${pack.path} execution branch disagrees with task board');
+    }
+    if (data['state_write_authority'] != 'COORDINATOR_ONLY') {
+      fail('$id state_write_authority must be COORDINATOR_ONLY');
+    }
+    if (data['agent_may_edit_task_board'] != false) {
+      fail('$id implementation Agent must not edit task board');
     }
     final deps = data['depends_on'];
     if (deps is List)
@@ -78,7 +96,7 @@ void main(List<String> args) {
     fail(
         '$id is not executable; never substitute historical F0/F1/F2/F3/FB/FS/FC work');
   final data = stories[id] as Map<String, dynamic>;
-  if (!{'READY', 'IN_PROGRESS', 'DELIVERED', 'REVIEW'}.contains(data['status']))
+  if (!{'READY', 'IN_PROGRESS'}.contains(data['status']))
     fail('$id status ${data['status']} not executable');
   final deps =
       (data['depends_on'] as List?)?.cast<String>() ?? const <String>[];
@@ -91,9 +109,12 @@ void main(List<String> args) {
   for (final key in [
     'owner',
     'reviewer',
-    'branch',
-    'worktree',
     'task_pack',
+    'execution_repo',
+    'execution_branch',
+    'execution_remote',
+    'state_write_authority',
+    'agent_may_edit_task_board',
     'platform_api_mode',
     'sdk_public_api_mode',
     'product_adapter_rule'

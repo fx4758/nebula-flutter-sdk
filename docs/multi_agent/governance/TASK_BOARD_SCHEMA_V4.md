@@ -1,5 +1,6 @@
 # Task Board Schema V4
 
+> SUPERSEDED by `TASK_BOARD_SCHEMA_V5.md`. Historical reference only; non-executable.
 Status: **FROZEN**
 
 `docs/multi_agent/task_board.json` is the only executable task source.

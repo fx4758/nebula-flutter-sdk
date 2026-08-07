@@ -28,12 +28,18 @@
     ".github/workflows/governance.yml",
     "docs/multi_agent/task_board.json",
     "docs/multi_agent/governance/AGENT_EXECUTION_SOURCE_POLICY.md",
-    "docs/multi_agent/governance/TASK_BOARD_SCHEMA_V3.md",
     "tool/task_source_guard.dart",
     "docs/multi_agent/governance/PLATFORM_API_CHANGE_POLICY.md",
-    "docs/multi_agent/governance/TASK_BOARD_SCHEMA_V4.md",
     "tool/platform_api_guard.dart",
-    "tool/platform_api_guard_test.dart"
+    "tool/platform_api_guard_test.dart",
+    "docs/multi_agent/governance/CROSS_REPO_EXECUTION_POLICY.md",
+    "docs/multi_agent/governance/TASK_BOARD_SCHEMA_V5.md",
+    "docs/multi_agent/reports/GOV_P0_CROSS_REPO_STATE_INCIDENT_20260807.md",
+    "tool/cross_repo_guard.dart",
+    "tool/cross_repo_guard_test.dart",
+    "tool/coordinator_state_guard.dart",
+    "tool/coordinator_state_guard_test.dart",
+    "docs/multi_agent/05_TASK_PACK_TEMPLATE.md"
   ],
   "allowed_task_states": [
     "READY",

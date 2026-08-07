@@ -1,19 +1,11 @@
 # Sprint 1 Agent Assignment — Execution Epoch 2
 
-Status: **READY FOR RELAUNCH AFTER GOV-P0 FIX**
+Status: **CONTROLLED BY COORDINATOR**
 
-SSOT: `task_board.json`. Every agent must run `dart run tool/task_source_guard.dart --story <ID>` before editing.
+SSOT: `task_board.json`. Implementation Agent reads but never edits Task Board. Each Story has one execution repo/branch.
 
-- Agent A / `s1/f01-adapter` / `wt-s1f01`: `S1-F01-001`, then `S1-F01-002`.
-- Agent B / `s1/f02-runtime-config` / `wt-s1f02`: `S1-F02-001`, then `S1-F02-002`.
-- Agent C / `s1/f03-release` / `wt-s1f03`: `S1-F03-001`, then `S1-F03-002`.
+- Agent A: `S1-F01-001` → NFC Writer / `s1/f01-001-adapter`; then after DONE, `S1-F01-002` → NFC Writer / `s1/f01-002-bootstrap`.
+- Agent B: `S1-F02-001` → flypost_backend / `s1/f02-001-runtime-config-audit`; after DONE, `S1-F02-002` → SDK / `s1/f02-002-sdk-config`.
+- Agent C: `S1-F03-001` → SDK / `s1/f03-001-release`; after DONE, `S1-F03-002` → SDK / `s1/f03-002-api-gate`.
 
-No agent may substitute `F0-*`, `F1-*`, `F2-*`, `F3-*`, `FB-*`, `FS-*`, or `FC-*` from `STATUS.md`.
-
-Delivery message != acceptance evidence. Reviewer checks repository evidence.
-## Platform API permissions
-- Agent A: Platform API `NONE`; SDK public API `READ_ONLY`; Adapter-first.
-- Agent B / S1-F02-001: Platform API `READ_ONLY`; audit/tests only. Production diff => stop + ACR.
-- Agent B / S1-F02-002: Platform API `NONE`; SDK public API `READ_ONLY`.
-- Agent C: Platform API `NONE`; governance only.
-No Agent may self-promote these modes.
+Before editing: run task-source + cross-repo + relevant Platform guards. Shared `main/dev` is never an implementation delivery branch. Delivery Note != acceptance evidence.

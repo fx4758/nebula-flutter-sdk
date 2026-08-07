@@ -23,6 +23,13 @@
 - `STATUS.md`：SDK 内部历史事实/能力完成记录，**NON-EXECUTABLE**。
 - `03_IMPLEMENTATION_PLAN.md`：历史/长期路线参考，**NON-EXECUTABLE**。
 
+## Cross-repository blocking gate
+- Task Board 是治理控制面，Implementation Agent 只读。
+- 每个 Story 只能修改一个 `execution_repo`；需要第二仓实现时必须拆 Story。
+- 不允许为了 claim/交付状态去修改 SDK 治理仓。
+- 不允许直接 push shared `main/dev` 作为交付。
+- 运行 `dart run tool/cross_repo_guard.dart --story <ID> --repo <execution_repo>`。
+
 ## Platform API blocking gate
 - Product/App Story 默认不能改 Platform API。
 - `task_board.json` 的 `platform_api_mode` 是唯一写权限来源。

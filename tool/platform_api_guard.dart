@@ -99,7 +99,7 @@ void validateAuthorization(String id, Map<String, dynamic> data) {
 }
 
 void selfCheck(Map<String, dynamic> board) {
-  if (board['schema_version'] != 4) fail('task board schema_version must be 4');
+  if (board['schema_version'] != 5) fail('task board schema_version must be 5');
   final policy = board['platform_api_governance'];
   if (policy is! Map<String, dynamic>) fail('platform_api_governance missing');
   final policyPath = policy['policy']?.toString() ?? '';

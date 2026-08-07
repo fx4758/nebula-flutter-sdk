@@ -1,6 +1,8 @@
 ## AI handoff
 
 - Task ID:
+- Execution repo:
+- Execution branch:
 - Baseline commit:
 - Scope/owned files:
 - Public API changed: no / yes (describe)
@@ -35,3 +37,10 @@ Paste concise results; do not mark checkboxes from expectation.
 - [ ] READ_ONLY Story has zero protected production Platform diff.
 - [ ] Any Platform write is authorized by a separate approved Story/ACR; implementation Agent did not self-promote scope.
 - [ ] CONTRACT_CHANGE has ADR + versioning/rollback + named second-consumer evidence.
+
+## Cross-repository governance
+
+- [ ] This change is only in the Story's declared execution repo/branch.
+- [ ] Coordinator-owned state was not modified by the implementation Agent.
+- [ ] No direct shared main/dev delivery push was used.
+- [ ] A second-repository implementation need was split into another Story instead of being changed here.

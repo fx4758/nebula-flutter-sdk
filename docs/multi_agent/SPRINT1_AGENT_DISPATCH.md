@@ -1,17 +1,13 @@
 # Sprint 1 Agent Dispatch — Epoch 2
 
-> NON-SSOT human mirror. Executable state is only `task_board.json`.
+> NON-SSOT human mirror. Coordinator owns persisted state in `task_board.json`.
 
-Before any edit: `dart run tool/task_source_guard.dart --story <ID>`.
+Implementation Agent startup:
+1. Read Story from Task Board; do not edit it.
+2. `dart run tool/task_source_guard.dart --story <ID>`
+3. `dart run tool/cross_repo_guard.dart --story <ID> --repo <execution_repo> --check-branch`
+4. Run Platform/API guard if required.
+5. Commit only in that Story's execution repo + feature branch.
+6. Return Delivery Note; Coordinator updates DELIVERED/REVIEW/DONE.
 
-- Agent A: `S1-F01-001` -> `S1-F01-002`, branch `s1/f01-adapter`, worktree `wt-s1f01`.
-- Agent B: `S1-F02-001` -> `S1-F02-002`, branch `s1/f02-runtime-config`, worktree `wt-s1f02`.
-- Agent C: `S1-F03-001` -> `S1-F03-002`, branch `s1/f03-release`, worktree `wt-s1f03`.
-
-Do not auto-claim any `F0/F1/F2/F3/FB/FS/FC` ID from `STATUS.md`.
-## Platform API permissions
-- Agent A: Platform API `NONE`; SDK public API `READ_ONLY`; Adapter-first.
-- Agent B / S1-F02-001: Platform API `READ_ONLY`; audit/tests only. Production diff => stop + ACR.
-- Agent B / S1-F02-002: Platform API `NONE`; SDK public API `READ_ONLY`.
-- Agent C: Platform API `NONE`; governance only.
-No Agent may self-promote these modes.
+No combined F01/F02/F03 branch is authoritative for new delivery. No direct shared `main/dev` push.

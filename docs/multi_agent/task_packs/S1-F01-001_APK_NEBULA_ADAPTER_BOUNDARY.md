@@ -1,7 +1,10 @@
 # S1-F01-001 APK Nebula Adapter Boundary
 - ID：S1-F01-001
 - Owner：Flutter Integration Agent A
-- Branch/worktree：`s1/f01-adapter` / `wt-s1f01`
+- Execution repo：`../flutter NFC Writer`
+- Execution branch：`s1/f01-001-adapter`
+- Governance state：`READ_ONLY` for Implementation Agent; Task Board/Sprint Board由 Coordinator 独占写
+- Delivery：只提交 execution repo 的 commit + Delivery Note；不得跨仓 claim/deliver 落盘
 - Platform API mode：`NONE`
 - SDK public API mode：`READ_ONLY`
 - Goal：建立 App 唯一 `platform/nebula` 适配边界；页面/业务不得直接 import SDK。

@@ -1,7 +1,10 @@
 # S1-F03-001 SDK Release Workflow
 - ID：S1-F03-001
 - Owner：SDK Governance Agent C
-- Branch/worktree：`s1/f03-release` / `wt-s1f03`
+- Execution repo：`.`
+- Execution branch：`s1/f03-001-release`
+- Governance state：`READ_ONLY` for Implementation Agent; Task Board/Sprint Board由 Coordinator 独占写
+- Delivery：只提交 execution repo 的 commit + Delivery Note；不得跨仓 claim/deliver 落盘
 - Platform API mode：`NONE`
 - SDK public API mode：`READ_ONLY`
 - Goal：冻结 dev=path、beta=git tag/version、production=package/registry 的发布策略。

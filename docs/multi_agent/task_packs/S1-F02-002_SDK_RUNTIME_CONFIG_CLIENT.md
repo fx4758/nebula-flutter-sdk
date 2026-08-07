@@ -2,7 +2,10 @@
 - ID：S1-F02-002
 - Owner：SDK Config Agent B
 - Depends：S1-F02-001
-- Branch/worktree：`s1/f02-runtime-config` / `wt-s1f02`
+- Execution repo：`.`
+- Execution branch：`s1/f02-002-sdk-config`
+- Governance state：`READ_ONLY` for Implementation Agent; Task Board/Sprint Board由 Coordinator 独占写
+- Delivery：只提交 execution repo 的 commit + Delivery Note；不得跨仓 claim/deliver 落盘
 - Platform API mode：`NONE`
 - SDK public API mode：**`READ_ONLY`**
 - Goal：复用现有 `NebulaConfigClient`，只做 Sprint 1 接入 closure；禁止重写 F2 已完成能力。

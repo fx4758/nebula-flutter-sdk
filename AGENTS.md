@@ -15,6 +15,13 @@
 3. 检查工作树，保留他人修改；一次只处理已分配 Story。
 4. 修改代码前运行 `dart run tool/governance.dart`。
 
+## GOV-P0：跨仓执行唯一性
+- 每个 Story 只有一个 `execution_repo` + 一个 `execution_branch`。跨仓依赖不等于跨仓写权限。
+- `docs/multi_agent/task_board.json`、Sprint Board、assignment/dispatch 由 Coordinator 独占写；Implementation Agent 永远只读。
+- Agent 完成后只返回 Delivery Note，不自行 claim/DELIVERED/DONE 落盘。
+- shared `main/dev` 禁止直接作为实现交付分支。
+- 启动时必须运行 `dart run tool/cross_repo_guard.dart --story <ID> --repo <execution_repo>`。
+
 ## GOV-P0：Platform API 默认只读
 - Product integration 不授予 Platform API 写权限；App 缺口先走 Adapter。
 - 任何 Platform production API 改动必须由 task_board 明确授予 `IMPLEMENT_FROZEN_CONTRACT` 或 `CONTRACT_CHANGE`。

@@ -2,7 +2,10 @@
 - ID：S1-F01-002
 - Owner：Flutter Integration Agent A
 - Depends：S1-F01-001
-- Branch/worktree：`s1/f01-adapter` / `wt-s1f01`
+- Execution repo：`../flutter NFC Writer`
+- Execution branch：`s1/f01-002-bootstrap`
+- Governance state：`READ_ONLY` for Implementation Agent; Task Board/Sprint Board由 Coordinator 独占写
+- Delivery：只提交 execution repo 的 commit + Delivery Note；不得跨仓 claim/deliver 落盘
 - Platform API mode：`NONE`
 - SDK public API mode：`READ_ONLY`
 - Goal：把 Nebula bootstrap 接入唯一 Composition Root；失败不得阻塞 App 启动。

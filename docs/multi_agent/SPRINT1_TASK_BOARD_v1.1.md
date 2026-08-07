@@ -1,14 +1,14 @@
 # Sprint 1 Task Board — Human Mirror
 
-> **NON-SSOT.** Machine authority: `task_board.json`.
+> **NON-SSOT.** Machine authority: `task_board.json`. State writes are Coordinator-only.
 
-| Story | Owner | Dependency | Platform API Mode | SDK Public API Mode | State source |
+| Story | State | Execution Repo | Execution Branch | Platform API | SDK Public API |
 |---|---|---|---|---|---|
-| S1-F01-001 Adapter Boundary | Agent A | - | NONE | READ_ONLY | task_board.json |
-| S1-F01-002 Bootstrap Lifecycle | Agent A | F01-001 | NONE | READ_ONLY | task_board.json |
-| S1-F02-001 Backend Runtime Config | Agent B | - | **READ_ONLY** | NONE | task_board.json |
-| S1-F02-002 SDK Config Closure | Agent B | F02-001 | NONE | **READ_ONLY** | task_board.json |
-| S1-F03-001 SDK Release Workflow | Agent C | - | NONE | READ_ONLY | task_board.json |
-| S1-F03-002 API Surface CI Gate | Agent C | F03-001 | NONE | READ_ONLY | task_board.json |
+| S1-F01-001 Adapter Boundary | REVIEW | Flutter NFC Writer | `s1/f01-001-adapter` | NONE | READ_ONLY |
+| S1-F01-002 Bootstrap Lifecycle | READY after F01-001 DONE | Flutter NFC Writer | `s1/f01-002-bootstrap` | NONE | READ_ONLY |
+| S1-F02-001 Backend Runtime Config Audit | READY | flypost_backend | `s1/f02-001-runtime-config-audit` | READ_ONLY | NONE |
+| S1-F02-002 SDK Config Closure | READY after F02-001 DONE | nebula-flutter-sdk | `s1/f02-002-sdk-config` | NONE | READ_ONLY |
+| S1-F03-001 SDK Release Workflow | READY | nebula-flutter-sdk | `s1/f03-001-release` | NONE | READ_ONLY |
+| S1-F03-002 API Surface CI Gate | READY after F03-001 DONE | nebula-flutter-sdk | `s1/f03-002-api-gate` | NONE | READ_ONLY |
 
-Agent summary is not acceptance evidence. Public API/capability expansion requires architecture review. Parser/NFC/action business remains outside SDK.
+One Story = one execution repo. Agent returns Delivery Note only; Coordinator records state. Agent summary is not acceptance evidence.

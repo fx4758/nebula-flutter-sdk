@@ -1,7 +1,10 @@
 # S1-F02-001 Backend Runtime Config Contract Audit
 - ID：S1-F02-001
 - Owner：Backend Runtime Config Agent B
-- Branch/worktree：`s1/f02-runtime-config` / `wt-s1f02`
+- Execution repo：`../flypost_backend`
+- Execution branch：`s1/f02-001-runtime-config-audit`
+- Governance state：`READ_ONLY` for Implementation Agent; Task Board/Sprint Board由 Coordinator 独占写
+- Delivery：只提交 execution repo 的 commit + Delivery Note；不得跨仓 claim/deliver 落盘
 - Platform API mode：**`READ_ONLY`**
 - SDK public API mode：`NONE`
 - Backend authority：`../flypost_backend`

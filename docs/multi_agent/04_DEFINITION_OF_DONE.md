@@ -10,7 +10,7 @@
 4. 每条验收条件有证据。
 5. 测试命令和结果完整。
 6. 已知限制明确，不用“后续优化”掩盖缺口。
-7. 更新 Sprint Board/task_board。
+7. Agent 提供 Delivery Note；由 Coordinator 独立验收后更新 Sprint Board/task_board。Agent 不得自行改状态文件。
 8. 无未经批准的公共 API、路径、错误码、数据表变化。
 9. 未覆盖他人未提交修改。
 10. 有 handoff block。
@@ -94,3 +94,11 @@ Architecture Change Request:
 - `CONTRACT_CHANGE`：再加 ADR、contract version、第二消费者证据、兼容/回滚、安全成本评审。
 - Product requirement 能由 App Adapter 解决时，Platform 变更自动不满足 DoD。
 - Agent 不能把自己的 Story 从 READ_ONLY 改成写模式后继续实现。
+
+## 9. Cross-Repository Story DoD（Blocking）
+
+- Story 的所有实现改动必须只存在于 `execution_repo`。
+- 当前 branch 必须等于 `execution_branch`；shared main/dev 不得作为 delivery branch。
+- Governance repo 的 Coordinator-owned state diff 必须为 0。
+- 如果第二仓需要实现改动，当前 Story BLOCKED/DELIVERED-WITH-GAP，由 Coordinator 新建第二 Story。
+- Agent 交付结束只报告 commit；Coordinator 才能写 DELIVERED/REVIEW/DONE。

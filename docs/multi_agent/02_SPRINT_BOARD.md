@@ -176,28 +176,29 @@
   - `contracts/MOBILE_CAPABILITY_CONTRACT.md`
 - **备注**：MA0 其余审计 Story（B01/C01/D01/Q01/S01）仍可并行推进；S1 进入仅对上列被允许 Agent 开放。
 
-## Sprint 1-A Foundation Integration（READY — Execution Epoch 2）
+## Sprint 1-A Foundation Integration（Execution Epoch 2）
 
-状态：**READY FOR RELAUNCH**。2026-08-07 17:06 的首次 launch 已判定无效：LAN Agent 从旧 `main` 的 F0 task router 领取了错误任务；三个 S1 worktree 均无 Feature commit/dirty change，因此安全重置。
+状态：**IN PROGRESS / GOVERNED**。S1-F01-001 已有独立 App delivery commit，当前处于 REVIEW；其余 Story 受依赖和单仓执行规则控制。
 
-唯一任务源：`task_board.json`。启动前必须执行 `dart run tool/task_source_guard.dart --story <ID>`。
+唯一任务源：`task_board.json`。Implementation Agent 只读，不得自行 claim/DELIVERED/DONE 落盘。
 
-**Platform API Blocking Rule**：S1-A 默认 Platform API READ_ONLY。S1-F02-001 仅审计/补测试；任何 production API diff 均 CHANGES REQUIRED。真实缺口必须 ACR 后另建 `IMPLEMENT_FROZEN_CONTRACT`/`CONTRACT_CHANGE` Story，不能在当前 Story 扩 scope。
+**Cross-Repo Blocking Rule**：一个 Story 只能有一个 `execution_repo` + 一个 feature branch；需要第二仓实现时必须拆 Story。shared `main/dev` 禁止直接作为 delivery branch。
 
-| Story | Owner | State | Worktree |
-|---|---|---|---|
-| S1-F01-001 Adapter Boundary | Agent A | READY | wt-s1f01 |
-| S1-F01-002 Bootstrap Lifecycle | Agent A | READY (after 001) | wt-s1f01 |
-| S1-F02-001 Backend Runtime Config | Agent B | READY | wt-s1f02 |
-| S1-F02-002 SDK Runtime Config Client | Agent B | READY (after 001) | wt-s1f02 |
-| S1-F03-001 SDK Release Workflow | Agent C | READY | wt-s1f03 |
-| S1-F03-002 API Surface CI Gate | Agent C | READY (after 001) | wt-s1f03 |
+**Platform API Blocking Rule**：S1-A 默认 Platform API READ_ONLY。S1-F02-001 仅审计/补测试；任何 production API diff 均 CHANGES REQUIRED。真实缺口必须 ACR 后另建授权 Story。
 
-### GOV-P0-EXEC-SSOT Incident Closure
+| Story | Owner | State | Execution Repo | Execution Branch |
+|---|---|---|---|---|
+| S1-F01-001 Adapter Boundary | Agent A | **REVIEW** | Flutter NFC Writer | `s1/f01-001-adapter` |
+| S1-F01-002 Bootstrap Lifecycle | Agent A | READY (blocked by 001) | Flutter NFC Writer | `s1/f01-002-bootstrap` |
+| S1-F02-001 Backend Runtime Config Audit | Agent B | READY | flypost_backend | `s1/f02-001-runtime-config-audit` |
+| S1-F02-002 SDK Runtime Config Closure | Agent B | READY (after F02-001) | nebula-flutter-sdk | `s1/f02-002-sdk-config` |
+| S1-F03-001 SDK Release Workflow | Agent C | READY | nebula-flutter-sdk | `s1/f03-001-release` |
+| S1-F03-002 API Surface CI Gate | Agent C | READY (after F03-001) | nebula-flutter-sdk | `s1/f03-002-api-gate` |
 
-- 根因：LAN `main` 停留在旧 F0 任务体系，而跨仓 Sprint 1 在 architect 分支；Agent 按旧 `STATUS.md` 合法地领取了错误 F0 任务。
-- 修复：`main` 发布当前 SSOT；`STATUS.md` 降级为 NON-EXECUTABLE；Task Board/Task Pack 一一对应；启动 Guard + CI self-check 阻断错误 Story。
-- 旧 `F0-02/F0-03` LAN 提交属于错误任务源下的 docs-only 交付，不计入 S1 完成度。
+### GOV-P0 incident closures
+
+- `GOV-P0-EXEC-SSOT`：旧 LAN main/F0 任务源漂移已关闭；main/guard/SSOT 已统一。
+- `GOV-P0-CROSS-REPO-STATE`：发现 App Agent 同时改 App 仓 + SDK Task Board，并把交付直接推 LAN dev。根因是治理仓/施工仓未拆分。已冻结 GOV-CROSS-REPO-001；Task Board 改为 Coordinator-only；S1-F01-001 正式 review branch 为 App `s1/f01-001-adapter`。
 - 禁止抢跑：Asset SDK / Upload API / Payment live refund / Advanced Risk Engine。
 
 ## 后续 Sprint 摘要
