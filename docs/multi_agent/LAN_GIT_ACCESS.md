@@ -1,48 +1,52 @@
-# LAN GIT 服务接入说明（Sprint 1 协作入口）
+# 仓库接入说明（Sprint 1 协作入口）
 
-> 状态：ACTIVE（2026-08-07 17:35 CST 由 Coordinator 建立并验证）
-> 服务：本机 192.168.31.137:9419 git daemon（`receive-pack` 已启用，支持 push）
+> 状态：本地 git daemon **已停用（DECOMMISSIONED，2026-08-08）**；代码仓库已迁移至局域网 HTTP Git 服务器。
+> 新权威远端：`http://192.168.31.102:3000/root/nebula-flutter-sdk.git`
 
-## 1. 仓库地址
+## 1. 仓库地址（新）
 
 ```bash
-git://192.168.31.137:9419/nebula-flutter-sdk
+http://192.168.31.102:3000/root/nebula-flutter-sdk.git
 ```
 
 验证可用：
 
 ```bash
-git ls-remote git://192.168.31.137:9419/nebula-flutter-sdk
+git ls-remote http://192.168.31.102:3000/root/nebula-flutter-sdk.git
 ```
+
+> 该服务器为 HTTP(S) 协议，**推送需要账号凭据**（Gitea/Forgejo 类）。本机已缓存 Basic 凭据可写；
+> 其他 agent 首次推送请用 `git` 凭据助手或在 URL 中携带 token，例如：
+> `git push https://<user>:<token>@192.168.31.102:3000/root/nebula-flutter-sdk.git <branch>`
 
 ## 2. 分支约定
 
 | 分支 | 用途 | Push 权限 |
 |---|---|---|
-| `architect/f0-02-mobile-session` | 主线（MA0 基线 + Sprint 1 启动） | Coordinator 专用，LAN agent 禁止直推 |
-| `s1/f01-adapter` | Sprint 1 Story：APK Nebula Adapter（Agent A） | Agent A / 参与该 Story 的 agent |
-| `s1/f02-runtime-config` | Sprint 1 Story：Runtime Config（Agent B，Backend + SDK） | Agent B / 参与该 Story 的 agent |
-| `s1/f03-release` | Sprint 1 Story：SDK Release Workflow（Agent C） | Agent C / 参与该 Story 的 agent |
+| `architect/f0-02-mobile-session` | 主线（MA0 基线 + Sprint 1 启动） | Coordinator 专用，agent 禁止直推 |
 | `main` | 历史基线 | 只读 |
+| `archive/*` | 历史归档分支（legacy / obsolete / cross-repo 清理） | 只读，勿在此基础上开发 |
+
+> 注：原 `s1/f01-adapter`、`s1/f02-runtime-config`、`s1/f03-release` 三个 worktree 分支已于 2026-08-08 清理（三次并行子 Agent 启动均被 429 限流阻断、从未产生提交，无工作成果丢失）。如重启 Sprint 1 并行开发，由 Coordinator 重新切出 Story 分支。
 
 ## 3. 其他局域网 Agent 加入方式
 
 ```bash
-# 1) 克隆
-git clone git://192.168.31.137:9419/nebula-flutter-sdk.git
+# 1) 克隆（需要服务器读权限）
+git clone http://192.168.31.102:3000/root/nebula-flutter-sdk.git
 cd nebula-flutter-sdk
 
-# 2) 认领 Story：从对应分支切出自己的工作分支
-git checkout -b work/你的名字-s1-f01 s1/f01-adapter
+# 2) 认领 Story：从主线切出自己的工作分支
+git checkout -b work/你的名字-s1-f01 architect/f0-02-mobile-session
 
 # 3) 提交
 git add -A && git commit -m "..."
 
-# 4) 推送自己的工作分支（不要推 Story 分支本身，避免互相覆盖）
-git push git://192.168.31.137:9419/nebula-flutter-sdk work/你的名字-s1-f01
+# 4) 推送自己的工作分支（不要推主线本身，避免互相覆盖）
+git push origin work/你的名字-s1-f01
 ```
 
-> git:// 协议不支持身份认证，推送者以分支名自证。**同一 Story 分支上请先 `git pull` 再 push**，冲突时优先 rebase 到 Story 分支最新。
+> HTTP 协议支持身份认证，推送者以凭据自证。**同一分支上请先 `git pull --rebase` 再 push**，冲突时优先 rebase 到最新。
 
 ## 4. 协作铁律（必须遵守）
 
@@ -58,20 +62,14 @@ git push git://192.168.31.137:9419/nebula-flutter-sdk work/你的名字-s1-f01
 
 ## 5. 当前 Sprint 1 看板（机器可读：task_board.json）
 
-- S1-F01-001（+002 Bootstrap）：IN_PROGRESS — wt-s1f01
-- S1-F02-001（Backend）+ S1-F02-002（SDK Config）：IN_PROGRESS — wt-s1f02
-- S1-F03-001 + S1-F03-002：IN_PROGRESS — wt-s1f03
+- S1-F01 / S1-F02 / S1-F03：IN_PROGRESS（见 task_board.json；原 worktree 已清理，需重启时由 Coordinator 重建隔离环境）
 - 前置门禁 MA0-A02/A03 = DONE（已满足）
 
-## 6. 服务维护
+## 6. 历史：本地 git daemon（已停用）
 
-- Daemon 以 **setsid 游离进程**运行于本机（192.168.31.137:9419），`receive-pack` 已启用。
-- 本机 bare 仓库：`/Users/sean/git-server/nebula-flutter-sdk.git`（所有分支的权威落点）。
-- **重启命令（唯一正确方式）**：`bash /Users/sean/git-server/start-lan-git.sh`
-  - ⚠️ 切勿用 `nohup ... &` 或 Bash 后台任务直接跑 daemon：命令/回合结束即被回收（9419 曾因此拒连）。
-  - 必须 `setsid` 脱离进程组（脚本已封装）。
-- 服务端 SSH 等强认证方案未启用；当前信任局域网环境，若需收严再评估。
+- 原本地 daemon `git://192.168.31.137:9419/nebula-flutter-sdk` 已于 2026-08-08 **停用并关闭**，相关启动脚本 `/Users/sean/git-server/start-lan-git.sh`、plist `~/Library/LaunchAgents/com.nebula.gitdaemon.plist`、bare 仓库 `/Users/sean/git-server/nebula-flutter-sdk.git` 均已不再作为协作入口（bare 仓库可作为本地备份保留，可随时删除）。
+- **请勿再依据本文档旧版本从 9419 克隆**——该端口已无服务，会 `connection refused`。
 
 ## 7. 其他仓库
 
-- flypost 后端仍在既有服务器 `git://192.168.1.3:9419/flypost`（未迁移，仅本 SDK 仓库挂在本机 LAN 服务）。
+- flypost 后端仍在既有服务器 `git://192.168.1.3:9419/flypost`（未迁移，与本 SDK 仓库的独立）。
