@@ -178,7 +178,7 @@
 
 ## Sprint 1-A Foundation Integration（Execution Epoch 2）
 
-状态：**IN PROGRESS / GOVERNED**。S1-F01-001 已通过 R2 独立验收并 DONE；S1-F01-002 依赖已满足、保持 READY 未认领；其余 Story 受依赖和单仓执行规则控制。
+状态：**IN PROGRESS / GOVERNED**。S1-F01-001 已通过 R2 独立验收并 DONE；S1-F01-002 内部依赖已满足，但因当前 NFC Writer baseline 的 NEBULA-DEP-001 → NEBULA-APP-001A 外部门禁，已改为 WAIT；不得在旧 baseline 抢跑；其余 Story 受依赖和单仓执行规则控制。
 
 唯一任务源：`task_board.json`。Implementation Agent 只读，不得自行 claim/DELIVERED/DONE 落盘。
 
@@ -189,7 +189,7 @@
 | Story | Owner | State | Execution Repo | Execution Branch |
 |---|---|---|---|---|
 | S1-F01-001 Adapter Boundary | Agent A | **DONE / PASS** | Flutter NFC Writer | `s1/f01-001-adapter` |
-| S1-F01-002 Bootstrap Lifecycle | Agent A | **READY / UNBLOCKED** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
+| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **WAIT / CURRENT APP BASELINE GATE** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
 | S1-F02-001 Backend Runtime Config Audit | Agent B | READY | flypost_backend | `s1/f02-001-runtime-config-audit` |
 | S1-F02-002 SDK Runtime Config Closure | Agent B | READY (after F02-001) | nebula-flutter-sdk | `s1/f02-002-sdk-config` |
 | S1-F03-001 SDK Release Workflow | Agent C | READY | nebula-flutter-sdk | `s1/f03-001-release` |
