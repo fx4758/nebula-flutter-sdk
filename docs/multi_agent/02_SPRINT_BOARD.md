@@ -178,7 +178,7 @@
 
 ## Sprint 1-A Foundation Integration（Execution Epoch 2）
 
-状态：**IN PROGRESS / GOVERNED · F01-004 R2 READY**。`59dd960/7929487` stale publication 已完成 quarantine；004A/004B/004C 三个注册 Owner contribution 已 DONE，并由 Coordinator 串行组装为 owner-authorized baseline `f11fb53`。S1-F01-004 现仅允许从该 baseline 在全新 R2 分支精确 replay `01-sdk-core.patch`，完成后进入独立 SDK Review R2。S1-F01-002 与 App NEBULA-DEP-002 继续 WAIT。
+状态：**IN PROGRESS / GOVERNED · F01-004 DONE / R2 PASS**。`S1-F01-004` clean R2 candidate `07e26d5` 已通过 Independent SDK Review R2 `e33ebeb`，Coordinator publication 正式关闭该 SDK Story。下一唯一跨仓 gate 是 App-side `NEBULA-DEP-002` immutable SDK repin；在 repin DONE 前，`S1-F01-002` 继续 WAIT。
 
 唯一任务源：`task_board.json`。Implementation Agent 只读，不得自行 claim/DELIVERED/DONE 落盘。
 
@@ -189,9 +189,9 @@
 | Story | Owner | State | Execution Repo | Execution Branch |
 |---|---|---|---|---|
 | S1-F01-001 Adapter Boundary | Agent A | **DONE / PASS** | Flutter NFC Writer | `s1/f01-001-adapter` |
-| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **WAIT / SDK R2 + APP REPIN GATE** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
+| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **WAIT / APP REPIN GATE ONLY** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
 | S1-F01-003 Bootstrap Contract Reconciliation | Agent D | **DONE / REVIEW PASS** | nebula-flutter-sdk | `s1/f01-003-bootstrap-contract-reconcile` |
-| S1-F01-004 SDK Bootstrap Surface Closure | Agent D | **READY / R2 CLEAN REPLAY ONLY** | nebula-flutter-sdk | `s1/f01-004-sdk-bootstrap-surface-r2` |
+| S1-F01-004 SDK Bootstrap Surface Closure | Agent D | **DONE / INDEPENDENT R2 PASS** | nebula-flutter-sdk | `s1/f01-004-sdk-bootstrap-surface-r2` |
 | S1-F01-004A Public Surface Owner Recovery | SDK Architect | **DONE / OWNER CONTRIBUTION PASS** | nebula-flutter-sdk | `s1/f01-004a-public-surface-owner` |
 | S1-F01-004B Policy Owner Recovery | Architecture/PM | **DONE / OWNER CONTRIBUTION PASS** | nebula-flutter-sdk | `s1/f01-004b-policy-owner` |
 | S1-F01-004C Governance Owner Recovery | Quality | **DONE / OWNER CONTRIBUTION PASS** | nebula-flutter-sdk | `s1/f01-004c-governance-owner` |

@@ -4,8 +4,8 @@ Status: **CONTROLLED BY COORDINATOR**
 
 SSOT: `task_board.json`. Implementation Agent reads but never edits Task Board. Each Story has one execution repo/branch.
 
-- Agent A: `S1-F01-001` 已 DONE；`S1-F01-002` 继续 WAIT。stale `59dd960/7929487` 不构成 SDK prerequisite；必须等 `S1-F01-004 R2 DONE/PASS → NFC Writer NEBULA-DEP-002 DONE` 后，Coordinator 才能从最新 App `dev` 重建 worktree 并显式置 READY。
-- Agent D / SDK Core: `S1-F01-003` 已 DONE；`S1-F01-004` 现 **READY / R2 CLEAN REPLAY ONLY**。执行 branch=`s1/f01-004-sdk-bootstrap-surface-r2`，base=`f11fb53`；只允许 replay 冻结的 `01-sdk-core.patch`，禁止 cherry-pick `19fc097/e101c7a/a7ccd6c/4aa233e`。交付后必须独立 SDK Review R2，未 PASS 前不得 DONE。
+- Agent A: `S1-F01-001` 已 DONE；`S1-F01-002` 继续 WAIT。`S1-F01-004` 已 DONE / Independent R2 PASS；现在只剩 App-side `NEBULA-DEP-002` immutable SDK repin。只有 repin DONE 后，Coordinator 才能从最新 App `dev` 重建 worktree并显式置 READY。
+- Agent D / SDK Core: `S1-F01-003`、`S1-F01-004` 均 DONE。F01-004 reviewed candidate=`07e26d5`，Independent SDK Review R2=`e33ebeb` PASS。SDK Core 停止施工；任何后续 Bootstrap contract/public-surface 变更必须走新 ACR/Story。
 - SDK Architect: `S1-F01-004A` DONE，owner delivery=`c1fced21`。
 - Architecture/PM: `S1-F01-004B` DONE，owner delivery=`b7d380bb`。
 - Quality: `S1-F01-004C` DONE，owner delivery=`2f417e51`。
