@@ -26,3 +26,13 @@ If the Story ID is absent/not active or the guard fails: **STOP. Do not substitu
 `main` is the canonical LAN clone entry and MUST contain the active task router/guard. Feature code stays on assigned feature branches/worktrees until evidence-based review.
 
 Any mismatch among `main`, task board, task pack, branch/worktree, or Story ID is **GOV-P0** and blocks implementation.
+
+## Coordinator publication path
+
+Coordinator-owned execution state is published to canonical `main` only through a PR carrying the Forgejo label `coordinator-publication`. The governance workflow derives Coordinator mode from the server-side PR event label; branch names, commit messages, PR titles and file content are not authorization signals.
+
+- Without that label, `coordinator_state_guard` runs in Implementation mode and any Coordinator-owned diff fails.
+- With that label on a PR targeting `main`, the workflow may invoke explicit Coordinator mode; all other governance/test/API/secret gates still run.
+- The workflow and Coordinator guard tools are themselves Coordinator-owned paths.
+- `main` MUST be protected server-side against direct push and MUST require the governance status check before merge.
+- Implementation Agents must not request/apply the publication label as a substitute for a Delivery Note; publication authorization belongs to the Coordinator/Architecture Owner.

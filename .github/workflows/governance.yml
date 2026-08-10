@@ -2,6 +2,7 @@ name: governance
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
 
@@ -26,8 +27,26 @@ jobs:
       - run: dart run tool/cross_repo_guard_test.dart
       - run: dart run tool/coordinator_state_guard.dart --self-check
       - run: dart run tool/coordinator_state_guard_test.dart
+      - run: dart run tool/coordinator_publication_mode_test.dart
       - if: github.event_name == 'pull_request'
-        run: dart run tool/coordinator_state_guard.dart --base "${{ github.event.pull_request.base.sha }}"
+        shell: bash
+        run: |
+          MODE="$(dart run tool/coordinator_publication_mode.dart --event-path "$GITHUB_EVENT_PATH")"
+          case "$MODE" in
+            coordinator)
+              dart run tool/coordinator_state_guard.dart \
+                --base "${{ github.event.pull_request.base.sha }}" \
+                --coordinator
+              ;;
+            implementation)
+              dart run tool/coordinator_state_guard.dart \
+                --base "${{ github.event.pull_request.base.sha }}"
+              ;;
+            *)
+              echo "unexpected coordinator publication mode: $MODE" >&2
+              exit 1
+              ;;
+          esac
       - run: dart run tool/platform_api_guard.dart --self-check
       - run: dart run tool/platform_api_guard_test.dart
       - run: dart run tool/governance_test.dart

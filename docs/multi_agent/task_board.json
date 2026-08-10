@@ -277,8 +277,15 @@
       "docs/multi_agent/task_board.json",
       "docs/multi_agent/02_SPRINT_BOARD.md",
       "docs/multi_agent/SPRINT1_AGENT_ASSIGNMENT.md",
-      "docs/multi_agent/SPRINT1_AGENT_DISPATCH.md"
-    ]
+      "docs/multi_agent/SPRINT1_AGENT_DISPATCH.md",
+      ".github/workflows/governance.yml",
+      "tool/coordinator_state_guard.dart",
+      "tool/coordinator_state_guard_test.dart",
+      "tool/coordinator_publication_mode.dart",
+      "tool/coordinator_publication_mode_test.dart"
+    ],
+    "coordinator_publication_label": "coordinator-publication",
+    "coordinator_publication_rule": "Only an explicitly labeled PR to main may invoke coordinator mode; unlabeled PRs remain implementation mode."
   },
   "incidents": [
     "GOV-P0-EXEC-SSOT-20260807",
