@@ -62,7 +62,9 @@ Detailed matrix/evidence: `reports/S1-F01-003_BOOTSTRAP_CONTRACT_RECONCILIATION.
 
 ## Decision
 - CONTRACT AGENT VERDICT：RECONCILED / OPTION A
-- INDEPENDENT REVIEW：PENDING
-- Approved SDK public API mode：not yet granted
-- Backend production change：not requested
-- Follow-up：independent S1-F01-003 review → Coordinator DONE/promotion → S1-F01-004 → App NEBULA-DEP-002 → S1-F01-002
+- INDEPENDENT REVIEW：PASS — `reports/S1-F01-003_INDEPENDENT_REVIEW.md`
+- Decision：APPROVED / Option A
+- Approved Platform API mode：READ_ONLY / Backend production change not requested
+- Approved SDK public API mode：CHANGE_APPROVED for `S1-F01-004` only
+- Contract version：CONTRACT-SDK-BOOTSTRAP V2 / FROZEN
+- Follow-up：S1-F01-004 → App NEBULA-DEP-002 → S1-F01-002

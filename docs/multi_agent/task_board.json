@@ -118,7 +118,7 @@
       ]
     },
     "S1-F01-003": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Contract Agent",
       "agent": "D",
       "reviewer": "Architecture Review Agent",
@@ -134,10 +134,14 @@
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
       "gap_id": "ACR-SDK-BOOTSTRAP-001",
-      "backend_authority_ref": "FlyPostAPI Dev @ 956981c119b01a0c1b4bf0793a20bed8f31d1180"
+      "backend_authority_ref": "FlyPostAPI Dev @ 956981c119b01a0c1b4bf0793a20bed8f31d1180",
+      "delivery_commit": "75e8321f5e911c0014205258ec824aa6ace4fd74",
+      "review_evidence": "reports/S1-F01-003_INDEPENDENT_REVIEW.md",
+      "contract_version": "CONTRACT-SDK-BOOTSTRAP V2",
+      "review_verdict": "PASS"
     },
     "S1-F01-004": {
-      "status": "WAIT",
+      "status": "READY",
       "owner": "SDK Core Agent",
       "agent": "D",
       "reviewer": "SDK Review Agent",
@@ -146,7 +150,7 @@
         "S1-F01-003"
       ],
       "platform_api_mode": "NONE",
-      "sdk_public_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "CHANGE_APPROVED",
       "product_adapter_rule": "ADAPTER_FIRST",
       "execution_repo": ".",
       "execution_branch": "s1/f01-004-sdk-bootstrap-surface",
@@ -154,7 +158,9 @@
       "execution_worktree": "wt-s1f01-004-sdk-bootstrap",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "promotion_gate": "After F01-003 DONE, Coordinator must set WAIT->READY and sdk_public_api_mode->CHANGE_APPROVED."
+      "promotion_gate": "SATISFIED: S1-F01-003 landed on main at 75e8321 and independent Architecture Review PASS; V2 contract authorized.",
+      "approved_contract": "contracts/SDK_BOOTSTRAP_CONTRACT_FREEZE.md V2",
+      "authorization": "ACR-SDK-BOOTSTRAP-001 APPROVED / Option A"
     },
     "S1-F02-001": {
       "status": "READY",

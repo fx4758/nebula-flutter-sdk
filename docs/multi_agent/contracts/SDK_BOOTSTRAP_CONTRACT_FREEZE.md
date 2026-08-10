@@ -2,13 +2,15 @@
 
 - **Contract ID**：CONTRACT-SDK-BOOTSTRAP
 - **Version**：2
-- **Status**：RE-FROZEN / S1-F01-003 DELIVERY CANDIDATE（等待独立 Architecture Review Agent 验收）
+- **Status**：FROZEN / PASS（S1-F01-003 independent Architecture Review accepted）
 - **Original freeze**：2026-08-07
 - **Reconciled at**：2026-08-10T11:01:37+08:00
 - **Reconciliation Story**：S1-F01-003
+- **Accepted implementation commit**：`75e8321f5e911c0014205258ec824aa6ace4fd74`
+- **Independent review**：`reports/S1-F01-003_INDEPENDENT_REVIEW.md` / PASS
 - **Backend authority**：FlyPostAPI `origin/Dev @ 956981c119b01a0c1b4bf0793a20bed8f31d1180`
 - **Fixture authority**：`test/fixtures/bootstrap_contract_v2.json` + `bootstrap_request*.json` + `bootstrap_response.json`
-- **SDK typed authority**：`lib/src/auth/installation.dart`（production read-only in S1-F01-003）
+- **SDK typed evidence**：`lib/src/auth/installation.dart`（production read-only in S1-F01-003; current limits remain drift to close in S1-F01-004）
 
 > V2 supersedes the stale V1 request requiredness/type/limit prose. S1-F01-003 is contract/tests/docs only: this file freezes the target truth but does **not** authorize production `lib/**` changes. Production closure belongs to S1-F01-004 after independent review and Coordinator promotion.
 
