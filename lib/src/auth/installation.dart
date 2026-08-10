@@ -6,10 +6,6 @@
 /// and an ADR first.
 library;
 
-import 'dart:convert';
-
-import 'installation_key_validation.dart';
-
 /// Mobile platform values (docs/08 §4.1 `platform`).
 enum NebulaPlatform { ios, android, harmony, web }
 
@@ -19,15 +15,16 @@ enum NebulaAttestationState { verified, limited, notSupported }
 /// Proof-of-possession algorithm (docs/08 §4.2 `proof_algorithm`, frozen ES256).
 enum NebulaProofAlgorithm { es256 }
 
-/// Shared optional diagnostic-string cap retained for public compatibility.
-/// Bootstrap V2 has field-specific 64/128-byte limits; see [BootstrapRequest].
+/// Shared string cap from docs/08 §4.1 ("string maximum: 128 characters").
 const int nebulaStringMaxLength = 128;
 
-/// Attestation payload cap in UTF-8 bytes (Bootstrap Contract V2).
+/// Attestation payload cap from docs/08 §4.1 ("attestation maximum: 16 KiB").
 const int nebulaAttestationMaxLength = 16 * 1024;
 
-/// Public-key wire cap in UTF-8 bytes (Bootstrap Contract V2 / Backend).
-const int nebulaPublicKeyMaxLength = 1024;
+/// Public key payload cap. ES256/P-256 SPKI DER base64url stays well under
+/// this; the generous cap avoids a hard dependency on the exact key encoding,
+/// which F0-04 fixtures will pin down later.
+const int nebulaPublicKeyMaxLength = 4096;
 
 /// A bound installation identity: App + installation + key thumbprint.
 ///
@@ -64,16 +61,11 @@ final class InstallationIdentity {
   String toString() => 'InstallationIdentity($appId/$installationId)';
 }
 
-/// Typed bootstrap request (Bootstrap Contract V2).
+/// Typed bootstrap request (docs/08 §4.1).
 ///
-/// `attestation` is optional nullable string platform evidence. The SDK owns
-/// its wire serialization but does not interpret provider-specific contents.
+/// `attestation` stays opaque at this layer: its typed shape is platform
+/// evidence and is pinned by F0-04 fixtures, not by the SDK core.
 final class BootstrapRequest {
-  static const int _identityMaxBytes = 64;
-  static const int _diagnosticMaxBytes = 128;
-  static const int _routingMaxBytes = 64;
-  static const int _bodyMaxBytes = 32 * 1024;
-
   const BootstrapRequest({
     required this.appId,
     required this.installationId,
@@ -102,88 +94,47 @@ final class BootstrapRequest {
   final String? region;
   final String? attestation;
 
-  /// Applies the reconciled Bootstrap Contract V2 limits.
+  /// Applies the frozen limits from docs/08 §4.1.
   ///
-  /// Backend caps are UTF-8 byte limits, not Dart UTF-16 code-unit counts.
-  /// Optional diagnostic/routing fields may be null; when present they must be
-  /// non-empty. The final canonical JSON body is also bounded by
-  /// the Backend's 32 KiB request-body ceiling.
+  /// Throws [ArgumentError] on the first violation. String fields default to
+  /// 128 chars; attestation is capped at 16 KiB and publicKey at 4096 chars.
   void validate() {
-    _requireUtf8(appId, 'appId', _identityMaxBytes);
-    _requireUtf8(
-      installationId,
-      'installationId',
-      _identityMaxBytes,
-    );
-    _requireUtf8(
-      bootstrapRequestId,
-      'bootstrapRequestId',
-      _identityMaxBytes,
-    );
-    validateP256SpkiBase64Url(
-      publicKey,
-      maxUtf8Bytes: nebulaPublicKeyMaxLength,
-    );
-    _optionalUtf8(appVersion, 'appVersion', _diagnosticMaxBytes);
-    _optionalUtf8(buildNumber, 'buildNumber', _diagnosticMaxBytes);
-    _optionalUtf8(osVersion, 'osVersion', _diagnosticMaxBytes);
-    _optionalUtf8(locale, 'locale', _routingMaxBytes);
-    _optionalUtf8(region, 'region', _routingMaxBytes);
-    _optionalUtf8(
-      attestation,
-      'attestation',
-      nebulaAttestationMaxLength,
-    );
-
-    final int bodyBytes = utf8.encode(jsonEncode(_wireMap())).length;
-    if (bodyBytes > _bodyMaxBytes) {
+    _requireBounded(appId, 'appId');
+    _requireBounded(installationId, 'installationId');
+    _requireBounded(bootstrapRequestId, 'bootstrapRequestId');
+    if (publicKey.isEmpty || publicKey.length > nebulaPublicKeyMaxLength) {
       throw ArgumentError.value(
-        bodyBytes,
-        'bootstrapRequest',
-        'canonical JSON body must be <= $_bodyMaxBytes bytes',
+        publicKey.length,
+        'publicKey',
+        'must be non-empty and <= $nebulaPublicKeyMaxLength chars',
       );
+    }
+    if (attestation != null &&
+        (attestation!.isEmpty ||
+            attestation!.length > nebulaAttestationMaxLength)) {
+      throw ArgumentError.value(
+        attestation!.length,
+        'attestation',
+        'must be non-empty and <= $nebulaAttestationMaxLength chars',
+      );
+    }
+    for (final f in <String?>[
+      appVersion,
+      buildNumber,
+      osVersion,
+      locale,
+      region
+    ]) {
+      if (f != null) _requireBounded(f, 'optional string');
     }
   }
 
-  /// Canonical SDK-owned 11-key wire representation.
-  ///
-  /// Optional values remain explicit JSON `null` when absent so every consumer
-  /// emits the same shape; callers must not duplicate this mapping.
-  Map<String, Object?> toJson() => _wireMap();
-
-  Map<String, Object?> _wireMap() => <String, Object?>{
-        'app_id': appId,
-        'installation_id': installationId,
-        'platform': platform.name,
-        'app_version': appVersion,
-        'build_number': buildNumber,
-        'os_version': osVersion,
-        'locale': locale,
-        'region': region,
-        'public_key': publicKey,
-        'attestation': attestation,
-        'bootstrap_request_id': bootstrapRequestId,
-      };
-
-  void _requireUtf8(String value, String field, int maxBytes) {
-    final int length = utf8.encode(value).length;
-    if (value.isEmpty || length > maxBytes) {
+  void _requireBounded(String value, String field) {
+    if (value.isEmpty || value.length > nebulaStringMaxLength) {
       throw ArgumentError.value(
-        length,
+        value.length,
         field,
-        'must be non-empty and <= $maxBytes UTF-8 bytes',
-      );
-    }
-  }
-
-  void _optionalUtf8(String? value, String field, int maxBytes) {
-    if (value == null) return;
-    final int length = utf8.encode(value).length;
-    if (value.isEmpty || length > maxBytes) {
-      throw ArgumentError.value(
-        length,
-        field,
-        'when present, must be non-empty and <= $maxBytes UTF-8 bytes',
+        'must be non-empty and <= $nebulaStringMaxLength chars',
       );
     }
   }
@@ -207,7 +158,7 @@ final class BootstrapResult {
   factory BootstrapResult.fromJson(Map<String, Object?> json) {
     return BootstrapResult(
       installationToken: json['installation_token'] as String,
-      // Wire 编码（Bootstrap Contract V2）：unix 秒 int64。
+      // Wire 编码（唯一 wire contract，flypost BootstrapResult）：unix 秒 int64。
       expiresAt: _unixSeconds(json['expires_at']),
       renewAfter: _unixSeconds(json['renew_after']),
       serverTime: _unixSeconds(json['server_time']),
@@ -235,7 +186,7 @@ final class BootstrapResult {
     );
   }
 
-  /// Wire 算法值：`ES256`（Bootstrap Contract V2 冻结大写常量）。
+  /// Wire 算法值：`ES256`（flypost 冻结大写常量）。
   static NebulaProofAlgorithm _proofAlgorithmFromWire(String wire) {
     return switch (wire) {
       'ES256' => NebulaProofAlgorithm.es256,

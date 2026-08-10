@@ -236,25 +236,6 @@ void _checkSources(
         );
         continue;
       }
-      final Set<String> allowedPaths =
-          (pattern['allowed_paths'] as List<Object?>? ?? <Object?>[])
-              .cast<String>()
-              .toSet();
-      if (allowedPaths.contains(relative)) {
-        final int allowedMatchCount =
-            pattern['allowed_match_count'] as int? ?? 0;
-        final int actualMatchCount = expression.allMatches(contents).length;
-        if (actualMatchCount <= allowedMatchCount) continue;
-        findings.add(
-          Finding(
-            pattern['id']! as String,
-            '$relative has $actualMatchCount matching occurrence(s); '
-            'allowed budget is $allowedMatchCount: '
-            '${pattern['reason']! as String}',
-          ),
-        );
-        continue;
-      }
       if (expression.hasMatch(contents)) {
         findings.add(
           Finding(
@@ -326,37 +307,6 @@ void _checkPolicyExamples(
     } on FormatException catch (error) {
       findings.add(Finding('GOV-POLICY', '$id invalid regex: $error'));
       continue;
-    }
-    final List<Object?> allowedPaths =
-        pattern['allowed_paths'] as List<Object?>? ?? <Object?>[];
-    final Object? allowedMatchCount = pattern['allowed_match_count'];
-    if (allowedPaths.isNotEmpty) {
-      final Object? reason = pattern['allowed_path_reason'];
-      if (reason is! String || reason.trim().isEmpty) {
-        findings.add(
-          Finding('GOV-POLICY', '$id allowed_paths require a reason'),
-        );
-      }
-      if (allowedMatchCount is! int || allowedMatchCount <= 0) {
-        findings.add(
-          Finding(
-            'GOV-POLICY',
-            '$id allowed_paths require positive allowed_match_count',
-          ),
-        );
-      }
-    } else if (allowedMatchCount != null) {
-      findings.add(
-        Finding('GOV-POLICY', '$id allowed_match_count requires allowed_paths'),
-      );
-    }
-    for (final Object? rawPath in allowedPaths) {
-      final String path = rawPath! as String;
-      if (!path.startsWith('lib/') || path.contains('*')) {
-        findings.add(
-          Finding('GOV-POLICY', '$id has invalid allowed_path: $path'),
-        );
-      }
     }
     final List<Object?> matches =
         pattern['examples_match'] as List<Object?>? ?? <Object?>[];

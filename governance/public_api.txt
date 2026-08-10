@@ -1,7 +1,4 @@
 src/auth/auth_proof.dart
-src/auth/bootstrap_client.dart
-src/auth/bootstrap_endpoints.dart
-src/auth/bootstrap_errors.dart
 src/auth/installation.dart
 src/auth/key_store.dart
 src/auth/login_request.dart

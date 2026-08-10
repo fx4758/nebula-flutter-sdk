@@ -101,12 +101,7 @@
       ],
       "examples_ignore": [
         "options.appId"
-      ],
-      "allowed_paths": [
-        "lib/src/auth/installation.dart"
-      ],
-      "allowed_path_reason": "Bootstrap Contract V2 requires public app_key app_id in the pre-installation body; Backend resolves trusted numeric AppID independently.",
-      "allowed_match_count": 1
+      ]
     }
   ]
 }
