@@ -188,6 +188,34 @@ void main() {
       );
     });
 
+    test('rejects fractional unix seconds without truncation', () {
+      Map<String, Object?> validWire() => <String, Object?>{
+            'installation_token': 'tok',
+            'expires_at': 1785866400,
+            'renew_after': 1785849120,
+            'server_time': 1785780000,
+            'app_id': 'app-a',
+            'installation_id': 'inst-1',
+            'proof_algorithm': 'ES256',
+            'attestation_state': 'not_supported',
+            'request_id': 'req-9',
+          };
+
+      for (final MapEntry<String, double> invalid in <String, double>{
+        'expires_at': 1.75,
+        'renew_after': 1.25,
+        'server_time': 1.5,
+      }.entries) {
+        final Map<String, Object?> wire = validWire()
+          ..[invalid.key] = invalid.value;
+        expect(
+          () => BootstrapResult.fromJson(wire),
+          throwsFormatException,
+          reason: '${invalid.key} must be strict int64 wire',
+        );
+      }
+    });
+
     test('minimum_supported_build is optional', () {
       final r = BootstrapResult.fromJson(<String, Object?>{
         'installation_token': 'tok-1',

@@ -226,11 +226,11 @@ final class BootstrapResult {
 
   /// Wire 时间：unix 秒（int64）。SDK 解析为 UTC DateTime，不依赖服务器时区。
   static DateTime _unixSeconds(Object? value) {
-    if (value is! num) {
+    if (value is! int) {
       throw FormatException('wire time must be unix seconds (int64): $value');
     }
     return DateTime.fromMillisecondsSinceEpoch(
-      value.toInt() * 1000,
+      value * 1000,
       isUtc: true,
     );
   }
