@@ -167,7 +167,7 @@
       "review_state": "R2_IMPLEMENTATION_READY",
       "review_evidence": "reports/S1-F01-004_INDEPENDENT_SDK_REVIEW_R1.md",
       "recovery_incident": "GOV-P0-F01-004-STALE-PUBLICATION-20260810",
-      "execution_gate": "READY_FROM_ROUTED_OWNER_BASELINE_FOR_EXACT_01_REPLAY_ONLY",
+      "execution_gate": "READY_FROM_IMMUTABLE_ROUTED_BASE_REF_FOR_EXACT_01_REPLAY_ONLY",
       "r1_closed": [
         "CONTRACT-INT64-01: strict int response parsing is present in frozen 01 replay proposal and independently reconstructed CI passed",
         "GOV-OWN-01: S1-F01-004A/B/C delivered by registered owners and were serially assembled into f11fb53"
@@ -178,7 +178,6 @@
         "59dd960e38ad51c2bd60b59044dfa1698f3a7909",
         "7929487b6a94e20c511725c706a7fa825c07c522"
       ],
-      "execution_base_commit": "5df87706b85bba7a935cd8c2aefc48975ba4b8c9",
       "owner_authorized_integration_branch": "integration/s1-f01-004-r2-owner-baseline",
       "owner_authorized_baseline_commit": "f11fb53d6ff6e6ec689797133e78f6b7a9219a05",
       "assembly_evidence": "reports/S1-F01-004_OWNER_AUTHORIZED_BASELINE_ASSEMBLY.md",
@@ -190,7 +189,8 @@
         "4aa233e"
       ],
       "r2_acceptance_gate": "Independent SDK Review R2 PASS required before DONE or downstream release",
-      "execution_router_commit": "5df87706b85bba7a935cd8c2aefc48975ba4b8c9"
+      "execution_base_ref": "refs/tags/s1-f01-004-r2-execution-base",
+      "routing_predecessor_commit": "5df87706b85bba7a935cd8c2aefc48975ba4b8c9"
     },
     "S1-F01-004A": {
       "status": "DONE",
