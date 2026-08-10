@@ -178,7 +178,7 @@
 
 ## Sprint 1-A Foundation Integration（Execution Epoch 2）
 
-状态：**IN PROGRESS / GOVERNED · F01-004 R1 RECOVERY**。`59dd960/7929487` stale publication 已进入 quarantine recovery；权威 R1=`e07e825 REQUEST CHANGES`。S1-F01-004 重新冻结为 WAIT，先由 004A/004B/004C 三个注册 Owner 提交各自 contribution，再由 Coordinator 组装 owner-authorized baseline，最后 SDK Core replay 01 并进入独立 R2。S1-F01-002 与 App NEBULA-DEP-002 均继续 WAIT。
+状态：**IN PROGRESS / GOVERNED · F01-004 R2 READY**。`59dd960/7929487` stale publication 已完成 quarantine；004A/004B/004C 三个注册 Owner contribution 已 DONE，并由 Coordinator 串行组装为 owner-authorized baseline `f11fb53`。S1-F01-004 现仅允许从该 baseline 在全新 R2 分支精确 replay `01-sdk-core.patch`，完成后进入独立 SDK Review R2。S1-F01-002 与 App NEBULA-DEP-002 继续 WAIT。
 
 唯一任务源：`task_board.json`。Implementation Agent 只读，不得自行 claim/DELIVERED/DONE 落盘。
 
@@ -191,10 +191,10 @@
 | S1-F01-001 Adapter Boundary | Agent A | **DONE / PASS** | Flutter NFC Writer | `s1/f01-001-adapter` |
 | S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **WAIT / SDK R2 + APP REPIN GATE** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
 | S1-F01-003 Bootstrap Contract Reconciliation | Agent D | **DONE / REVIEW PASS** | nebula-flutter-sdk | `s1/f01-003-bootstrap-contract-reconcile` |
-| S1-F01-004 SDK Bootstrap Surface Closure | Agent D | **WAIT / REQUEST CHANGES R1** | nebula-flutter-sdk | `s1/f01-004-sdk-bootstrap-surface` |
-| S1-F01-004A Public Surface Owner Recovery | SDK Architect | **READY / OWNER CONTRIBUTION** | nebula-flutter-sdk | `s1/f01-004a-public-surface-owner` |
-| S1-F01-004B Policy Owner Recovery | Architecture/PM | **READY / OWNER CONTRIBUTION** | nebula-flutter-sdk | `s1/f01-004b-policy-owner` |
-| S1-F01-004C Governance Owner Recovery | Quality | **READY / OWNER CONTRIBUTION** | nebula-flutter-sdk | `s1/f01-004c-governance-owner` |
+| S1-F01-004 SDK Bootstrap Surface Closure | Agent D | **READY / R2 CLEAN REPLAY ONLY** | nebula-flutter-sdk | `s1/f01-004-sdk-bootstrap-surface-r2` |
+| S1-F01-004A Public Surface Owner Recovery | SDK Architect | **DONE / OWNER CONTRIBUTION PASS** | nebula-flutter-sdk | `s1/f01-004a-public-surface-owner` |
+| S1-F01-004B Policy Owner Recovery | Architecture/PM | **DONE / OWNER CONTRIBUTION PASS** | nebula-flutter-sdk | `s1/f01-004b-policy-owner` |
+| S1-F01-004C Governance Owner Recovery | Quality | **DONE / OWNER CONTRIBUTION PASS** | nebula-flutter-sdk | `s1/f01-004c-governance-owner` |
 | S1-F02-001 Backend Runtime Config Audit | Agent B | READY | flypost_backend | `s1/f02-001-runtime-config-audit` |
 | S1-F02-002 SDK Runtime Config Closure | Agent B | READY (after F02-001) | nebula-flutter-sdk | `s1/f02-002-sdk-config` |
 | S1-F03-001 SDK Release Workflow | Agent C | READY | nebula-flutter-sdk | `s1/f03-001-release` |
