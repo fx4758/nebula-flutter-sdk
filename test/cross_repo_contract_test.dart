@@ -1,6 +1,8 @@
 import 'package:nebula_sdk/nebula_sdk.dart';
 import 'package:test/test.dart';
 
+import 'bootstrap_test_support.dart';
+
 // =============================================================================
 // FC-01 — Cross-repository contract reconciliation (docs/09 §4)
 //
@@ -89,8 +91,8 @@ void main() {
         for (final f in kBootstrapRequestFields) f: 'x',
       }..['platform'] = 'ios'; // enum wire value, not a free string
       final req = bootstrapRequestFromWire(json);
-      // Reconciliation-only round trip. Production serialization ownership is
-      // SDK S1-F01-004; this helper must never become an App production seam.
+      // Production round trip: S1-F01-004 owns canonical serialization in
+      // BootstrapRequest.toJson(); the legacy test helper delegates to it.
       expect(
         bootstrapRequestToWire(req).keys.toSet(),
         kBootstrapRequestFields.toSet(),
@@ -106,12 +108,11 @@ void main() {
 
     test('V2 optional values serialize as null; local environment is not wire',
         () {
-      const req = BootstrapRequest(
+      final req = fixtureBootstrapRequest(
         appId: 'app-a',
         installationId: 'inst-1',
-        platform: NebulaPlatform.ios,
-        publicKey: 'key-der',
         bootstrapRequestId: 'boot-1',
+        populatedOptionals: false,
       );
       req.validate();
       final wire = bootstrapRequestToWire(req);
@@ -299,12 +300,11 @@ void main() {
       // it must honor is one bounded bootstrap retry with the same
       // bootstrap_request_id (docs/08 §3) — the SDK request carries a stable
       // idempotency key for exactly one retry.
-      const req = BootstrapRequest(
+      final req = fixtureBootstrapRequest(
         appId: 'app-a',
         installationId: 'inst-1',
-        platform: NebulaPlatform.ios,
-        publicKey: 'key-der',
         bootstrapRequestId: 'req-1',
+        populatedOptionals: false,
       );
       req.validate();
       expect(req.bootstrapRequestId, 'req-1');
@@ -374,17 +374,4 @@ BootstrapRequest bootstrapRequestFromWire(Map<String, Object?> json) {
   );
 }
 
-Map<String, Object?> bootstrapRequestToWire(BootstrapRequest r) =>
-    <String, Object?>{
-      'app_id': r.appId,
-      'installation_id': r.installationId,
-      'platform': r.platform.name,
-      'app_version': r.appVersion,
-      'build_number': r.buildNumber,
-      'os_version': r.osVersion,
-      'locale': r.locale,
-      'region': r.region,
-      'public_key': r.publicKey,
-      'attestation': r.attestation,
-      'bootstrap_request_id': r.bootstrapRequestId,
-    };
+Map<String, Object?> bootstrapRequestToWire(BootstrapRequest r) => r.toJson();
