@@ -5,7 +5,7 @@
 - Contract authority: `CONTRACT-SDK-BOOTSTRAP V2` / FROZEN / PASS
 - Authorization: `ACR-SDK-BOOTSTRAP-001` / `sdk_public_api_mode=CHANGE_APPROVED`
 - Execution branch: `s1/f01-004-sdk-bootstrap-surface`
-- Delivery status: **IMPLEMENTED / PENDING INDEPENDENT SDK REVIEW**
+- Delivery status: **R1 REQUEST CHANGES / R2 CORE REWORK — INT64 CLOSED, OWNER INTEGRATION PENDING**
 
 ## Production closure
 
@@ -32,15 +32,15 @@ Approved new top-level public symbols: 4.
 
 `BootstrapRequest.toJson()` is a member on the existing public model. API snapshot moved from 121 to 125 symbols with no extra leak.
 
-## Governance closure for public `app_id`
+## Proposed governance integration for public `app_id` (owner handoff pending)
 
 The frozen bootstrap request must serialize public `app_id` (product/app key), while the existing `DATA-TRUST-BODY-APP-ID` rule correctly forbids mobile-authored trusted App scope elsewhere.
 
-The guard now supports exact `allowed_paths` only. The sole exception is:
+The current mixed-owner candidate demonstrates an exact-path + bounded-match implementation. It is **not** accepted as SDK Core-owned governance. The proposed sole exception is:
 
 `lib/src/auth/installation.dart`
 
-Reason: Bootstrap V2 sends the public app key; Backend independently resolves trusted numeric AppID. Wildcard allowed paths are mechanically rejected, and the existing “body-authored app scope” regression in other files remains blocking.
+Reason: Bootstrap V2 sends the public app key; Backend independently resolves trusted numeric AppID. Wildcard allowed paths are mechanically rejected, and a second same-file match exceeds `allowed_match_count=1`. Per R1 GOV-OWN-01, `governance/policy.json`, `governance/**`, `tool/**`, and `lib/nebula_sdk.dart` must be landed/reviewed by their registered serial owners before this mechanism can count as accepted governance.
 
 ## Verification evidence
 
@@ -48,7 +48,7 @@ Latest pre-delivery gates:
 
 - `dart format --output=none --set-exit-if-changed .` PASS
 - `dart analyze` PASS / 0 issues
-- `dart test` **210/210 PASS**
+- `dart test` **211/211 PASS**
 - real loopback `HttpTransport -> NebulaBootstrapClient` integration PASS
 - Product-name erasure PASS
 - `Nebula Governance` PASS
@@ -76,6 +76,31 @@ M1-M4 restore hash matched exactly; M5-M6 restore hash matched exactly. Post-res
 
 Independent review R1 found a real whole-file exemption blind spot: a second `app_id` mapping added inside the exact allowed file was initially invisible. The guard was tightened to `allowed_match_count=1`; regression now proves both missing match budget and a second same-file match are blocking. Reviewer mutation R1 is therefore closed mechanically rather than by convention.
 
+## R1 blocker rework
+
+### CONTRACT-INT64-01 — CLOSED in SDK Core write set
+
+`BootstrapResult` now accepts only Dart `int` for `expires_at`, `renew_after`, and `server_time`. Fractional JSON numbers are rejected with `FormatException`; no `toInt()`, rounding, or truncation remains. Regression probes cover `1.75`, `1.25`, and `1.5` on the three fields. Locked CI (`flypost/nebula-sdk-ci:20260810-v1`, Dart 3.12.0) passes 211/211 tests.
+
+### GOV-OWN-01 — NOT SELF-CLOSED; owner split prepared
+
+The implementation Agent does not claim ownership of the mixed-owner history in `19fc097` / `e101c7a` / `a7ccd6c`. An exact, non-overlapping handoff bundle was generated outside the repository at:
+
+`/Users/sean/Documents/project/forAI/handoff-s1-f01-004-r2`
+
+It splits the candidate tree into:
+
+- `01-sdk-core.patch` — Auth/SDK implementation + task tests/report;
+- `02-sdk-architect-public-surface.patch` — `lib/nebula_sdk.dart`;
+- `03-architecture-pm-policy.patch` — `governance/policy.json`;
+- `04-quality-governance-surface.patch` — API allowlist/snapshot + governance tool/tests.
+
+Applying all four patches to `da2944d` is mechanically verified against the extracted candidate Git tree; the exact tip/tree hashes are recorded in the handoff bundle. These patches are handoff proposals, **not owner authorization**. The final reviewed candidate must be rebuilt/replayed after the registered owners land or explicitly approve their exact paths.
+
+### Stale publication race
+
+A pre-R1 publication race advanced `hub/main` to `59dd960` and later prepared `ai/S1-F01-004-review-publication@7929487` as DONE/PASS. Those commits predate/conflict with authoritative R1 `e07e825` REQUEST CHANGES and must not be used as evidence that F01-004 passed review. This implementation Agent did not modify Coordinator-owned task state.
+
 ## Residual / downstream
 
 - Backend remains the authoritative P-256 parser/validator; SDK validation is fail-fast defense, not a trust boundary.
@@ -83,4 +108,4 @@ Independent review R1 found a real whole-file exemption blind spot: a second `ap
 - This Story does not implement App KeyStore/Keychain, installation-token secure storage, proof signing, or App lifecycle. Those remain NFC Writer `NEBULA-APP-001B` responsibilities after immutable SDK repin.
 - No Backend or App repository was modified.
 
-This implementation Agent does **not** mark S1-F01-004 DONE and does not release `S1-F01-002`. Independent SDK Review and separate Coordinator publication remain mandatory.
+This implementation Agent does **not** mark S1-F01-004 DONE and does not release `NEBULA-DEP-002` or `S1-F01-002`. Owner-sensitive integration, independent R2 SDK Review, and separate Coordinator publication remain mandatory.
