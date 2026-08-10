@@ -149,6 +149,26 @@ void main() {
         target.remove('allowed_path_reason');
       });
     }),
+    GuardCase.fail('policy allowed path requires match budget', 'GOV-POLICY',
+        (Directory root) {
+      _editPolicy(root, (Map<String, Object?> policy) {
+        final List<Object?> patterns =
+            policy['forbidden_source_patterns']! as List<Object?>;
+        final Map<String, Object?> target = patterns
+            .map((Object? raw) => (raw! as Map).cast<String, Object?>())
+            .firstWhere((Map<String, Object?> p) =>
+                p['id'] == 'DATA-TRUST-BODY-APP-ID');
+        target.remove('allowed_match_count');
+      });
+    }),
+    GuardCase.fail(
+        'allowed path match budget exceeded', 'DATA-TRUST-BODY-APP-ID',
+        (Directory root) {
+      File('${root.path}/lib/src/auth/installation.dart').writeAsStringSync(
+        "\nfinal reviewerBadScope = {'app_id': otherAppId};\n",
+        mode: FileMode.append,
+      );
+    }),
     GuardCase.fail('expired exception', 'GOV-EXCEPTION', (Directory root) {
       _writeExceptions(root, <Map<String, Object?>>[
         _validException('EX-EXPIRED')..['expires_on'] = '2020-01-01',

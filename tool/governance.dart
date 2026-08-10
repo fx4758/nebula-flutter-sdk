@@ -224,11 +224,6 @@ void _checkSources(
     }
     final String contents = lines.join('\n');
     for (final Map<String, Object?> pattern in patterns) {
-      final Set<String> allowedPaths =
-          (pattern['allowed_paths'] as List<Object?>? ?? <Object?>[])
-              .cast<String>()
-              .toSet();
-      if (allowedPaths.contains(relative)) continue;
       RegExp expression;
       try {
         expression = _patternFromPolicy(pattern);
@@ -237,6 +232,25 @@ void _checkSources(
           Finding(
             'GOV-POLICY',
             '${pattern['id']! as String} invalid regex: $error',
+          ),
+        );
+        continue;
+      }
+      final Set<String> allowedPaths =
+          (pattern['allowed_paths'] as List<Object?>? ?? <Object?>[])
+              .cast<String>()
+              .toSet();
+      if (allowedPaths.contains(relative)) {
+        final int allowedMatchCount =
+            pattern['allowed_match_count'] as int? ?? 0;
+        final int actualMatchCount = expression.allMatches(contents).length;
+        if (actualMatchCount <= allowedMatchCount) continue;
+        findings.add(
+          Finding(
+            pattern['id']! as String,
+            '$relative has $actualMatchCount matching occurrence(s); '
+            'allowed budget is $allowedMatchCount: '
+            '${pattern['reason']! as String}',
           ),
         );
         continue;
@@ -315,6 +329,7 @@ void _checkPolicyExamples(
     }
     final List<Object?> allowedPaths =
         pattern['allowed_paths'] as List<Object?>? ?? <Object?>[];
+    final Object? allowedMatchCount = pattern['allowed_match_count'];
     if (allowedPaths.isNotEmpty) {
       final Object? reason = pattern['allowed_path_reason'];
       if (reason is! String || reason.trim().isEmpty) {
@@ -322,6 +337,18 @@ void _checkPolicyExamples(
           Finding('GOV-POLICY', '$id allowed_paths require a reason'),
         );
       }
+      if (allowedMatchCount is! int || allowedMatchCount <= 0) {
+        findings.add(
+          Finding(
+            'GOV-POLICY',
+            '$id allowed_paths require positive allowed_match_count',
+          ),
+        );
+      }
+    } else if (allowedMatchCount != null) {
+      findings.add(
+        Finding('GOV-POLICY', '$id allowed_match_count requires allowed_paths'),
+      );
     }
     for (final Object? rawPath in allowedPaths) {
       final String path = rawPath! as String;

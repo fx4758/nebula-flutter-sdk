@@ -52,7 +52,7 @@ Latest pre-delivery gates:
 - real loopback `HttpTransport -> NebulaBootstrapClient` integration PASS
 - Product-name erasure PASS
 - `Nebula Governance` PASS
-- Governance regression **28 cases PASS**
+- Governance regression **30 cases PASS**
 - API surface PASS: 125 symbols
 - Secret scan PASS
 - Task Source Guard `S1-F01-004` PASS
@@ -73,6 +73,8 @@ Temporary production mutations were injected and restored; all were caught:
 - M6 classify `50001` as invalid installation -> Bootstrap error-classification test FAIL.
 
 M1-M4 restore hash matched exactly; M5-M6 restore hash matched exactly. Post-restore targeted tests PASS.
+
+Independent review R1 found a real whole-file exemption blind spot: a second `app_id` mapping added inside the exact allowed file was initially invisible. The guard was tightened to `allowed_match_count=1`; regression now proves both missing match budget and a second same-file match are blocking. Reviewer mutation R1 is therefore closed mechanically rather than by convention.
 
 ## Residual / downstream
 
