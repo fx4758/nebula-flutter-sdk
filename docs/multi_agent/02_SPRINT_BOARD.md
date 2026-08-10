@@ -178,7 +178,7 @@
 
 ## Sprint 1-A Foundation Integration（Execution Epoch 2）
 
-状态：**IN PROGRESS / GOVERNED · F01-004 DONE / R2 PASS**。`S1-F01-004` clean R2 candidate `07e26d5` 已通过 Independent SDK Review R2 `e33ebeb`，Coordinator publication 正式关闭该 SDK Story。下一唯一跨仓 gate 是 App-side `NEBULA-DEP-002` immutable SDK repin；在 repin DONE 前，`S1-F01-002` 继续 WAIT。
+状态：**IN PROGRESS / GOVERNED · F01-002 WAIT ON APP HOST PREREQUISITES**。SDK Bootstrap surface 与 App SDK repin 均已关闭；App canonical `dev=5d2f4cf` 已接受 preflight ACR `0fd061d`，当前必须等待 `NEBULA-APP-SECURE-001` + `NEBULA-APP-PROFILE-001` owner closure。两者 DONE 前 `S1-F01-002` 不可执行。
 
 唯一任务源：`task_board.json`。Implementation Agent 只读，不得自行 claim/DELIVERED/DONE 落盘。
 
@@ -189,7 +189,7 @@
 | Story | Owner | State | Execution Repo | Execution Branch |
 |---|---|---|---|---|
 | S1-F01-001 Adapter Boundary | Agent A | **DONE / PASS** | Flutter NFC Writer | `s1/f01-001-adapter` |
-| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **WAIT / APP REPIN GATE ONLY** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
+| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **WAIT / APP SECURE + PROFILE** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
 | S1-F01-003 Bootstrap Contract Reconciliation | Agent D | **DONE / REVIEW PASS** | nebula-flutter-sdk | `s1/f01-003-bootstrap-contract-reconcile` |
 | S1-F01-004 SDK Bootstrap Surface Closure | Agent D | **DONE / INDEPENDENT R2 PASS** | nebula-flutter-sdk | `s1/f01-004-sdk-bootstrap-surface-r2` |
 | S1-F01-004A Public Surface Owner Recovery | SDK Architect | **DONE / OWNER CONTRIBUTION PASS** | nebula-flutter-sdk | `s1/f01-004a-public-surface-owner` |
