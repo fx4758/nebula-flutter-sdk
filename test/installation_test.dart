@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:nebula_sdk/nebula_sdk.dart';
 import 'package:test/test.dart';
+
+import 'bootstrap_test_support.dart';
 
 void main() {
   group('InstallationIdentity', () {
@@ -28,106 +32,117 @@ void main() {
     });
   });
 
-  group(
-      'BootstrapRequest.validate (current SDK implementation; V2 closure pending F01-004)',
-      () {
-    BootstrapRequest valid() => const BootstrapRequest(
-          appId: 'app-a',
-          installationId: 'inst-1',
-          platform: NebulaPlatform.android,
-          publicKey: 'public-key-der',
-          bootstrapRequestId: 'req-1',
-        );
-
-    test('accepts a fully valid request', () {
-      expect(() => valid().validate(), returnsNormally);
+  group('BootstrapRequest V2 validation + canonical serialization', () {
+    test('accepts the populated frozen fixture', () {
+      expect(() => fixtureBootstrapRequest().validate(), returnsNormally);
     });
 
-    test('rejects empty appId', () {
-      final r = valid();
+    test('canonical toJson emits exactly 11 keys with explicit null optionals',
+        () {
+      final BootstrapRequest request =
+          fixtureBootstrapRequest(populatedOptionals: false);
+      request.validate();
       expect(
-        () => BootstrapRequest(
-          appId: '',
-          installationId: r.installationId,
-          platform: r.platform,
-          publicKey: r.publicKey,
-          bootstrapRequestId: r.bootstrapRequestId,
-        ).validate(),
+        request.toJson(),
+        <String, Object?>{
+          'app_id': request.appId,
+          'installation_id': request.installationId,
+          'platform': request.platform.name,
+          'app_version': null,
+          'build_number': null,
+          'os_version': null,
+          'locale': null,
+          'region': null,
+          'public_key': request.publicKey,
+          'attestation': null,
+          'bootstrap_request_id': request.bootstrapRequestId,
+        },
+      );
+    });
+
+    test('required identity fields use 64 UTF-8 byte caps', () {
+      final BootstrapRequest pass = fixtureBootstrapRequest(appId: 'é' * 32);
+      expect(() => pass.validate(), returnsNormally); // 64 UTF-8 bytes.
+      final BootstrapRequest fail = fixtureBootstrapRequest(appId: 'é' * 33);
+      expect(() => fail.validate(), throwsArgumentError); // 66 bytes.
+      expect(
+        () => fixtureBootstrapRequest(installationId: '').validate(),
         throwsArgumentError,
       );
     });
 
-    test('rejects string fields over 128 chars', () {
-      final r = valid();
-      expect(
-        () => BootstrapRequest(
-          appId: r.appId,
-          installationId: 'x' * 129,
-          platform: r.platform,
-          publicKey: r.publicKey,
-          bootstrapRequestId: r.bootstrapRequestId,
-        ).validate(),
-        throwsArgumentError,
+    test('diagnostic/routing optionals reject empty and use field byte caps',
+        () {
+      final BootstrapRequest empty = BootstrapRequest(
+        appId: 'app-a',
+        installationId: 'inst-a',
+        platform: NebulaPlatform.android,
+        publicKey: fixtureP256PublicKey,
+        bootstrapRequestId: 'req-a',
+        appVersion: '',
+        buildNumber: '',
+        osVersion: '',
+        locale: '',
+        region: '',
+        attestation: '',
       );
+      expect(() => empty.validate(), throwsArgumentError);
       expect(
-        () => BootstrapRequest(
-          appId: r.appId,
-          installationId: r.installationId,
-          platform: r.platform,
-          publicKey: r.publicKey,
-          bootstrapRequestId: r.bootstrapRequestId,
-          osVersion: 'x' * 129,
-        ).validate(),
+        () => fixtureBootstrapRequest(locale: '界' * 21).validate(),
+        returnsNormally,
+      ); // 63 bytes.
+      expect(
+        () => fixtureBootstrapRequest(locale: '界' * 22).validate(),
         throwsArgumentError,
-      );
+      ); // 66 bytes.
+      expect(
+        () => fixtureBootstrapRequest(osVersion: 'é' * 65).validate(),
+        throwsArgumentError,
+      ); // 130 bytes.
     });
 
-    test('attestation cap is 16 KiB, not 128 chars (provider evidence)', () {
-      final r = valid();
+    test('attestation uses 16 KiB byte cap and canonical body uses 32 KiB cap',
+        () {
       expect(
-        () => BootstrapRequest(
-          appId: r.appId,
-          installationId: r.installationId,
-          platform: r.platform,
-          publicKey: r.publicKey,
-          bootstrapRequestId: r.bootstrapRequestId,
-          attestation: 'x' * 16000, // < 16 KiB
-        ).validate(),
+        () => fixtureBootstrapRequest(attestation: 'x' * 16384).validate(),
         returnsNormally,
       );
       expect(
-        () => BootstrapRequest(
-          appId: r.appId,
-          installationId: r.installationId,
-          platform: r.platform,
-          publicKey: r.publicKey,
-          bootstrapRequestId: r.bootstrapRequestId,
-          attestation: 'x' * 16385, // > 16 KiB
-        ).validate(),
+        () => fixtureBootstrapRequest(attestation: 'x' * 16385).validate(),
+        throwsArgumentError,
+      );
+      // Field bytes are legal, but JSON escaping doubles every quote and pushes
+      // the canonical body over the Backend's 32 KiB BodyLimit.
+      expect(
+        () => fixtureBootstrapRequest(attestation: '"' * 16384).validate(),
         throwsArgumentError,
       );
     });
 
-    test('publicKey allows ES256 DER well under the cap and rejects empty', () {
-      final r = valid();
+    test('public key must be valid base64url P-256 SPKI DER', () {
+      expect(() => fixtureBootstrapRequest().validate(), returnsNormally);
       expect(
-        () => BootstrapRequest(
-          appId: r.appId,
-          installationId: r.installationId,
-          platform: r.platform,
-          publicKey: 'x' * 2048,
-          bootstrapRequestId: r.bootstrapRequestId,
+        () => fixtureBootstrapRequest(
+          publicKey: '${fixtureP256PublicKey}==',
         ).validate(),
         returnsNormally,
+      ); // Backend accepts padded base64url too.
+      expect(
+        () => fixtureBootstrapRequest(publicKey: 'not+base64/key').validate(),
+        throwsArgumentError,
       );
       expect(
-        () => BootstrapRequest(
-          appId: r.appId,
-          installationId: r.installationId,
-          platform: r.platform,
-          publicKey: '',
-          bootstrapRequestId: r.bootstrapRequestId,
-        ).validate(),
+        () => fixtureBootstrapRequest(publicKey: 'x' * 1025).validate(),
+        throwsArgumentError,
+      );
+
+      final List<int> der = base64Url.decode(
+        base64Url.normalize(fixtureP256PublicKey),
+      );
+      der[der.length - 1] ^= 1; // corrupt the curve point, keep DER shape.
+      final String corrupted = base64Url.encode(der).replaceAll('=', '');
+      expect(
+        () => fixtureBootstrapRequest(publicKey: corrupted).validate(),
         throwsArgumentError,
       );
     });

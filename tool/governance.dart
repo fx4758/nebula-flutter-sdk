@@ -224,6 +224,11 @@ void _checkSources(
     }
     final String contents = lines.join('\n');
     for (final Map<String, Object?> pattern in patterns) {
+      final Set<String> allowedPaths =
+          (pattern['allowed_paths'] as List<Object?>? ?? <Object?>[])
+              .cast<String>()
+              .toSet();
+      if (allowedPaths.contains(relative)) continue;
       RegExp expression;
       try {
         expression = _patternFromPolicy(pattern);
@@ -307,6 +312,24 @@ void _checkPolicyExamples(
     } on FormatException catch (error) {
       findings.add(Finding('GOV-POLICY', '$id invalid regex: $error'));
       continue;
+    }
+    final List<Object?> allowedPaths =
+        pattern['allowed_paths'] as List<Object?>? ?? <Object?>[];
+    if (allowedPaths.isNotEmpty) {
+      final Object? reason = pattern['allowed_path_reason'];
+      if (reason is! String || reason.trim().isEmpty) {
+        findings.add(
+          Finding('GOV-POLICY', '$id allowed_paths require a reason'),
+        );
+      }
+    }
+    for (final Object? rawPath in allowedPaths) {
+      final String path = rawPath! as String;
+      if (!path.startsWith('lib/') || path.contains('*')) {
+        findings.add(
+          Finding('GOV-POLICY', '$id has invalid allowed_path: $path'),
+        );
+      }
     }
     final List<Object?> matches =
         pattern['examples_match'] as List<Object?>? ?? <Object?>[];
