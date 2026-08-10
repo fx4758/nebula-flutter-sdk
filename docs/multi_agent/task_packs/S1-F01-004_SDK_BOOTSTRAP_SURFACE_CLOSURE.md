@@ -8,7 +8,7 @@
 - SDK public API mode：`CHANGE_APPROVED`
 
 ## Execution gate
-**READY / R2 CLEAN REPLAY ONLY.** Registered Owner contributions `S1-F01-004A/B/C` are DONE and Coordinator assembled them serially into `integration/s1-f01-004-r2-owner-baseline @ f11fb53d6ff6e6ec689797133e78f6b7a9219a05`. Owner/runtime baseline is exactly `f11fb53d6ff6e6ec689797133e78f6b7a9219a05`. Coordinator overlays routing-only state on `s1/f01-004-sdk-bootstrap-surface-r2` and freezes the resulting executable head with immutable tag `refs/tags/s1-f01-004-r2-execution-base`. SDK Core must start from that tag/branch head and replay only the frozen `01-sdk-core.patch`. The old mixed-owner branch/commits remain evidence only. Independent SDK Review R2 is still mandatory before DONE.
+**DONE / INDEPENDENT SDK REVIEW R2 PASS.** Candidate `07e26d5376c1715c5daba909572af37483c71fbe` was independently reviewed at `e33ebebdb80d224956cffccf47ceab4a7d33343c` with zero blocking findings. SDK Core must stop; this Story is no longer executable. Downstream release is limited to App-side `NEBULA-DEP-002` repin; `S1-F01-002` remains WAIT until that repin is DONE.
 
 ## Goal
 Implement the minimum canonical SDK-owned bootstrap surface after contract re-freeze.
