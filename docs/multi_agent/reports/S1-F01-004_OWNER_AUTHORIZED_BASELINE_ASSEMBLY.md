@@ -7,6 +7,7 @@
 - Integration branch: `integration/s1-f01-004-r2-owner-baseline`
 - Owner-authorized baseline: `f11fb53d6ff6e6ec689797133e78f6b7a9219a05`
 - SDK Core clean R2 branch: `s1/f01-004-sdk-bootstrap-surface-r2`
+- Routed execution base: `5df87706b85bba7a935cd8c2aefc48975ba4b8c9` (parent `f11fb53`; routing/docs only)
 
 ## Owner contribution acceptance
 
@@ -34,8 +35,9 @@ Mixed-owner historical commits `19fc097`, `e101c7a`, `a7ccd6c`, and `4aa233e` re
 The old execution branch `s1/f01-004-sdk-bootstrap-surface` is superseded. Clean execution is pinned to:
 
 ```text
-branch: s1/f01-004-sdk-bootstrap-surface-r2
-base:   f11fb53d6ff6e6ec689797133e78f6b7a9219a05
+branch:        s1/f01-004-sdk-bootstrap-surface-r2
+owner baseline: f11fb53d6ff6e6ec689797133e78f6b7a9219a05
+execution base: 5df87706b85bba7a935cd8c2aefc48975ba4b8c9
 ```
 
 ## Independent reconstructed R2 verification
