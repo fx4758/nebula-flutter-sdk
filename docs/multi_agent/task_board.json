@@ -22,7 +22,7 @@
   },
   "sprint1_entry": {
     "status": "IN_PROGRESS",
-    "note": "S1-F01-004 SDK Bootstrap Surface Closure is DONE / Independent R2 PASS at 07e26d5 with review e33ebeb. Next cross-repo gate is App-side NEBULA-DEP-002 immutable SDK repin; S1-F01-002 remains WAIT until repin DONE."
+    "note": "S1-F01-002 NFC Writer Reference Bootstrap Integration is READY after Coordinator verified App Secure/Profile canonical publication, immutable SDK pin ad2da9d, and fresh execution worktree rebuilt from App dev=6fa58b2."
   },
   "story_tracking": {
     "S1-F01-001": {
@@ -84,7 +84,7 @@
       ]
     },
     "S1-F01-002": {
-      "status": "WAIT",
+      "status": "READY",
       "owner": "Flutter Integration Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -102,22 +102,22 @@
       "execution_worktree": "wt-s1f01-002-app",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "dependency_state": "BLOCKED_ON_APP_HOST_PREREQUISITES",
-      "ready_note": "App preflight ACR accepted by Architecture. WAIT until NEBULA-APP-SECURE-001 and NEBULA-APP-PROFILE-001 are owner-reviewed and Coordinator-published DONE; then recreate s1/f01-002-bootstrap worktree from latest App origin/dev before execution.",
+      "dependency_state": "SATISFIED",
+      "ready_note": "Coordinator preflight satisfied: App canonical dev=6fa58b2050032ddbdd10ecf19a99424d47abbb8d contains NEBULA-APP-SECURE-001 DONE / REVIEW PASS and NEBULA-APP-PROFILE-001 DONE / REVIEW PASS; wt-s1f01-002-app was freshly rebuilt from that dev; App SDK pin ad2da9d36f6d2561bd9a5a5644c777d6e3ddffe4 verified.",
       "story_name": "NFC Writer Reference Bootstrap Integration",
       "reference_consumer": "NFC Writer",
       "future_consumers": [
         "StarSprout",
         "FlyPost"
       ],
-      "execution_gate": "WAIT_FOR_APP_SECURE_AND_PROFILE",
+      "execution_gate": "OPEN",
       "external_dependencies": [
         "flutter NFC Writer:NEBULA-DEP-001=DONE",
         "flutter NFC Writer:NEBULA-APP-001A=DONE",
         "flutter NFC Writer:NEBULA-DEP-002=DONE"
       ],
       "preflight_acr": "0fd061d51bd89313eb86cd774bb1ef5413d5a0d0",
-      "app_canonical_dev": "5d2f4cf0710abf248feea68335bcf281c4300aea",
+      "app_canonical_dev": "6fa58b2050032ddbdd10ecf19a99424d47abbb8d",
       "external_prerequisites": [
         "NEBULA-APP-SECURE-001",
         "NEBULA-APP-PROFILE-001"

@@ -12,21 +12,19 @@
 
 ## Execution gate
 
-当前 Story 定义已冻结，但**不得领取**，直到 Coordinator 机械确认：
+**READY / COORDINATOR PREFLIGHT PASS.** 以下冻结前置条件已机械满足：
 
 1. `S1-F01-003 = DONE`（bootstrap contract reconciliation）；
 2. `S1-F01-004 = DONE`（canonical SDK bootstrap surface closure）；
 3. `flutter NFC Writer:NEBULA-DEP-001 = DONE`；
 4. `flutter NFC Writer:NEBULA-APP-001A = DONE`；
-5. `flutter NFC Writer:NEBULA-DEP-002 = DONE`（已满足）；
-6. `flutter NFC Writer:NEBULA-APP-SECURE-001 = DONE`（secure installation identity）；
-7. `flutter NFC Writer:NEBULA-APP-PROFILE-001 = DONE`（public product registration/runtime profile）；
-8. 从届时最新 App `dev` **重新创建** `s1/f01-002-bootstrap` / `wt-s1f01-002-app`；当前 ACR worktree 不得继续 production implementation；
-9. Task Board 由 Coordinator 将本 Story `WAIT -> READY`。
+5. `flutter NFC Writer:NEBULA-DEP-002 = DONE`，immutable SDK pin=`ad2da9d36f6d2561bd9a5a5644c777d6e3ddffe4`；
+6. `flutter NFC Writer:NEBULA-APP-SECURE-001 = DONE / REVIEW PASS`；
+7. `flutter NFC Writer:NEBULA-APP-PROFILE-001 = DONE / REVIEW PASS`；
+8. App canonical `dev=6fa58b2050032ddbdd10ecf19a99424d47abbb8d`；
+9. `s1/f01-002-bootstrap` / `wt-s1f01-002-app` 已从该 canonical dev 全新重建。
 
-当前 blocker authority：App ACR `0fd061d51bd89313eb86cd774bb1ef5413d5a0d0`，Architecture publication 已进入 App canonical `dev=5d2f4cf0710abf248feea68335bcf281c4300aea`。
-
-`NEBULA-APP-SECURE-001` 与 `NEBULA-APP-PROFILE-001` 是 App-owned prerequisite，不授权本 Story 扩大 `Platform API mode=NONE` 或修改 SDK/Backend。
+Coordinator 已将 execution SSOT `WAIT -> READY`。Implementation Agent 仍不得扩大 `Platform API mode=NONE`、修改 SDK/Backend、重做 Secure native storage 或 Profile authority。
 
 历史 `S1-F01-001` 的 DONE 只证明 Adapter Boundary 合同成立，不授权在旧 App baseline 上继续 bootstrap。
 
