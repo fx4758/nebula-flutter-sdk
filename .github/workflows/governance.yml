@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: https://data.forgejo.org/actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: dart-lang/setup-dart@v1
+      - uses: https://github.com/dart-lang/setup-dart@v1
         with:
           sdk: stable
       - run: dart pub get
@@ -30,17 +30,19 @@ jobs:
       - run: dart run tool/coordinator_publication_mode_test.dart
       - if: github.event_name == 'pull_request'
         shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           MODE="$(dart run tool/coordinator_publication_mode.dart --event-path "$GITHUB_EVENT_PATH")"
           case "$MODE" in
             coordinator)
               dart run tool/coordinator_state_guard.dart \
-                --base "${{ github.event.pull_request.base.sha }}" \
+                --base "$PR_BASE_SHA" \
                 --coordinator
               ;;
             implementation)
               dart run tool/coordinator_state_guard.dart \
-                --base "${{ github.event.pull_request.base.sha }}"
+                --base "$PR_BASE_SHA"
               ;;
             *)
               echo "unexpected coordinator publication mode: $MODE" >&2
