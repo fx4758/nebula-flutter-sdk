@@ -90,7 +90,8 @@
       "reviewer": "Architecture Review Agent",
       "task_pack": "task_packs/S1-F01-002_BOOTSTRAP_LIFECYCLE.md",
       "depends_on": [
-        "S1-F01-001"
+        "S1-F01-001",
+        "S1-F01-004"
       ],
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
@@ -101,19 +102,59 @@
       "execution_worktree": "wt-s1f01-002-app",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "dependency_state": "INTERNAL_SATISFIED_EXTERNAL_WAIT",
-      "ready_note": "F01-001 is DONE, but current NFC Writer baseline still requires NEBULA-DEP-001 -> NEBULA-APP-001A before bootstrap. Coordinator must rebase/recreate the Story worktree from then-current App dev and flip WAIT -> READY; Implementation Agent must not claim while WAIT.",
+      "dependency_state": "BLOCKED_ON_SDK_BOOTSTRAP_CLOSURE_AND_APP_REPIN",
+      "ready_note": "Do NOT promote: require S1-F01-003 DONE -> S1-F01-004 DONE -> App NEBULA-DEP-002 DONE; then Coordinator recreates worktree from latest App dev and flips WAIT -> READY.",
       "story_name": "NFC Writer Reference Bootstrap Integration",
       "reference_consumer": "NFC Writer",
       "future_consumers": [
         "StarSprout",
         "FlyPost"
       ],
-      "execution_gate": "WAIT_FOR_CURRENT_APP_BASELINE",
+      "execution_gate": "WAIT_FOR_SDK_BOOTSTRAP_CLOSURE_AND_APP_REPIN",
       "external_dependencies": [
         "flutter NFC Writer:NEBULA-DEP-001=DONE",
-        "flutter NFC Writer:NEBULA-APP-001A=DONE"
+        "flutter NFC Writer:NEBULA-APP-001A=DONE",
+        "flutter NFC Writer:NEBULA-DEP-002=DONE"
       ]
+    },
+    "S1-F01-003": {
+      "status": "READY",
+      "owner": "SDK Contract Agent",
+      "agent": "D",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/S1-F01-003_BOOTSTRAP_CONTRACT_RECONCILIATION.md",
+      "depends_on": [],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "NONE",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "s1/f01-003-bootstrap-contract-reconcile",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-s1f01-003-sdk-contract",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "gap_id": "ACR-SDK-BOOTSTRAP-001",
+      "backend_authority_ref": "FlyPostAPI Dev @ 956981c119b01a0c1b4bf0793a20bed8f31d1180"
+    },
+    "S1-F01-004": {
+      "status": "WAIT",
+      "owner": "SDK Core Agent",
+      "agent": "D",
+      "reviewer": "SDK Review Agent",
+      "task_pack": "task_packs/S1-F01-004_SDK_BOOTSTRAP_SURFACE_CLOSURE.md",
+      "depends_on": [
+        "S1-F01-003"
+      ],
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "s1/f01-004-sdk-bootstrap-surface",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-s1f01-004-sdk-bootstrap",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "promotion_gate": "After F01-003 DONE, Coordinator must set WAIT->READY and sdk_public_api_mode->CHANGE_APPROVED."
     },
     "S1-F02-001": {
       "status": "READY",

@@ -14,10 +14,13 @@
 
 当前 Story 定义已冻结，但**不得领取**，直到 Coordinator 机械确认：
 
-1. `flutter NFC Writer:NEBULA-DEP-001 = DONE`；
-2. `flutter NFC Writer:NEBULA-APP-001A = DONE`；
-3. 从当时最新 App `dev` 创建/重建 `s1/f01-002-bootstrap` 隔离 worktree；
-4. Task Board 由 Coordinator 将本 Story `WAIT -> READY`。
+1. `S1-F01-003 = DONE`（bootstrap contract reconciliation）；
+2. `S1-F01-004 = DONE`（canonical SDK bootstrap surface closure）；
+3. `flutter NFC Writer:NEBULA-DEP-001 = DONE`；
+4. `flutter NFC Writer:NEBULA-APP-001A = DONE`；
+5. `flutter NFC Writer:NEBULA-DEP-002 = DONE`（new SDK commit immutable repin）；
+6. 从当时最新 App `dev` 创建/重建 `s1/f01-002-bootstrap` 隔离 worktree；
+7. Task Board 由 Coordinator 将本 Story `WAIT -> READY`。
 
 历史 `S1-F01-001` 的 DONE 只证明 Adapter Boundary 合同成立，不授权在旧 App baseline 上继续 bootstrap。
 
