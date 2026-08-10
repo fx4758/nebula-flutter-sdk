@@ -42,6 +42,33 @@ void main() {
       expect(req.attestation, isNull); // not_supported flow
     });
 
+    test('V2 optional request values are nullable in the canonical fixture',
+        () {
+      final json = _fixture('bootstrap_request_optional_nulls');
+      final req = BootstrapRequest(
+        appId: json['app_id']! as String,
+        installationId: json['installation_id']! as String,
+        platform: NebulaPlatform.values.byName(json['platform']! as String),
+        appVersion: json['app_version'] as String?,
+        buildNumber: json['build_number'] as String?,
+        osVersion: json['os_version'] as String?,
+        locale: json['locale'] as String?,
+        region: json['region'] as String?,
+        publicKey: json['public_key']! as String,
+        attestation: json['attestation'] as String?,
+        bootstrapRequestId: json['bootstrap_request_id']! as String,
+      );
+      req.validate();
+      expect(req.appVersion, isNull);
+      expect(req.buildNumber, isNull);
+      expect(req.osVersion, isNull);
+      expect(req.locale, isNull);
+      expect(req.region, isNull);
+      expect(req.attestation, isNull);
+      expect(json.keys, isNot(contains('environment')));
+      expect(json.keys, isNot(contains('key_algorithm')));
+    });
+
     test('public key fixture parses as valid base64url DER (SPKI length)', () {
       final json = _fixture('bootstrap_request');
       final der =
@@ -86,6 +113,21 @@ void main() {
         result.expiresAt.difference(result.serverTime),
         const Duration(hours: 24),
       );
+    });
+
+    test('paired fixtures preserve bootstrap idempotency and renewal semantics',
+        () {
+      final request = _fixture('bootstrap_request');
+      final response = _fixture('bootstrap_response');
+      expect(response['app_id'], request['app_id']);
+      expect(response['installation_id'], request['installation_id']);
+      expect(response['request_id'], request['bootstrap_request_id']);
+
+      final serverTime = response['server_time']! as int;
+      final expiresAt = response['expires_at']! as int;
+      final renewAfter = response['renew_after']! as int;
+      final ttl = expiresAt - serverTime;
+      expect(renewAfter - serverTime, (ttl * 8) ~/ 10);
     });
   });
 

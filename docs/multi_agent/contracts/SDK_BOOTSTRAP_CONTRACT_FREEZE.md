@@ -1,95 +1,152 @@
 # SDK Bootstrap Contract Freeze
 
 - **Contract ID**：CONTRACT-SDK-BOOTSTRAP
-- **Status**：FROZEN（基线取自既有的 aligned 实现 + fixtures，非新发明）
-- **Frozen at**：2026-08-07
-- **Frozen by**：Contract Agent（`workbuddy-contract-agent`）— MA0-A01 follow-up
-- **Authority source**：MA0-A01 §2 M1、§4.4 fixtures、`00_MASTER_PLAN.md` §2.3/§2.4
-- **Audience**：SDK Core Agent、Backend Auth Agent（Sprint 1 允许 Agent）
+- **Version**：2
+- **Status**：RE-FROZEN / S1-F01-003 DELIVERY CANDIDATE（等待独立 Architecture Review Agent 验收）
+- **Original freeze**：2026-08-07
+- **Reconciled at**：2026-08-10T11:01:37+08:00
+- **Reconciliation Story**：S1-F01-003
+- **Backend authority**：FlyPostAPI `origin/Dev @ 956981c119b01a0c1b4bf0793a20bed8f31d1180`
+- **Fixture authority**：`test/fixtures/bootstrap_contract_v2.json` + `bootstrap_request*.json` + `bootstrap_response.json`
+- **SDK typed authority**：`lib/src/auth/installation.dart`（production read-only in S1-F01-003）
 
-> 本契约冻结的是**已落地且证据齐全**的 `POST /api/v1/mobile/bootstrap`。任何字段/类型/错误码变更须走 `06_ARCHITECTURE_CHANGE_REQUEST_TEMPLATE.md` 并由 Contract Agent 重新冻结。
+> V2 supersedes the stale V1 request requiredness/type/limit prose. S1-F01-003 is contract/tests/docs only: this file freezes the target truth but does **not** authorize production `lib/**` changes. Production closure belongs to S1-F01-004 after independent review and Coordinator promotion.
 
-## 1. Endpoint
+## 1. Endpoint and trust boundary
 
-- **Method + Path**：`POST /api/v1/mobile/bootstrap`
-- **Group**：mobile bootstrap group（`router.go:133-137`）
-- **Middleware chain（外→内）**：`CoarseIPRateLimit(100,1m)` → `BodyLimit(maxMobileBodyBytes)` → handler
-  - ⚠️ **bootstrap 运行于 installation 建立之前，故不带 `InstallationProof` / `Token`**（与 M2-M6 不同）。此行为**已冻结**，属设计意图。
-- **Envelope**：平台标准 `HTTP 200 + {code,data}`（`pkg/response/response.go:20-28`）。
+- **Method + path**：`POST /api/v1/mobile/bootstrap`
+- **Public pre-installation endpoint**：no App Secret, no installation proof, no user token.
+- **Backend chain**：`CoarseIPRateLimit(100, 1m)` → `BodyLimit(32 KiB)` → bootstrap handler.
+- **Response envelope**：success and handler business errors use `{code,data}`; rate-limit middleware may use HTTP `429`/`503` with the same envelope.
+- `environment` is **not a request wire field**. It is SDK-local configuration (`NebulaOptions.environment`) used with `baseUri`/storage namespace selection.
+- `key_algorithm` is **not a request wire field**. V1 bootstrap fixes the key/proof family to ES256 / P-256; the response reports `proof_algorithm = "ES256"`.
 
-## 2. Request（冻结字段）
+## 2. Canonical request shape
 
-来源：`BootstrapRequest`（`core/installation/service.go:60-70`）、`lib/src/auth/installation.dart:69`、fixture `bootstrap_request.json`。
+The SDK-owned production serializer created by S1-F01-004 MUST emit exactly these 11 canonical keys. Required values are non-null. Optional values are emitted as JSON `null` when absent; the Backend may tolerate omitted/empty optional values, but that tolerance is not the canonical SDK representation.
 
-| 字段 | 类型 | 必填 | 说明 |
-|---|---|---|---|
-| `app_id` | string | ✅ | 应用标识 |
-| `installation_id` | string | ✅ | 安装标识 |
-| `platform` | string | ✅ | ios / android / … |
-| `app_version` | string | ✅ | |
-| `build_number` | string | ✅ | |
-| `os_version` | string | ✅ | |
-| `locale` | string | ✅ | |
-| `region` | string | ✅ | |
-| `public_key` | string | ✅ | installation 密钥对公钥，用于 proof |
-| `attestation` | object | ✅ | 平台 attestation 载荷 |
-| `bootstrap_request_id` | string | ✅ | **幂等键**；服务端写入 `app_installation_bootstrap` 账本（唯一键 `(app_id, bootstrap_request_id)`） |
+| Wire field | Canonical wire value | Required value? | Limit / validation | Final V2 decision |
+|---|---|---:|---|---|
+| `app_id` | string | yes | 1..64 UTF-8 bytes | Public product/app key; not a credential. |
+| `installation_id` | string | yes | 1..64 UTF-8 bytes | Stable per-install identity; UUID is the expected producer format. |
+| `platform` | string enum | yes | `ios` / `android` / `harmony` / `web` | Exact lowercase wire enum. |
+| `app_version` | string or null | no | if present: 1..128 UTF-8 bytes | Diagnostic value. Backend also accepts empty/omitted; SDK canonical unset = `null`. |
+| `build_number` | string or null | no | if present: 1..128 UTF-8 bytes | Diagnostic value; canonical unset = `null`. |
+| `os_version` | string or null | no | if present: 1..128 UTF-8 bytes | Diagnostic value; canonical unset = `null`. |
+| `locale` | string or null | no | if present: 1..64 UTF-8 bytes | Routing/diagnostic hint only; never authorization. |
+| `region` | string or null | no | if present: 1..64 UTF-8 bytes | Routing hint only; never authorization. |
+| `public_key` | string | yes | 1..1024 UTF-8 bytes + valid key | Base64URL DER SubjectPublicKeyInfo containing an EC P-256 public key. Canonical producer SHOULD use unpadded Base64URL (fixture is 122 chars); Backend accepts padded/unpadded. |
+| `attestation` | string or null | no | if present: 1..16384 UTF-8 bytes | Opaque typed-provider evidence encoded as a string. **Not an object.** `null` means no evidence / `not_supported`. |
+| `bootstrap_request_id` | string | yes | 1..64 UTF-8 bytes | Stable idempotency key; UUID is the expected producer format. |
 
-## 各类字段语义冻结约定
+### 2.1 Length measurement
 
-- 所有字符串字段非空（`required`）。
-- 时间字段（`expires_at` / `renew_after` / `server_time`）为 **unix 秒级整数**，由服务端授时。
-- `bootstrap_request_id` 必须为调用方生成的稳定幂等标识；重复提交返回既有 `BootstrapResult`，不产生新 installation。
+Backend validation uses Go `len(string)`, therefore the authoritative limit unit is **UTF-8 bytes after JSON decoding**, not Dart UTF-16 code units. S1-F01-004 must not implement these limits with plain `String.length` where non-ASCII input can differ.
 
-## 3. Response（冻结字段）
+The raw HTTP bootstrap body is capped at **32 KiB** by Backend middleware/handler. SDK serialization must stay inside that body limit in addition to per-field limits.
 
-来源：`BootstrapResult`（`core/installation/service.go:75-84`）、fixture `bootstrap_response.json`。
+### 2.2 Requiredness vs Backend tolerance
 
-| 字段 | 类型 | 必填 | 说明 |
-|---|---|---|---|
-| `installation_token` | string | ✅ | 短期 installation 作用域令牌 |
-| `expires_at` | int64 (unix) | ✅ | |
-| `renew_after` | int64 (unix) | ✅ | |
-| `server_time` | int64 (unix) | ✅ | |
-| `app_id` | string | ✅ | |
-| `installation_id` | string | ✅ | |
-| `proof_algorithm` | string | ✅ | 取值集合由 S1 冻结（见 Open Items） |
-| `attestation_state` | string | ✅ | 取值集合由 S1 冻结 |
-| `minimum_supported_build` | string | ✅ | |
-| `request_id` | string | ✅ | |
+Backend `BootstrapRequest` uses Go string zero values and validates only the five required logical inputs (`app_id`, `installation_id`, `platform`, `public_key`, `bootstrap_request_id`) as non-empty. Existing Backend success tests omit `locale`, `region`, and `attestation`. The SDK typed model already makes all six diagnostic/routing/evidence fields nullable.
 
-## 4. Idempotency
+V2 therefore freezes:
 
-- **Key**：`bootstrap_request_id`。相同 `(app_id, bootstrap_request_id)` 重复提交返回既有 `BootstrapResult`（账本去重，不新建 installation）。
+- required/non-null: `app_id`, `installation_id`, `platform`, `public_key`, `bootstrap_request_id`;
+- optional/nullable: `app_version`, `build_number`, `os_version`, `locale`, `region`, `attestation`;
+- canonical SDK serializer emits all 11 keys, using JSON `null` for absent optionals so fixtures and client wire shape remain stable.
 
-## 5. Error codes（冻结 — 来源 `error_mapping.json`，FB-01）
+## 3. Canonical response shape
 
-| code | 含义 |
-|---|---|
-| `12001` | invalid_installation |
-| `12003` | client_outdated（`minimum_supported_build` 违例） |
-| `12004` | temporarily_unavailable（over_limit，fail fast） |
-| `10003` / `30001` / `40002` / `50001` | legacy |
+All 10 response keys are present on successful Backend serialization. `minimum_supported_build` is the only nullable value.
 
-全部经 envelope `{code,data}` + `HTTP 200` 返回。
+| Wire field | Type / nullability | V2 semantics |
+|---|---|---|
+| `installation_token` | string, non-null | Short-lived installation capability token. |
+| `expires_at` | int64 unix seconds | Server-authoritative expiry. Current default TTL = 24h. |
+| `renew_after` | int64 unix seconds | Server-authoritative renewal point. Client consumes it as returned; it must not derive a different schedule from prose. Current Backend computes the 80% TTL point. |
+| `server_time` | int64 unix seconds | Server time used for the response. |
+| `app_id` | string, non-null | Echo of public `app_id`. |
+| `installation_id` | string, non-null | Authoritative installation identity. |
+| `proof_algorithm` | string, non-null | V1 fixed wire value `ES256`. |
+| `attestation_state` | string enum, non-null | `verified` / `limited` / `not_supported`. |
+| `minimum_supported_build` | string or null | Optional policy; current Bootstrap service returns `null`. |
+| `request_id` | string, non-null | **Echo of `bootstrap_request_id` for this bootstrap operation**, not a second independently-generated request identifier. |
 
-## 6. Scope
+The response fixture is a paired exchange with the request fixture: `app_id`, `installation_id`, and `request_id == bootstrap_request_id` must agree. V2 also corrects the stale `renew_after` fixture to the Backend's current 80% TTL result.
 
-- **app + installation（pre-user）**。此时尚无 user 身份。
+## 4. Idempotency and retry
 
-## 7. SDK obligation（冻结）
+### 4.1 Server idempotency
 
-- SDK **必须**定义常量 `BootstrapEndpoints.bootstrap = "/api/v1/mobile/bootstrap"`，解决 MA0-A01 §4.2 的 drift（当前路径未常量化，由调用方提供）。
-- SDK **不得**硬编码 bucket / provider / App Secret。
-- `BootstrapRequest` / `BootstrapResponse` 结构已存在于 `lib/src/auth/installation.dart`，冻结为 wire contract。
+- Idempotency scope is `(resolved app, bootstrap_request_id)`.
+- Replaying the same request ID returns the authoritative existing/renewed installation fact and must not create a second installation.
+- Reusing one request ID for a materially different identity/environment body is a conflict (`30001`).
+- Current Backend request-hash comparison covers resolved App, installation ID, public-key thumbprint, platform, app version, build number, and OS version. Locale/region/attestation are not part of that hash.
 
-## 8. Open Items（**未冻结** — 路由至 S1）
+The last point is an implementation tolerance, **not** permission for a client to mutate a retry. SDK V1 rule is stricter: once a `bootstrap_request_id` is assigned, the SDK MUST retry the **same immutable request object / same canonical serialized values**.
 
-- 枚举 `proof_algorithm` 取值集合。
-- 枚举 `attestation_state` 取值集合与状态迁移。
-- `minimum_supported_build` 比较语义（`>=` vs `==`）。
-- SDK 常量新增属 SDK Core Agent 实现任务（Sprint 1 允许）。
+### 4.2 SDK automatic retry input
 
-## 9. Change control
+V2 client decision (carrying forward docs/08 §3 “one bounded retry with same bootstrap request ID”): S1-F01-004 must enforce **at most one automatic retry**:
 
-字段/类型/错误码的任何变更须提交新 ACR（`06_ARCHITECTURE_CHANGE_REQUEST_TEMPLATE.md`）并由 Contract Agent 重新冻结；本文件版本随之递增。
+- allowed: transport ambiguity (timeout/I/O failure with no definitive application response), current `50001` server failure, or allocated `12004` temporarily-unavailable category if returned;
+- same `bootstrap_request_id` and same canonical request values are mandatory;
+- `12001`, `30001`, client-outdated `12003`, and rate-limit `40002` are not immediate automatic retry inputs;
+- HTTP `429` / code `40002` must honor rate-limit semantics; no immediate loop;
+- HTTP `503` + code `40002` from the coarse limiter's fail-closed dependency path is also not an immediate retry loop.
+
+No retry may generate a new request ID for the same logical bootstrap attempt.
+
+## 5. Bootstrap error mapping truth
+
+Authoritative Backend bootstrap currently exposes these concrete outputs:
+
+| HTTP | code | Current cause class | SDK action input |
+|---:|---:|---|---|
+| 200 | `0` | success | parse `BootstrapResult` |
+| 200 | `12001` | request validation failure, unknown/disabled App, invalid public key, invalid attestation | invalid bootstrap/install identity; no automatic retry |
+| 200 | `30001` | malformed/oversize JSON at handler or idempotency/body conflict | invalid request; no retry |
+| 429 | `40002` | coarse IP rate limit exceeded | rate limited; no immediate retry |
+| 503 | `40002` | coarse rate-limit backend unavailable (fail-closed) | unavailable/rate-limit boundary; bounded external backoff, no immediate loop |
+| 200 | `50001` | unclassified repository/server failure | V2 client decision: may consume the single bounded retry; must never map to authentication-required |
+
+`12003` (client outdated) and `12004` (temporarily unavailable) remain allocated platform error categories and SDK classifiers, but the authoritative Bootstrap service at `956981c...` does not currently emit them. V2 must not describe them as observed Bootstrap outputs.
+
+## 6. Serialization ownership
+
+Canonical request serialization is an **SDK production responsibility**. S1-F01-004 must provide one SDK-owned serializer (`BootstrapRequest.toJson()` or an equivalent non-App-owned production serializer) and a typed Bootstrap client. The transport continues to JSON-encode the SDK-owned map.
+
+Test-local `bootstrapRequestToWire` / `bootstrapRequestFromWire` helpers are reconciliation oracles only. They are not a supported production seam and must not be copied into NFC Writer, StarSprout, FlyPost, or another consumer.
+
+## 7. Endpoint constant obligation
+
+S1-F01-004 must define an SDK-owned canonical endpoint surface equivalent to:
+
+```dart
+BootstrapEndpoints.bootstrap == '/api/v1/mobile/bootstrap'
+```
+
+Consumers must not hardcode that path.
+
+## 8. Product-name erasure / scope
+
+This contract contains only platform foundation concepts: App, installation, environment selection, key/proof, bootstrap, runtime trust. No NFC Writer/NDEF/tag/passport/dynamic-note semantics are permitted in the SDK request or client.
+
+## 9. S1-F01-004 carry-forward production deltas
+
+The reconciled contract intentionally leaves these production diffs for S1-F01-004:
+
+1. add SDK-owned bootstrap endpoint constant;
+2. add SDK-owned canonical request serialization;
+3. add typed SDK bootstrap client and bounded retry/error mapping;
+4. change request validation limits to Backend truth (`64/128/64/1024/16KiB` as applicable);
+5. measure string limits in UTF-8 bytes, not plain Dart `String.length`;
+6. preserve nullable optional fields and string/null attestation semantics;
+7. keep `environment` and `key_algorithm` out of the request wire;
+8. test paired fixture semantics (`request_id` echo, server-authoritative `renew_after`).
+
+No App production implementation is authorized by this contract freeze.
+
+## 10. Change control
+
+Any future request field/type/nullability/limit, endpoint, proof algorithm, idempotency, or response semantic change requires a new ACR/ADR path and independent review. Backend permissiveness alone is not authorization to expand the canonical SDK wire.

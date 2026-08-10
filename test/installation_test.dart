@@ -28,7 +28,9 @@ void main() {
     });
   });
 
-  group('BootstrapRequest.validate (docs/08 §4.1 limits)', () {
+  group(
+      'BootstrapRequest.validate (current SDK implementation; V2 closure pending F01-004)',
+      () {
     BootstrapRequest valid() => const BootstrapRequest(
           appId: 'app-a',
           installationId: 'inst-1',
@@ -136,7 +138,7 @@ void main() {
       final r = BootstrapResult.fromJson(<String, Object?>{
         'installation_token': 'tok-1',
         'expires_at': 1785866400, // 2026-08-04T18:00:00Z
-        'renew_after': 1785784320, // 2026-08-03T19:12:00Z
+        'renew_after': 1785849120, // 2026-08-04T13:12:00Z (80% of 24h TTL)
         'server_time': 1785780000, // 2026-08-03T18:00:00Z
         'app_id': 'app-a',
         'installation_id': 'inst-1',
@@ -159,7 +161,7 @@ void main() {
         () => BootstrapResult.fromJson(<String, Object?>{
           'installation_token': 'tok',
           'expires_at': '2026-08-04T18:00:00Z', // wrong wire type
-          'renew_after': 1785784320,
+          'renew_after': 1785849120,
           'server_time': 1785780000,
           'app_id': 'app-a',
           'installation_id': 'inst-1',
@@ -175,7 +177,7 @@ void main() {
       final r = BootstrapResult.fromJson(<String, Object?>{
         'installation_token': 'tok-1',
         'expires_at': 1785866400,
-        'renew_after': 1785784320,
+        'renew_after': 1785849120,
         'server_time': 1785780000,
         'app_id': 'app-a',
         'installation_id': 'inst-1',

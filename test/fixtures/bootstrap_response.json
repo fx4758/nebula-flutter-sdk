@@ -1,13 +1,13 @@
 {
-  "comment": "Frozen bootstrap response fixture — REAL wire format from flypost BootstrapResult (internal/core/installation/service.go). Times are unix seconds (int64), proof_algorithm is the uppercase constant ES256, attestation_state is snake_case. Any drift from flypost serialization fails this fixture.",
+  "comment": "Frozen bootstrap response fixture — REAL wire format from flypost BootstrapResult (internal/core/installation/service.go). Times are unix seconds (int64); renew_after is the Backend-authoritative 80% TTL point; request_id echoes bootstrap_request_id. proof_algorithm is ES256 and attestation_state is snake_case. Any drift from flypost serialization fails this fixture.",
   "installation_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6Imluc3RhbGxhdGlvbiIsImFwcF9pZCI6Im5lYnVsYS5leGFtcGxlLmFwcCIsImluc3RhbGxhdGlvbl9pZCI6IjNmMmExYzhlLTliNGQtNGY2ZS04YTJiLTFjNWQ3ZTlmMGEzYiIsImlhdCI6MTc4NTc1MTIwMCwiZXhwIjoxNzg1ODM3NjAwfQ.sample-signature",
   "expires_at": 1785866400,
-  "renew_after": 1785784320,
+  "renew_after": 1785849120,
   "server_time": 1785780000,
   "app_id": "nebula.example.app",
   "installation_id": "3f2a1c8e-9b4d-4f6e-8a2b-1c5d7e9f0a3b",
   "proof_algorithm": "ES256",
   "attestation_state": "not_supported",
   "minimum_supported_build": null,
-  "request_id": "req-0f3a9c2e-7b4d-4a6f-8e1c-2b5d6c7f8a9b"
+  "request_id": "b7e8f2c1-4a5d-4c6b-9e0f-2d3c4b5a6e7f"
 }

@@ -54,7 +54,15 @@ Independent repo verification:
 
 **None.** NFC Writer must not hardcode `/api/v1/mobile/bootstrap` or duplicate the test-local wire mapping in production.
 
+## S1-F01-003 reconciliation delivery
+
+Contract Agent delivery reconciled the request drift and found two additional response-fixture drifts: `renew_after` did not match the Backend 80% TTL point, and response `request_id` did not echo the paired `bootstrap_request_id`. Backend string caps are also UTF-8 byte limits; current Dart `String.length` validation is not equivalent. `environment` and `key_algorithm` are not bootstrap request wire fields.
+
+Detailed matrix/evidence: `reports/S1-F01-003_BOOTSTRAP_CONTRACT_RECONCILIATION.md`. Re-freeze candidate: `contracts/SDK_BOOTSTRAP_CONTRACT_FREEZE.md` V2. Machine-readable oracle: `test/fixtures/bootstrap_contract_v2.json`.
+
 ## Decision
-- PENDING INDEPENDENT CONTRACT REVIEW
-- Approved mode：not yet granted
-- Follow-up：S1-F01-003 → S1-F01-004 → App NEBULA-DEP-002 → S1-F01-002
+- CONTRACT AGENT VERDICT：RECONCILED / OPTION A
+- INDEPENDENT REVIEW：PENDING
+- Approved SDK public API mode：not yet granted
+- Backend production change：not requested
+- Follow-up：independent S1-F01-003 review → Coordinator DONE/promotion → S1-F01-004 → App NEBULA-DEP-002 → S1-F01-002

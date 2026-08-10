@@ -1,5 +1,5 @@
 {
-  "comment": "Frozen bootstrap request fixture (docs/08 §4.1, F0-04). Public-key is a real ES256/P-256 SPKI DER, base64url (122 chars). Change requires a fixture freeze ADR.",
+  "comment": "Bootstrap V2 populated canonical request fixture: all 11 SDK-owned wire keys are present; optional values are populated here (the paired optional-nulls fixture freezes the absent form). Public key is real ES256/P-256 SPKI DER, unpadded base64url (122 chars).",
   "app_id": "nebula.example.app",
   "installation_id": "3f2a1c8e-9b4d-4f6e-8a2b-1c5d7e9f0a3b",
   "platform": "ios",

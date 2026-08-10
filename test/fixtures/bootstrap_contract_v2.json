@@ -1,0 +1,129 @@
+{
+  "comment": "S1-F01-003 machine-readable bootstrap V2 contract reconciled to FlyPostAPI Dev 956981c119b01a0c1b4bf0793a20bed8f31d1180. S1-F01-004 may consume this as a test oracle; it is not runtime configuration.",
+  "endpoint": "/api/v1/mobile/bootstrap",
+  "method": "POST",
+  "body_max_bytes": 32768,
+  "required_request_fields": [
+    "app_id",
+    "installation_id",
+    "platform",
+    "public_key",
+    "bootstrap_request_id"
+  ],
+  "optional_request_fields": [
+    "app_version",
+    "build_number",
+    "os_version",
+    "locale",
+    "region",
+    "attestation"
+  ],
+  "canonical_absent_optional": null,
+  "field_max_utf8_bytes": {
+    "app_id": 64,
+    "installation_id": 64,
+    "bootstrap_request_id": 64,
+    "app_version": 128,
+    "build_number": 128,
+    "os_version": 128,
+    "locale": 64,
+    "region": 64,
+    "public_key": 1024,
+    "attestation": 16384
+  },
+  "platform_values": [
+    "ios",
+    "android",
+    "harmony",
+    "web"
+  ],
+  "public_key_format": "base64url-p256-spki-der",
+  "attestation_wire_type": "nullable-string",
+  "response_fields": [
+    "installation_token",
+    "expires_at",
+    "renew_after",
+    "server_time",
+    "app_id",
+    "installation_id",
+    "proof_algorithm",
+    "attestation_state",
+    "minimum_supported_build",
+    "request_id"
+  ],
+  "proof_algorithm": "ES256",
+  "attestation_state_values": [
+    "verified",
+    "limited",
+    "not_supported"
+  ],
+  "request_id_semantics": "echo-bootstrap_request_id",
+  "idempotency_scope": [
+    "resolved_app_id",
+    "bootstrap_request_id"
+  ],
+  "current_backend_request_hash_fields": [
+    "resolved_app_id",
+    "installation_id",
+    "public_key_thumbprint",
+    "platform",
+    "app_version",
+    "build_number",
+    "os_version"
+  ],
+  "request_hash_excluded_fields": [
+    "locale",
+    "region",
+    "attestation"
+  ],
+  "current_outputs": [
+    {
+      "http": 200,
+      "code": 0,
+      "class": "success"
+    },
+    {
+      "http": 200,
+      "code": 12001,
+      "class": "invalid_installation"
+    },
+    {
+      "http": 200,
+      "code": 30001,
+      "class": "invalid_request_or_conflict"
+    },
+    {
+      "http": 429,
+      "code": 40002,
+      "class": "rate_limited"
+    },
+    {
+      "http": 503,
+      "code": 40002,
+      "class": "rate_limiter_dependency_failure"
+    },
+    {
+      "http": 200,
+      "code": 50001,
+      "class": "server_failure"
+    }
+  ],
+  "allocated_but_not_current_bootstrap_emission": [
+    12003,
+    12004
+  ],
+  "automatic_retry_max": 1,
+  "retry_requires_same_request_id_and_values": true,
+  "automatic_retry_inputs": [
+    "transport_ambiguity",
+    "http_200_code_50001",
+    "http_200_code_12004_if_returned"
+  ],
+  "no_immediate_retry_inputs": [
+    "http_200_code_12001",
+    "http_200_code_30001",
+    "http_200_code_12003",
+    "http_429_code_40002",
+    "http_503_code_40002"
+  ]
+}

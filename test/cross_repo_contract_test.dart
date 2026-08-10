@@ -47,6 +47,26 @@ const List<String> kBootstrapRequestFields = <String>[
   'bootstrap_request_id',
 ];
 
+/// S1-F01-003 V2 required/non-null request values.
+const List<String> kBootstrapRequiredRequestFields = <String>[
+  'app_id',
+  'installation_id',
+  'platform',
+  'public_key',
+  'bootstrap_request_id',
+];
+
+/// S1-F01-003 V2 optional values. Canonical SDK serialization keeps the keys
+/// and emits JSON null when a value is absent.
+const List<String> kBootstrapNullableRequestFields = <String>[
+  'app_version',
+  'build_number',
+  'os_version',
+  'locale',
+  'region',
+  'attestation',
+];
+
 /// Frozen bootstrap response fields (docs/08 §4.2, flypost
 /// TestMobileBootstrapFixtures).
 const List<String> kBootstrapResultFields = <String>[
@@ -69,12 +89,38 @@ void main() {
         for (final f in kBootstrapRequestFields) f: 'x',
       }..['platform'] = 'ios'; // enum wire value, not a free string
       final req = bootstrapRequestFromWire(json);
-      // Round-trip proves every frozen wire field is consumed by the typed
-      // contract; the transport may then serialize it back losslessly.
+      // Reconciliation-only round trip. Production serialization ownership is
+      // SDK S1-F01-004; this helper must never become an App production seam.
       expect(
         bootstrapRequestToWire(req).keys.toSet(),
         kBootstrapRequestFields.toSet(),
       );
+      expect(
+        <String>{
+          ...kBootstrapRequiredRequestFields,
+          ...kBootstrapNullableRequestFields,
+        },
+        kBootstrapRequestFields.toSet(),
+      );
+    });
+
+    test('V2 optional values serialize as null; local environment is not wire',
+        () {
+      const req = BootstrapRequest(
+        appId: 'app-a',
+        installationId: 'inst-1',
+        platform: NebulaPlatform.ios,
+        publicKey: 'key-der',
+        bootstrapRequestId: 'boot-1',
+      );
+      req.validate();
+      final wire = bootstrapRequestToWire(req);
+      for (final field in kBootstrapNullableRequestFields) {
+        expect(wire[field], isNull,
+            reason: '$field canonical unset must be null');
+      }
+      expect(wire.keys, isNot(contains('environment')));
+      expect(wire.keys, isNot(contains('key_algorithm')));
     });
 
     test('bootstrap result parses every frozen wire field', () {
@@ -82,7 +128,7 @@ void main() {
       final json = <String, Object?>{
         'installation_token': 'tok',
         'expires_at': 1785866400,
-        'renew_after': 1785784320,
+        'renew_after': 1785849120,
         'server_time': 1785780000,
         'app_id': 'app-a',
         'installation_id': 'inst-1',
@@ -307,8 +353,11 @@ class _FakeRefresh {
   }
 }
 
-/// Reconcile-only helpers: parse/serialize the wire map through the typed
-/// contract, proving every frozen field is consumed and re-emitted.
+/// Reconcile-only bridge helpers for the pre-F01-004 typed model. They are
+/// NOT the production serializer; canonical serialization ownership is SDK
+/// production code in S1-F01-004. S1-F01-004
+/// must replace production ownership with an SDK serializer/client; consumers
+/// must never copy these helpers.
 BootstrapRequest bootstrapRequestFromWire(Map<String, Object?> json) {
   return BootstrapRequest(
     appId: json['app_id']! as String,
