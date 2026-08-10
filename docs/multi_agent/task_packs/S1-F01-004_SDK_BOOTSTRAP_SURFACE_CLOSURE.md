@@ -8,7 +8,7 @@
 - SDK public API mode：`CHANGE_APPROVED`
 
 ## Execution gate
-**READY.** S1-F01-003 is DONE / independent review PASS. Coordinator explicitly authorized `sdk_public_api_mode = CHANGE_APPROVED` for this Story only. Authority: `ACR-SDK-BOOTSTRAP-001` + `SDK_BOOTSTRAP_CONTRACT_FREEZE.md` V2.
+**DONE / independent SDK Review PASS.** Canonical landing: `59dd960e38ad51c2bd60b59044dfa1698f3a7909`. Review evidence: `reports/S1-F01-004_INDEPENDENT_REVIEW.md`. This Story is no longer executable.
 
 ## Goal
 Implement the minimum canonical SDK-owned bootstrap surface after contract re-freeze.
