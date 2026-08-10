@@ -35,4 +35,5 @@ Coordinator-owned execution state is published to canonical `main` only through 
 - With that label on a PR targeting `main`, the workflow may invoke explicit Coordinator mode; all other governance/test/API/secret gates still run.
 - The workflow and Coordinator guard tools are themselves Coordinator-owned paths.
 - `main` MUST be protected server-side against direct push and MUST require the governance status check before merge.
+- The SDK governance required check runs only on the repo-scoped `nebula-sdk` runner using the pinned local image identity + offline dependency snapshot; remote setup/checkout Actions are not part of this P0 publication path.
 - Implementation Agents must not request/apply the publication label as a substitute for a Delivery Note; publication authorization belongs to the Coordinator/Architecture Owner.

@@ -282,10 +282,17 @@
       "tool/coordinator_state_guard.dart",
       "tool/coordinator_state_guard_test.dart",
       "tool/coordinator_publication_mode.dart",
-      "tool/coordinator_publication_mode_test.dart"
+      "tool/coordinator_publication_mode_test.dart",
+      "governance/ci_dependency_snapshot.json",
+      "tool/ci_dependency_guard.dart",
+      "tool/ci_dependency_guard_test.dart"
     ],
     "coordinator_publication_label": "coordinator-publication",
-    "coordinator_publication_rule": "Only an explicitly labeled PR to main may invoke coordinator mode; unlabeled PRs remain implementation mode."
+    "coordinator_publication_rule": "Only an explicitly labeled PR to main may invoke coordinator mode; unlabeled PRs remain implementation mode.",
+    "sdk_ci_runner_label": "nebula-sdk",
+    "sdk_ci_runner_image": "flypost/nebula-sdk-ci:20260810-v1",
+    "sdk_ci_dependency_snapshot": "governance/ci_dependency_snapshot.json",
+    "sdk_ci_image_identity": "nebula-sdk-ci-20260810-v1"
   },
   "incidents": [
     "GOV-P0-EXEC-SSOT-20260807",
