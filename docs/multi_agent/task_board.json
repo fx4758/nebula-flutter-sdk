@@ -84,13 +84,14 @@
       ]
     },
     "S1-F01-002": {
-      "status": "READY",
+      "status": "WAIT",
       "owner": "Flutter Integration Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
       "task_pack": "task_packs/S1-F01-002_BOOTSTRAP_LIFECYCLE.md",
       "depends_on": [
-        "S1-F01-001"
+        "S1-F01-001",
+        "S1-F01-004"
       ],
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
@@ -101,8 +102,59 @@
       "execution_worktree": "wt-s1f01-002-app",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "dependency_state": "SATISFIED",
-      "ready_note": "F01-001 DONE; eligible to claim, not started."
+      "dependency_state": "BLOCKED_ON_SDK_BOOTSTRAP_CLOSURE_AND_APP_REPIN",
+      "ready_note": "Do NOT promote: require S1-F01-003 DONE -> S1-F01-004 DONE -> App NEBULA-DEP-002 DONE; then Coordinator recreates worktree from latest App dev and flips WAIT -> READY.",
+      "story_name": "NFC Writer Reference Bootstrap Integration",
+      "reference_consumer": "NFC Writer",
+      "future_consumers": [
+        "StarSprout",
+        "FlyPost"
+      ],
+      "execution_gate": "WAIT_FOR_SDK_BOOTSTRAP_CLOSURE_AND_APP_REPIN",
+      "external_dependencies": [
+        "flutter NFC Writer:NEBULA-DEP-001=DONE",
+        "flutter NFC Writer:NEBULA-APP-001A=DONE",
+        "flutter NFC Writer:NEBULA-DEP-002=DONE"
+      ]
+    },
+    "S1-F01-003": {
+      "status": "READY",
+      "owner": "SDK Contract Agent",
+      "agent": "D",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/S1-F01-003_BOOTSTRAP_CONTRACT_RECONCILIATION.md",
+      "depends_on": [],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "NONE",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "s1/f01-003-bootstrap-contract-reconcile",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-s1f01-003-sdk-contract",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "gap_id": "ACR-SDK-BOOTSTRAP-001",
+      "backend_authority_ref": "FlyPostAPI Dev @ 956981c119b01a0c1b4bf0793a20bed8f31d1180"
+    },
+    "S1-F01-004": {
+      "status": "WAIT",
+      "owner": "SDK Core Agent",
+      "agent": "D",
+      "reviewer": "SDK Review Agent",
+      "task_pack": "task_packs/S1-F01-004_SDK_BOOTSTRAP_SURFACE_CLOSURE.md",
+      "depends_on": [
+        "S1-F01-003"
+      ],
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "s1/f01-004-sdk-bootstrap-surface",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-s1f01-004-sdk-bootstrap",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "promotion_gate": "After F01-003 DONE, Coordinator must set WAIT->READY and sdk_public_api_mode->CHANGE_APPROVED."
     },
     "S1-F02-001": {
       "status": "READY",
@@ -225,8 +277,22 @@
       "docs/multi_agent/task_board.json",
       "docs/multi_agent/02_SPRINT_BOARD.md",
       "docs/multi_agent/SPRINT1_AGENT_ASSIGNMENT.md",
-      "docs/multi_agent/SPRINT1_AGENT_DISPATCH.md"
-    ]
+      "docs/multi_agent/SPRINT1_AGENT_DISPATCH.md",
+      ".github/workflows/governance.yml",
+      "tool/coordinator_state_guard.dart",
+      "tool/coordinator_state_guard_test.dart",
+      "tool/coordinator_publication_mode.dart",
+      "tool/coordinator_publication_mode_test.dart",
+      "governance/ci_dependency_snapshot.json",
+      "tool/ci_dependency_guard.dart",
+      "tool/ci_dependency_guard_test.dart"
+    ],
+    "coordinator_publication_label": "coordinator-publication",
+    "coordinator_publication_rule": "Only an explicitly labeled PR to main may invoke coordinator mode; unlabeled PRs remain implementation mode.",
+    "sdk_ci_runner_label": "nebula-sdk",
+    "sdk_ci_runner_image": "flypost/nebula-sdk-ci:20260810-v1",
+    "sdk_ci_dependency_snapshot": "governance/ci_dependency_snapshot.json",
+    "sdk_ci_image_identity": "nebula-sdk-ci-20260810-v1"
   },
   "incidents": [
     "GOV-P0-EXEC-SSOT-20260807",

@@ -2,6 +2,7 @@ name: governance
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
 
@@ -10,24 +11,86 @@ permissions:
 
 jobs:
   guard:
-    runs-on: ubuntu-latest
+    runs-on: nebula-sdk
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
-      - run: dart pub get
+      - name: Checkout current revision from LAN Forgejo
+        shell: bash
+        env:
+          CI_TOKEN: ${{ secrets.FORGEJO_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "${CI_TOKEN:-}"
+          test -n "${GITHUB_SERVER_URL:-}"
+          test -n "${GITHUB_REPOSITORY:-}"
+          test -n "${GITHUB_WORKSPACE:-}"
+          test -f "${GITHUB_EVENT_PATH:-}"
+
+          HEAD_REF="$(python3 - <<'PY'
+          import json, os
+          event = json.load(open(os.environ['GITHUB_EVENT_PATH']))
+          pr = event.get('pull_request')
+          if isinstance(pr, dict):
+              print(pr['head']['ref'])
+          else:
+              ref = event.get('ref', '')
+              prefix = 'refs/heads/'
+              if not ref.startswith(prefix):
+                  raise SystemExit(f'unsupported ref: {ref}')
+              print(ref[len(prefix):])
+          PY
+          )"
+          test -n "$HEAD_REF"
+
+          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          AUTH="$(printf 'x-access-token:%s' "$CI_TOKEN" | base64 | tr -d '\n')"
+          AUTH_KEY="http.${GITHUB_SERVER_URL}/.extraheader"
+
+          mkdir -p "$GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE"
+          git init -q .
+          git remote add origin "$REPO_URL"
+          git -c "$AUTH_KEY=AUTHORIZATION: basic $AUTH" \
+            fetch --no-tags origin '+refs/heads/*:refs/remotes/origin/*'
+          git checkout -q --detach "refs/remotes/origin/$HEAD_REF"
+          unset AUTH CI_TOKEN
+
+      - name: Resolve pinned offline CI dependencies
+        run: dart pub get --offline
+
+      - name: Verify CI image and dependency resolution
+        run: |
+          dart run tool/ci_dependency_guard_test.dart
+          dart run tool/ci_dependency_guard.dart
+
       - run: dart run tool/governance.dart
       - run: dart run tool/task_source_guard.dart --self-check
       - run: dart run tool/cross_repo_guard.dart --self-check
       - run: dart run tool/cross_repo_guard_test.dart
       - run: dart run tool/coordinator_state_guard.dart --self-check
       - run: dart run tool/coordinator_state_guard_test.dart
+      - run: dart run tool/coordinator_publication_mode_test.dart
       - if: github.event_name == 'pull_request'
-        run: dart run tool/coordinator_state_guard.dart --base "${{ github.event.pull_request.base.sha }}"
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          MODE="$(dart run tool/coordinator_publication_mode.dart --event-path "$GITHUB_EVENT_PATH")"
+          case "$MODE" in
+            coordinator)
+              dart run tool/coordinator_state_guard.dart \
+                --base "$PR_BASE_SHA" \
+                --coordinator
+              ;;
+            implementation)
+              dart run tool/coordinator_state_guard.dart \
+                --base "$PR_BASE_SHA"
+              ;;
+            *)
+              echo "unexpected coordinator publication mode: $MODE" >&2
+              exit 1
+              ;;
+          esac
       - run: dart run tool/platform_api_guard.dart --self-check
       - run: dart run tool/platform_api_guard_test.dart
       - run: dart run tool/governance_test.dart
