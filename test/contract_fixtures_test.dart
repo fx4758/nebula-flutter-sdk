@@ -36,8 +36,6 @@ void main() {
         bootstrapRequestId: json['bootstrap_request_id']! as String,
       );
       req.validate(); // real values must satisfy §4.1 limits
-      final expectedWire = Map<String, Object?>.from(json)..remove('comment');
-      expect(req.toJson(), expectedWire);
       expect(req.publicKey, json['public_key']);
       // Real ES256/P-256 SPKI DER base64url is 122 chars — well under limits.
       expect(req.publicKey.length, 122);
@@ -61,8 +59,6 @@ void main() {
         bootstrapRequestId: json['bootstrap_request_id']! as String,
       );
       req.validate();
-      final expectedWire = Map<String, Object?>.from(json)..remove('comment');
-      expect(req.toJson(), expectedWire);
       expect(req.appVersion, isNull);
       expect(req.buildNumber, isNull);
       expect(req.osVersion, isNull);

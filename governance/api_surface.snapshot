@@ -10,10 +10,6 @@ src/analytics/event.dart const kMaxEventNameLength
 src/analytics/event.dart const kMaxEventPropertyCount
 src/analytics/event.dart enum NebulaEventPrivacy
 src/analytics/nebula_analytics.dart class NebulaAnalytics
-src/auth/bootstrap_client.dart class NebulaBootstrapClient
-src/auth/bootstrap_endpoints.dart class BootstrapEndpoints
-src/auth/bootstrap_errors.dart enum NebulaBootstrapErrorCategory
-src/auth/bootstrap_errors.dart function classifyBootstrapError
 src/auth/installation.dart class BootstrapRequest
 src/auth/installation.dart class BootstrapResult
 src/auth/installation.dart class InstallationIdentity

@@ -178,7 +178,7 @@
 
 ## Sprint 1-A Foundation Integration（Execution Epoch 2）
 
-状态：**IN PROGRESS / GOVERNED**。S1-F01-001/003/004 均已独立验收 DONE/PASS；S1-F01-002 继续 WAIT，当前只剩 App `NEBULA-DEP-002` immutable SDK repin 外部门禁；其余 Story 受依赖和单仓执行规则控制。
+状态：**IN PROGRESS / GOVERNED · F01-004 R1 RECOVERY**。`59dd960/7929487` stale publication 已进入 quarantine recovery；权威 R1=`e07e825 REQUEST CHANGES`。S1-F01-004 重新冻结为 WAIT，先由 004A/004B/004C 三个注册 Owner 提交各自 contribution，再由 Coordinator 组装 owner-authorized baseline，最后 SDK Core replay 01 并进入独立 R2。S1-F01-002 与 App NEBULA-DEP-002 均继续 WAIT。
 
 唯一任务源：`task_board.json`。Implementation Agent 只读，不得自行 claim/DELIVERED/DONE 落盘。
 
@@ -189,9 +189,12 @@
 | Story | Owner | State | Execution Repo | Execution Branch |
 |---|---|---|---|---|
 | S1-F01-001 Adapter Boundary | Agent A | **DONE / PASS** | Flutter NFC Writer | `s1/f01-001-adapter` |
-| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **WAIT / APP REPIN GATE** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
+| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **WAIT / SDK R2 + APP REPIN GATE** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
 | S1-F01-003 Bootstrap Contract Reconciliation | Agent D | **DONE / REVIEW PASS** | nebula-flutter-sdk | `s1/f01-003-bootstrap-contract-reconcile` |
-| S1-F01-004 SDK Bootstrap Surface Closure | Agent D | **DONE / REVIEW PASS** | nebula-flutter-sdk | `s1/f01-004-sdk-bootstrap-surface` |
+| S1-F01-004 SDK Bootstrap Surface Closure | Agent D | **WAIT / REQUEST CHANGES R1** | nebula-flutter-sdk | `s1/f01-004-sdk-bootstrap-surface` |
+| S1-F01-004A Public Surface Owner Recovery | SDK Architect | **READY / OWNER CONTRIBUTION** | nebula-flutter-sdk | `s1/f01-004a-public-surface-owner` |
+| S1-F01-004B Policy Owner Recovery | Architecture/PM | **READY / OWNER CONTRIBUTION** | nebula-flutter-sdk | `s1/f01-004b-policy-owner` |
+| S1-F01-004C Governance Owner Recovery | Quality | **READY / OWNER CONTRIBUTION** | nebula-flutter-sdk | `s1/f01-004c-governance-owner` |
 | S1-F02-001 Backend Runtime Config Audit | Agent B | READY | flypost_backend | `s1/f02-001-runtime-config-audit` |
 | S1-F02-002 SDK Runtime Config Closure | Agent B | READY (after F02-001) | nebula-flutter-sdk | `s1/f02-002-sdk-config` |
 | S1-F03-001 SDK Release Workflow | Agent C | READY | nebula-flutter-sdk | `s1/f03-001-release` |
@@ -200,7 +203,8 @@
 ### GOV-P0 incident closures
 
 - `GOV-P0-EXEC-SSOT`：旧 LAN main/F0 任务源漂移已关闭；main/guard/SSOT 已统一。
-- `GOV-P0-CROSS-REPO-STATE`：发现 App Agent 同时改 App 仓 + SDK Task Board，并把交付直接推 LAN dev。根因是治理仓/施工仓未拆分。已冻结 GOV-CROSS-REPO-001；Task Board 改为 Coordinator-only；S1-F01-001 正式 review branch 为 App `s1/f01-001-adapter`。
+- `GOV-P0-CROSS-REPO-STATE`：发现 App Agent 同时改 App 仓 + SDK Task Board，并把交付直接推 LAN dev。根因是治理仓/施工仓未拆分。已冻结 GOV-CROSS-REPO-001；Task Board 改为 Coordinator-only；S1-F01-001 正式 review branch 为 App `s1/f01-001-adapter`.
+- `GOV-P0-F01-004-STALE-PUBLICATION-20260810`：`59dd960/7929487` 在权威 R1 REQUEST CHANGES 下错误发布 DONE/PASS；Coordinator 按 GOV-CROSS-REPO-001 §5 恢复到 `da2944d` tree，保留 R1 证据，并注册 004A/B/C owner recovery。
 - 禁止抢跑：Asset SDK / Upload API / Payment live refund / Advanced Risk Engine。
 
 ## 后续 Sprint 摘要
