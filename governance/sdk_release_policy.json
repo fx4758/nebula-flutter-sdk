@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "release_workflow_story": "S1-F03-001",
+  "tag_prefix": "v",
+  "channels": {
+    "dev": {"distribution": "path", "publish_to": "none", "rule": "developer-only; never a release artifact"},
+    "beta": {"distribution": "git_tag", "publish_to": "none", "prerelease_prefix": "rc", "rule": "immutable Forgejo tag must equal v<pubspec version>"},
+    "production": {"distribution": "registry", "publish_to": "registry", "rule": "stable SemVer only; explicit HTTPS registry required"}
+  }
+}

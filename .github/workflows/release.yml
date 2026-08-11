@@ -1,0 +1,61 @@
+name: release-gate
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-tag:
+    runs-on: nebula-sdk
+    timeout-minutes: 10
+    steps:
+      - name: Checkout immutable tag from LAN Forgejo
+        shell: bash
+        env:
+          CI_TOKEN: ${{ secrets.FORGEJO_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "${CI_TOKEN:-}"
+          test -n "${GITHUB_SERVER_URL:-}"
+          test -n "${GITHUB_REPOSITORY:-}"
+          test -n "${GITHUB_WORKSPACE:-}"
+          test -n "${GITHUB_REF_NAME:-}"
+          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          AUTH="$(printf 'x-access-token:%s' "$CI_TOKEN" | base64 | tr -d '\n')"
+          AUTH_KEY="http.${GITHUB_SERVER_URL}/.extraheader"
+          mkdir -p "$GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE"
+          git init -q .
+          git remote add origin "$REPO_URL"
+          git -c "$AUTH_KEY=AUTHORIZATION: basic $AUTH" \
+            fetch --no-tags origin "refs/tags/${GITHUB_REF_NAME}:refs/tags/${GITHUB_REF_NAME}"
+          git checkout -q --detach "refs/tags/${GITHUB_REF_NAME}^{commit}"
+          unset AUTH CI_TOKEN
+
+      - run: dart pub get --offline
+      - run: dart run tool/ci_dependency_guard_test.dart
+      - run: dart run tool/ci_dependency_guard.dart
+      - run: dart run tool/task_source_guard.dart --self-check
+      - run: dart run tool/platform_api_guard.dart --self-check
+      - run: dart run tool/api_surface.dart
+      - name: Determine channel and validate immutable tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's/^version:[[:space:]]*//p' pubspec.yaml)"
+          test -n "$version"
+          if [[ "$version" == *-* ]]; then channel=beta; else channel=production; fi
+          dart run tool/sdk_release_gate.dart \
+            --channel "$channel" \
+            --approved-commit "$GITHUB_SHA" \
+            --tag "$GITHUB_REF_NAME"
+      - run: dart run tool/governance.dart
+      - run: dart run tool/secret_scan.dart
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: dart analyze
+      - run: dart test
+      - run: dart run tool/smoke.dart
