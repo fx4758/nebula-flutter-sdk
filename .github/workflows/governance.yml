@@ -55,6 +55,16 @@ jobs:
           git checkout -q --detach "refs/remotes/origin/$HEAD_REF"
           unset AUTH CI_TOKEN
 
+      - name: Validate execution routing policy
+        run: |
+          python3 - <<'PY'
+          import json
+          p = json.load(open('.ai/execution-policy.yaml'))
+          assert p['targets']['heavy_build'] == 'mac-mini-ci'
+          assert p['formal_ci']['target'] == 'forgejo'
+          assert p['formal_ci']['direct_agent_execution'] is False
+          PY
+
       - name: Resolve pinned offline CI dependencies
         run: dart pub get --offline
 

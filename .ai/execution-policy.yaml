@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "targets": {
+    "coding": "local",
+    "heavy_build": "mac-mini-ci",
+    "formal_ci": "forgejo"
+  },
+  "classifiers": {
+    "medium": [
+      "dart test",
+      "dart analyze",
+      "dart run tool/governance.dart"
+    ],
+    "heavy": [
+      "flutter build",
+      "xcodebuild",
+      "./gradlew assemble",
+      "./gradlew bundle",
+      "gradle assemble",
+      "gradle bundle"
+    ]
+  },
+  "routes": {
+    "light": {"target": "any"},
+    "medium": {"target": "any"},
+    "heavy": {"target": "$heavy_build", "lease": "heavy-build"}
+  },
+  "formal_ci": {
+    "target": "forgejo",
+    "direct_agent_execution": false
+  }
+}

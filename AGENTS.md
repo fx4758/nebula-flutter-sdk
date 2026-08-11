@@ -42,3 +42,11 @@
 - Reviewer/Coordinator：`REVIEW -> DONE`、全局依赖/Sprint/Blocker。
 - Agent 回复不是验收证据；Reviewer 必须独立读 diff/代码/配置并跑验证。
 - 每个提交必须包含 Story ID；发现架构缺口提交 ACR，不得自行换任务。
+
+## Execution routing
+
+Execution placement is not an Agent choice. Before build/test work, use MyMCP
+`execution_route` and treat `.ai/execution-policy.yaml` as the machine SSOT.
+This SDK's current Dart governance lane stays on its lightweight Forgejo runner;
+any future native/Flutter heavy build is routed to `mac-mini-ci` by policy rather
+than by creating another runner or toolchain.
