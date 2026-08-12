@@ -346,7 +346,7 @@
       "agent_may_edit_task_board": false
     },
     "S1-F03-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Governance Agent",
       "agent": "C",
       "reviewer": "Governance Review Agent",
@@ -359,7 +359,12 @@
       "execution_remote": "lan",
       "execution_worktree": "wt-s1f03-001-sdk",
       "state_write_authority": "COORDINATOR_ONLY",
-      "agent_may_edit_task_board": false
+      "agent_may_edit_task_board": false,
+      "delivery_commit": "8b686efe2fbc186836f15b46aa085009428f6679",
+      "review_state": "PASS",
+      "review_verdict": "ACCEPT",
+      "review_evidence": "reports/S1-F03-001_COORDINATOR_ACCEPTANCE.md",
+      "completed_at": "2026-08-12T13:47:00+08:00"
     },
     "S1-F03-002": {
       "status": "READY",
