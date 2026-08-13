@@ -1,15 +1,15 @@
 # NEBULA-ID-002 Snowflake/Audit CI Stability Hardening
 
 - ID：NEBULA-ID-002
-- Owner: Backend Platform / CI Owner
-- Depends: none; this is independent of `S1-F02-003`.
-- Execution repo: `../flypost_backend`
-- Execution branch: `nebula-id-002-snowflake-audit-ci-stability`
-- Governance state: `READ_ONLY` for Implementation Agent; Task Board is Coordinator-owned.
-- Delivery: execution-repo commit plus Delivery Note only; no Task Board mutation.
-- Platform API mode: `NONE`
-- SDK public API mode: `NONE`
-- Adapter-first: `ADAPTER_FIRST`
+- Owner：Backend Platform / CI Owner
+- Depends：none; this is independent of `S1-F02-003`.
+- Execution repo：`../flypost_backend`
+- Execution branch：`nebula-id-002-snowflake-audit-ci-stability`
+- Governance state：`READ_ONLY` for Implementation Agent; Task Board is Coordinator-owned.
+- Delivery：execution-repo commit plus Delivery Note only; no Task Board mutation.
+- Platform API mode：`NONE`
+- SDK public API mode：`NONE`
+- Adapter-first：`ADAPTER_FIRST`
 
 ## Incident
 
