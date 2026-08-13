@@ -316,7 +316,7 @@
       "sdk_public_api_mode": "NONE",
       "product_adapter_rule": "ADAPTER_FIRST",
       "backend_repo": "../flypost_backend",
-      "backend_baseline_commit": "8ec212f5233e815229965977dedfca7a1ca2ffd0",
+      "backend_baseline_commit": "070500e2be02358f711552e5b88b00f784ed7389",
       "platform_read_only_scope": "audit + tests/docs only; production Platform API changes forbidden",
       "gap_behavior": "raise ACR + follow-up Story; do not repair in current Story",
       "execution_repo": "../flypost_backend",
