@@ -344,13 +344,13 @@
       }
     },
     "S1-F02-002": {
-      "status": "READY",
+      "status": "WAIT",
       "owner": "SDK Config Agent",
       "agent": "B",
       "reviewer": "SDK Review Agent",
       "task_pack": "task_packs/S1-F02-002_SDK_RUNTIME_CONFIG_CLIENT.md",
       "depends_on": [
-        "S1-F02-001"
+        "S1-F02-003"
       ],
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
@@ -360,7 +360,41 @@
       "execution_remote": "lan",
       "execution_worktree": "wt-s1f02-002-sdk",
       "state_write_authority": "COORDINATOR_ONLY",
-      "agent_may_edit_task_board": false
+      "agent_may_edit_task_board": false,
+      "preflight_verdict": "PASS_WITH_BACKEND_FROZEN_LIMIT_BLOCKER",
+      "preflight_evidence": "reports/S1-F02-002_SDK_RUNTIME_CONFIG_PRECHECK.md",
+      "sdk_production_mutation_required": false,
+      "app_repin_required": false
+    },
+    "S1-F02-003": {
+      "status": "READY",
+      "owner": "Backend Runtime Config Agent",
+      "agent": "A",
+      "reviewer": "Backend Review Agent",
+      "task_pack": "task_packs/S1-F02-003_BACKEND_RUNTIME_CONFIG_LIMIT_CLOSURE.md",
+      "depends_on": [
+        "S1-F02-001"
+      ],
+      "platform_api_mode": "IMPLEMENT_FROZEN_CONTRACT",
+      "sdk_public_api_mode": "NONE",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "backend_repo": "../flypost_backend",
+      "backend_baseline_commit": "b091da1e4d1115310bae0e0e95865304124caaa1",
+      "execution_repo": "../flypost_backend",
+      "execution_branch": "s1/f02-003-runtime-config-limits",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-s1f02-003-backend",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "platform_change_authorization": {
+        "acr_id": "ACR-RUNTIME-CONFIG-LIMIT-001",
+        "acr_path": "reports/ACR-RUNTIME-CONFIG-LIMIT-001.md",
+        "decision": "APPROVED",
+        "frozen_contract": "docs/12_MOBILE_RUNTIME_CONFIG_CONTRACT.md §8.3",
+        "backend_baseline_commit": "b091da1e4d1115310bae0e0e95865304124caaa1",
+        "independent_reviewer": "Backend Review Agent",
+        "adapter_first_analysis": "Server-side delivery-size enforcement cannot be implemented by an App Adapter or SDK-internal change."
+      }
     },
     "S1-F03-001": {
       "status": "READY",
