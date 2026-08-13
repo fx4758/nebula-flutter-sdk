@@ -396,6 +396,26 @@
         "adapter_first_analysis": "Server-side delivery-size enforcement cannot be implemented by an App Adapter or SDK-internal change."
       }
     },
+    "NEBULA-ID-002": {
+      "status": "READY",
+      "owner": "Backend Platform / CI Owner",
+      "agent": "A",
+      "reviewer": "Backend Review Agent",
+      "task_pack": "task_packs/NEBULA-ID-002_SNOWFLAKE_AUDIT_CI_STABILITY.md",
+      "depends_on": [],
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "NONE",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": "../flypost_backend",
+      "execution_branch": "nebula-id-002-snowflake-audit-ci-stability",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-nebula-id-002-backend",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "incident_reference": "FlyPostAPI PR #14 Quality Baseline / backend: internal/pkg/audit.TestWriteDetailCrossInstanceNoFork panicked with snowflake: clock rollback exceeds bound.",
+      "scope_isolation": "Independent Snowflake/Audit CI stability work. It must not modify S1-F02-003 Runtime Config candidate, Runtime Config API, Router, SDK, or App.",
+      "required_preflight": "Reproduce or classify the intermittent full-suite failure using exact Backend Dev fetched at execution start; preserve Snowflake fail-closed production semantics."
+    },
     "S1-F03-001": {
       "status": "READY",
       "owner": "SDK Governance Agent",
