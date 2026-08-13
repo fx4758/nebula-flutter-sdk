@@ -1,9 +1,9 @@
 # S1-F02-002 SDK Runtime Config Precheck
 
-Status: **READ_ONLY PREFLIGHT EVIDENCE**  
-SDK canonical base: `main@b1a9e2cb4e82f468aae73ae46e8b72709aac0f48`  
-Backend audit baseline: `FlyPostAPI Dev@070500e2be02358f711552e5b88b00f784ed7389`  
-Backend audit publication: `root/FlyPostAPI#13`, merged as `b091da1e4d1115310bae0e0e95865304124caaa1`  
+Status: **READ_ONLY PREFLIGHT EVIDENCE**
+SDK canonical base: `main@b1a9e2cb4e82f468aae73ae46e8b72709aac0f48`
+Backend audit baseline: `FlyPostAPI Dev@070500e2be02358f711552e5b88b00f784ed7389`
+Backend audit publication: `root/FlyPostAPI#13`, merged as `b091da1e4d1115310bae0e0e95865304124caaa1`
 Date: 2026-08-13
 
 ## Scope
