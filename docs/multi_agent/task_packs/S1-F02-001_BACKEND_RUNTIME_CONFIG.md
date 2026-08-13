@@ -8,7 +8,7 @@
 - Platform API mode：**`READ_ONLY`**
 - SDK public API mode：`NONE`
 - Backend authority：`../flypost_backend`
-- Backend baseline：`8ec212f5233e815229965977dedfca7a1ca2ffd0`
+- Backend baseline：`070500e2be02358f711552e5b88b00f784ed7389`
 - Goal：独立核对现有 Mobile Runtime Config 是否符合冻结 Platform contract；**不是为 NFC Writer 设计/改接口**。
 - Required：`docs/12_MOBILE_RUNTIME_CONFIG_CONTRACT.md`、MA0 backend audit、`governance/PLATFORM_API_CHANGE_POLICY.md`。
 - Allowed：审计证据、现有 contract tests 的补充、测试 fixture/docs；生产 Platform API 默认不可修改。
