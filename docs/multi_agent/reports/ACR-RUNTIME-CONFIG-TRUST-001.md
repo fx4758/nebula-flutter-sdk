@@ -1,6 +1,6 @@
 # ACR-RUNTIME-CONFIG-TRUST-001
 
-Status: **DEFERRED / NON-RC**  
+Status: **DEFERRED / NON-RC**
 Blocks 2.4.0: **NO**
 
 The frozen SDK contract text still describes optional `X-App-Platform` selection. Canonical runtime behavior is stricter and remains authoritative:

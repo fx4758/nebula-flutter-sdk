@@ -1,9 +1,9 @@
 # ACR-RUNTIME-CONFIG-LIMIT-001
 
-Status: **APPROVED**  
-Decision: **IMPLEMENT_FROZEN_CONTRACT**  
-Frozen contract: `docs/12_MOBILE_RUNTIME_CONFIG_CONTRACT.md §8.3`  
-Backend baseline: `070500e2be02358f711552e5b88b00f784ed7389`  
+Status: **APPROVED**
+Decision: **IMPLEMENT_FROZEN_CONTRACT**
+Frozen contract: `docs/12_MOBILE_RUNTIME_CONFIG_CONTRACT.md §8.3`
+Backend baseline: `070500e2be02358f711552e5b88b00f784ed7389`
 Independent reviewer: Backend Review Agent
 
 ## Capability and classification
