@@ -346,11 +346,11 @@
     "S1-F02-002": {
       "status": "READY",
       "owner": "SDK Config Agent",
-      "agent": "B",
+      "agent": "A",
       "reviewer": "SDK Review Agent",
       "task_pack": "task_packs/S1-F02-002_SDK_RUNTIME_CONFIG_CLIENT.md",
       "depends_on": [
-        "S1-F02-001"
+        "S1-F02-003"
       ],
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
@@ -360,7 +360,131 @@
       "execution_remote": "lan",
       "execution_worktree": "wt-s1f02-002-sdk",
       "state_write_authority": "COORDINATOR_ONLY",
-      "agent_may_edit_task_board": false
+      "agent_may_edit_task_board": false,
+      "preflight_verdict": "PASS_WITH_BACKEND_FROZEN_LIMIT_BLOCKER",
+      "preflight_evidence": "reports/S1-F02-002_SDK_RUNTIME_CONFIG_PRECHECK.md",
+      "sdk_production_mutation_required": false,
+      "app_repin_required": false
+    },
+    "S1-F02-003": {
+      "status": "DONE",
+      "owner": "Backend Runtime Config Agent",
+      "agent": "A",
+      "reviewer": "Backend Review Agent",
+      "task_pack": "task_packs/S1-F02-003_BACKEND_RUNTIME_CONFIG_LIMIT_CLOSURE.md",
+      "depends_on": [
+        "S1-F02-001"
+      ],
+      "platform_api_mode": "IMPLEMENT_FROZEN_CONTRACT",
+      "sdk_public_api_mode": "NONE",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "backend_repo": "../flypost_backend",
+      "backend_baseline_commit": "b091da1e4d1115310bae0e0e95865304124caaa1",
+      "execution_repo": "../flypost_backend",
+      "execution_branch": "s1/f02-003-runtime-config-limits",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-s1f02-003-backend",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "platform_change_authorization": {
+        "acr_id": "ACR-RUNTIME-CONFIG-LIMIT-001",
+        "acr_path": "reports/ACR-RUNTIME-CONFIG-LIMIT-001.md",
+        "decision": "APPROVED",
+        "frozen_contract": "docs/12_MOBILE_RUNTIME_CONFIG_CONTRACT.md §8.3",
+        "backend_baseline_commit": "b091da1e4d1115310bae0e0e95865304124caaa1",
+        "independent_reviewer": "Backend Review Agent",
+        "adapter_first_analysis": "Server-side delivery-size enforcement cannot be implemented by an App Adapter or SDK-internal change."
+      },
+      "review_verdict": "PASS",
+      "review_state": "PASS",
+      "delivery_commit": "872badfd12d61af9fd3b7bdc0e61288d7770b992",
+      "delivery_evidence": {
+        "backend_pr": "root/FlyPostAPI#14",
+        "core_implementation_commit": "76024ee72371410383e7d32b6b57dc67cb7e7104",
+        "accepted_candidate": "872badfd12d61af9fd3b7bdc0e61288d7770b992",
+        "execution_base": "b091da1e4d1115310bae0e0e95865304124caaa1",
+        "merge_commit": "c8c6cdc7413ffef1b63729b6b3de54596a3a9ed9",
+        "merged_at": "2026-08-14T07:51:45+08:00",
+        "candidate_ci": [
+          "Migrations #71 SUCCESS",
+          "Quality #72 backend SUCCESS",
+          "Quality #72 go-sdk SUCCESS",
+          "Quality #72 dart-sdk SUCCESS"
+        ],
+        "post_merge_ci": [
+          "Quality #73 backend SUCCESS",
+          "Quality #73 go-sdk SUCCESS",
+          "Quality #73 dart-sdk SUCCESS"
+        ],
+        "verification": "Frozen Runtime Config limit closure accepted on exact PR head; accepted candidate includes implementation plus Delivery Note; no SDK/App mutation."
+      },
+      "formal_review": {
+        "review_id": 36,
+        "state": "APPROVED",
+        "reviewer": "reviewer-agent",
+        "official": true,
+        "commit_id": "872badfd12d61af9fd3b7bdc0e61288d7770b992",
+        "submitted_at": "2026-08-14T07:57:00+08:00"
+      },
+      "governance_sequence_deviation": "PR #14 merged at 2026-08-14T07:51:45+08:00 before formal review #36 was submitted at 2026-08-14T07:57:00+08:00. The approval is real post-merge evidence and does not claim to have preceded merge.",
+      "acceptance_note": "Independent Backend Review PASS on exact candidate 872badfd12d61af9fd3b7bdc0e61288d7770b992; candidate CI #71/#72 SUCCESS; canonical Backend merge c8c6cdc7413ffef1b63729b6b3de54596a3a9ed9; post-merge Quality #73 SUCCESS; formal review #36 APPROVED by reviewer-agent was recorded after merge and reconciled without production rework.",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "review_evidence": "reports/S1-F02-003_COORDINATOR_ACCEPTANCE.md"
+    },
+    "NEBULA-ID-002": {
+      "status": "DONE",
+      "owner": "Backend Platform / CI Owner",
+      "agent": "A",
+      "reviewer": "Backend Review Agent",
+      "task_pack": "task_packs/NEBULA-ID-002_SNOWFLAKE_AUDIT_CI_STABILITY.md",
+      "depends_on": [],
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "NONE",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": "../flypost_backend",
+      "execution_branch": "nebula-id-002-snowflake-audit-ci-stability",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-nebula-id-002-backend",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "incident_reference": "FlyPostAPI PR #14 Quality Baseline / backend: internal/pkg/audit.TestWriteDetailCrossInstanceNoFork panicked with snowflake: clock rollback exceeds bound.",
+      "scope_isolation": "Independent Snowflake/Audit CI stability work. It must not modify S1-F02-003 Runtime Config candidate, Runtime Config API, Router, SDK, or App.",
+      "required_preflight": "Reproduce or classify the intermittent full-suite failure using exact Backend Dev fetched at execution start; preserve Snowflake fail-closed production semantics.",
+      "review_verdict": "PASS",
+      "delivery_evidence": {
+        "backend_pr": "root/FlyPostAPI#15",
+        "accepted_candidate": "53b81fefd7a1d7ec138227f8c37f64c1ff695541",
+        "execution_base": "b091da1e4d1115310bae0e0e95865304124caaa1",
+        "merge_commit": "1cd8272c0abd29dec3a655fe7279773e1a4a008d",
+        "merged_at": "2026-08-13T22:40:37+08:00",
+        "pr_ci": [
+          "run #67 SUCCESS",
+          "run #68 SUCCESS"
+        ],
+        "post_merge_ci": [
+          "run #69 SUCCESS"
+        ],
+        "verification": "Audit target x50 PASS; audit race x20 PASS; Snowflake semantics x50 PASS; Snowflake package PASS; full go test ./... PASS; audit.go byte-identical to fresh Dev.",
+        "runtime_config_drift": 0,
+        "router_drift": 0,
+        "sdk_app_drift": 0
+      },
+      "closure_note": "NEBULA-ID-002 closed as independent Snowflake/Audit CI stability repair. Formal approval occurred after merge and is explicitly reconciled. S1-F02-003 / PR #14 remains unchanged at 872badfd12d61af9fd3b7bdc0e61288d7770b992 and must be rerun unchanged.",
+      "review_state": "PASS",
+      "delivery_commit": "53b81fefd7a1d7ec138227f8c37f64c1ff695541",
+      "completed_at": "2026-08-13T22:45:51+08:00",
+      "formal_review": {
+        "review_id": 33,
+        "state": "APPROVED",
+        "reviewer": "reviewer-agent",
+        "official": true,
+        "commit_id": "53b81fefd7a1d7ec138227f8c37f64c1ff695541",
+        "submitted_at": "2026-08-13T22:45:51+08:00"
+      },
+      "governance_sequence_deviation": "PR #15 merged at 2026-08-13T22:40:37+08:00 before formal review #33 was submitted at 2026-08-13T22:45:51+08:00. The approval is real post-merge evidence and does not claim to have preceded merge.",
+      "acceptance_note": "Independent Backend Review ACCEPT / PASS on exact candidate; PR #15 CI runs #67/#68 SUCCESS; canonical Backend Dev merge 1cd8272c...; post-merge run #69 SUCCESS; formal review #33 APPROVED by reviewer-agent was recorded after merge and reconciled without production rework.",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "review_evidence": "reports/NEBULA-ID-002_COORDINATOR_ACCEPTANCE.md"
     },
     "S1-F03-001": {
       "status": "READY",

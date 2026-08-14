@@ -1,7 +1,7 @@
 # S1-F02-002 SDK Runtime Config Client Closure
 - ID：S1-F02-002
 - Owner：SDK Config Agent B
-- Depends：S1-F02-001
+- Depends：S1-F02-003 (after S1-F02-001 audit pass)
 - Execution repo：`.`
 - Execution branch：`s1/f02-002-sdk-config`
 - Governance state：`READ_ONLY` for Implementation Agent; Task Board/Sprint Board由 Coordinator 独占写
