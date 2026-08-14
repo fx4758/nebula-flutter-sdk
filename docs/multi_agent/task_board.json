@@ -344,7 +344,7 @@
       }
     },
     "S1-F02-002": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Config Agent",
       "agent": "A",
       "reviewer": "SDK Review Agent",
@@ -364,7 +364,34 @@
       "preflight_verdict": "PASS_WITH_BACKEND_FROZEN_LIMIT_BLOCKER",
       "preflight_evidence": "reports/S1-F02-002_SDK_RUNTIME_CONFIG_PRECHECK.md",
       "sdk_production_mutation_required": false,
-      "app_repin_required": false
+      "app_repin_required": false,
+      "review_verdict": "PASS",
+      "review_state": "PASS",
+      "delivery_commit": "dc0a807fc40c7a848c132d5226da5bfa454dbf13",
+      "delivery_evidence": {
+        "sdk_pr": "root/nebula-flutter-sdk#22",
+        "accepted_candidate": "dc0a807fc40c7a848c132d5226da5bfa454dbf13",
+        "execution_base": "ea6b46fdb6e6455ca7c131906017fceb8c44e907",
+        "merge_commit": "c727377aff906d0d824266c29256df64eca7bdf6",
+        "merged_at": "2026-08-14T11:28:09+08:00",
+        "candidate_ci": "governance #69 / internal 579 SUCCESS on exact candidate",
+        "post_merge_ci": "governance #70 / internal 581 SUCCESS on canonical merge",
+        "closure_report": "docs/reports/S1-F02-002_SDK_RUNTIME_CONFIG_CLOSURE.md",
+        "production_code_diff": 0,
+        "public_api_diff": 0,
+        "app_repin": false
+      },
+      "formal_review": {
+        "review_id": 47,
+        "state": "APPROVED",
+        "reviewer": "reviewer-agent",
+        "official": true,
+        "commit_id": "dc0a807fc40c7a848c132d5226da5bfa454dbf13",
+        "submitted_at": "2026-08-14T11:27:45+08:00"
+      },
+      "acceptance_note": "SDK Runtime Config closure accepted by reuse with zero production/public API mutation; formal review #47 APPROVED exact candidate dc0a807fc40c7a848c132d5226da5bfa454dbf13; PR #22 merged as c727377aff906d0d824266c29256df64eca7bdf6; post-merge governance #70 SUCCESS.",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "review_evidence": "docs/reports/S1-F02-002_SDK_RUNTIME_CONFIG_CLOSURE.md"
     },
     "S1-F02-003": {
       "status": "DONE",
