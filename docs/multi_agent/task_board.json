@@ -587,6 +587,33 @@
       "contract_v1_frozen": false,
       "closure_mode": "COORDINATOR_EVIDENCE_CANONICALIZATION",
       "closure_note": "Required audit/ACR artifacts were absent from canonical main after Architecture review; Coordinator canonicalized reviewed evidence without production mutation or implementation authorization."
+    },
+    "OBS-CONTRACT-V1-001": {
+      "status": "READY",
+      "owner": "Mobile Observability Contract Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/OBS-CONTRACT-V1-001_MOBILE_OBSERVABILITY_CONTRACT_FREEZE.md",
+      "depends_on": [
+        "S1-F04-001"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "obs/contract-v1-001-mobile-observability-freeze",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-obs-contract-v1-001-mobile-observability-freeze",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "architecture_source": "reports/ACR-MOBILE-OBSERVABILITY-001.md",
+      "required_output": "ADR-MOBILE-OBSERVABILITY-001 + Mobile Analytics Contract v1 + Error Reporting Contract v1 freeze only; no production implementation.",
+      "implementation_authorized": false,
+      "backend_mutation_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "implementation_story_registration_authorized": false
     }
   },
   "non_executable_roadmaps": [
