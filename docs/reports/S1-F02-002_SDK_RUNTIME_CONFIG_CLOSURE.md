@@ -2,7 +2,7 @@
 
 Status: **DELIVERED FOR INDEPENDENT REVIEW**
 
-Canonical governance base: `main@ea6b46fdb6e6455ca7c131906017fceb8c44e907`  
+Canonical governance base: `main@ea6b46fdb6e6455ca7c131906017fceb8c44e907`
 Pre-delivery verification subject: `9caf81ddfcd490d61168df7e4619ee1880bf0522`
 
 ## Delivery decision
