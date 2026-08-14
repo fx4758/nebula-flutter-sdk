@@ -547,6 +547,35 @@
       "execution_worktree": "wt-s1f03-002-sdk",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false
+    },
+    "S1-F04-001": {
+      "status": "READY",
+      "owner": "Mobile Observability Contract Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/S1-F04-001_MOBILE_OBSERVABILITY_GAP_AUDIT.md",
+      "depends_on": [
+        "S1-F01-004",
+        "S1-F02-002"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "s1/f04-001-mobile-observability-gap-audit",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-s1f04-001-mobile-observability-gap-audit",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "triggering_product": "NFC Writer NEBULA-APP-001D",
+      "release_dependency": "NEBULA-APP-001D remains WAIT until separately authorized Backend + SDK observability capability closure is canonical.",
+      "observed_gap": "SDK F2-04 queue/sender Port is implemented, but no canonical mobile ingest transport contract is wired; Backend legacy analytics wire/auth is incompatible with MB-01 mobile proof semantics; canonical SDK has no Crash/Error Reporting public capability.",
+      "required_output": "Cross-repo gap audit + ACR-MOBILE-OBSERVABILITY-001 preparation only; no contract or production implementation in this Story.",
+      "second_consumer_evidence": [
+        "FlyPost docs/sprints/FLUTTER_P0_SPRINT_PLAN.md: Release requires Crash/Telemetry/request_id",
+        "FlyPost docs/sprints/AGENT_TASK_BOARD.md: S6-01 telemetry/release lane",
+        "FlyPost docs/sprints/TASK_REGISTRY.json: lib/core/telemetry/**"
+      ]
     }
   },
   "non_executable_roadmaps": [
