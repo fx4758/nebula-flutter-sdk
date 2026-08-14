@@ -549,7 +549,7 @@
       "agent_may_edit_task_board": false
     },
     "S1-F04-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Mobile Observability Contract Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -575,7 +575,18 @@
         "FlyPost docs/sprints/FLUTTER_P0_SPRINT_PLAN.md: Release requires Crash/Telemetry/request_id",
         "FlyPost docs/sprints/AGENT_TASK_BOARD.md: S6-01 telemetry/release lane",
         "FlyPost docs/sprints/TASK_REGISTRY.json: lib/core/telemetry/**"
-      ]
+      ],
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "audit_evidence": "reports/S1-F04-001_MOBILE_OBSERVABILITY_GAP_AUDIT.md",
+      "acr_evidence": "reports/ACR-MOBILE-OBSERVABILITY-001.md",
+      "architecture_decision": "ACR-MOBILE-OBSERVABILITY-001 APPROVED; Coordinator evidence canonicalization; no implementation authorization.",
+      "implementation_authorized": false,
+      "adr_created": false,
+      "contract_v1_frozen": false,
+      "closure_mode": "COORDINATOR_EVIDENCE_CANONICALIZATION",
+      "closure_note": "Required audit/ACR artifacts were absent from canonical main after Architecture review; Coordinator canonicalized reviewed evidence without production mutation or implementation authorization."
     }
   },
   "non_executable_roadmaps": [
