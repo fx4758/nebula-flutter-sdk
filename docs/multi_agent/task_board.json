@@ -626,7 +626,7 @@
       "closure_note": "ADR-MOBILE-OBSERVABILITY-001 + Mobile Analytics Contract v1 + Error Reporting Contract v1 independently reviewed and canonical; no implementation authorization."
     },
     "OBS-SDK-ERROR-V1-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Error Reporting Agent",
       "agent": "A",
       "reviewer": "SDK Review Agent",
@@ -645,12 +645,21 @@
       "agent_may_edit_task_board": false,
       "architecture_authority": "adrs/ADR-MOBILE-OBSERVABILITY-001.md",
       "frozen_contract": "contracts/ERROR_REPORTING_CONTRACT_V1.md",
-      "implementation_authorized": true,
+      "implementation_authorized": false,
       "implementation_scope": "SDK internal Error Reporting V1 core only; no public export, no Backend/App/provider mutation.",
       "backend_mutation_authorized": false,
       "sdk_public_surface_mutation_authorized": false,
       "app_mutation_authorized": false,
-      "provider_integration_authorized": false
+      "provider_integration_authorized": false,
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "delivery_commit": "ad3495a9df8c6b64ce3d45879770a58144119f7f",
+      "core_implementation_commit": "1d00032eb8bb0cbdbc60130c6e8471bde69a17f2",
+      "delivery_pr": "#30",
+      "formal_review": "#69 APPROVED / reviewer-agent / official=true / exact candidate ad3495a9df8c6b64ce3d45879770a58144119f7f",
+      "delivery_merge_commit": "257b7fbac88c3a880ff5b992e695137faa9d44fe",
+      "closure_note": "SDK Error Reporting V1 internal core independently reviewed and canonical. Public SDK export, Backend ingest, provider integration, App wiring, and Analytics implementation remain separately unauthorized."
     }
   },
   "non_executable_roadmaps": [
