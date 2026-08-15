@@ -589,7 +589,7 @@
       "closure_note": "Required audit/ACR artifacts were absent from canonical main after Architecture review; Coordinator canonicalized reviewed evidence without production mutation or implementation authorization."
     },
     "OBS-CONTRACT-V1-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Mobile Observability Contract Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -613,7 +613,17 @@
       "sdk_production_mutation_authorized": false,
       "app_mutation_authorized": false,
       "provider_integration_authorized": false,
-      "implementation_story_registration_authorized": false
+      "implementation_story_registration_authorized": false,
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "delivery_commit": "2b9310ae5e7309749365a2e7b19ee6529c8fa756",
+      "formal_review": "#63 APPROVED / reviewer-agent / official=true / exact candidate 2b9310ae5e7309749365a2e7b19ee6529c8fa756",
+      "delivery_pr": "#27",
+      "delivery_merge_commit": "deb8bcd9dc6695bf3702e84c700a78806005c571",
+      "contract_v1_frozen": true,
+      "adr_created": true,
+      "closure_note": "ADR-MOBILE-OBSERVABILITY-001 + Mobile Analytics Contract v1 + Error Reporting Contract v1 independently reviewed and canonical; no implementation authorization."
     }
   },
   "non_executable_roadmaps": [
