@@ -697,6 +697,43 @@
       "public_surface_freeze": "contracts/ERROR_REPORTING_SDK_PUBLIC_SURFACE_V1.md",
       "public_surface_symbol_delta": "125 -> 126 predicted; exactly NebulaErrorReporting, mechanically simulated during review",
       "closure_note": "Error Reporting SDK Public Surface v1 freeze independently reviewed and canonical. Actual capabilities.dart/nebula.dart/client.dart/api_surface snapshot mutation remains unauthorized pending a separate CHANGE_APPROVED surface implementation Story."
+    },
+    "OBS-SDK-ERROR-API-V1-002": {
+      "status": "READY",
+      "owner": "SDK Architect Agent",
+      "agent": "A",
+      "reviewer": "SDK Review Agent",
+      "task_pack": "task_packs/OBS-SDK-ERROR-API-V1-002_PUBLIC_SURFACE_IMPLEMENTATION.md",
+      "depends_on": [
+        "OBS-SDK-ERROR-API-V1-001"
+      ],
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "CHANGE_APPROVED",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "obs/sdk-error-api-v1-002-public-surface-implementation",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-obs-sdk-error-api-v1-002-public-surface-implementation",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "frozen_public_surface": "contracts/ERROR_REPORTING_SDK_PUBLIC_SURFACE_V1.md",
+      "implementation_authorized": true,
+      "sdk_public_surface_mutation_authorized": true,
+      "authorized_write_set": [
+        "lib/src/capabilities.dart",
+        "lib/src/nebula.dart",
+        "lib/src/error_reporting/client.dart",
+        "governance/api_surface.snapshot"
+      ],
+      "required_unchanged_paths": [
+        "lib/nebula_sdk.dart",
+        "governance/public_api.txt"
+      ],
+      "expected_api_surface": "125 -> 126; only new top-level symbol src/capabilities.dart class NebulaErrorReporting",
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "analytics_mutation_authorized": false
     }
   },
   "non_executable_roadmaps": [
