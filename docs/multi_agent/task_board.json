@@ -624,6 +624,33 @@
       "contract_v1_frozen": true,
       "adr_created": true,
       "closure_note": "ADR-MOBILE-OBSERVABILITY-001 + Mobile Analytics Contract v1 + Error Reporting Contract v1 independently reviewed and canonical; no implementation authorization."
+    },
+    "OBS-SDK-ERROR-V1-001": {
+      "status": "READY",
+      "owner": "SDK Error Reporting Agent",
+      "agent": "A",
+      "reviewer": "SDK Review Agent",
+      "task_pack": "task_packs/OBS-SDK-ERROR-V1-001_ERROR_REPORTING_INTERNAL_CORE.md",
+      "depends_on": [
+        "OBS-CONTRACT-V1-001"
+      ],
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "obs/sdk-error-v1-001-internal-core",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-obs-sdk-error-v1-001-internal-core",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "architecture_authority": "adrs/ADR-MOBILE-OBSERVABILITY-001.md",
+      "frozen_contract": "contracts/ERROR_REPORTING_CONTRACT_V1.md",
+      "implementation_authorized": true,
+      "implementation_scope": "SDK internal Error Reporting V1 core only; no public export, no Backend/App/provider mutation.",
+      "backend_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false
     }
   },
   "non_executable_roadmaps": [
