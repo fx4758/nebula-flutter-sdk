@@ -24,20 +24,26 @@ The contract does not add `user_id` to the canonical event payload. Privacy/iden
 
 ## 3. Request/batch identity
 
-The SDK queue is not itself a transport batch. Before assigning identity, the sender MUST exact-byte split queued events into one or more final transport batches that each fit the proof-protected request budget. Each resulting transport batch has its own client-generated `batch_id`.
+The SDK queue is not itself a transport batch. The sender MUST construct a final transport batch using the complete serialized request body, including the candidate `batch_id`, before that identity becomes durable/assigned.
+
+Mechanically required construction:
+
+1. select an ordered candidate event set from the bounded queue;
+2. generate a provisional client `batch_id`;
+3. serialize the complete canonical request body with that provisional ID and exact envelope/array overhead;
+4. if the serialized body exceeds the proof-protected ceiling, shrink/recompute the candidate event set before identity is bound; the provisional ID is not yet a durable batch identity and MAY be discarded/replaced during this construction step;
+5. only after the complete serialized request fits the ceiling, bind/persist that `batch_id` to that exact ordered event set; from that point the batch is immutable.
 
 Requirements:
 
-- exact-byte split occurs **before** `batch_id` assignment;
-- one `batch_id` identifies exactly one final transport request event set;
+- one assigned `batch_id` identifies exactly one immutable final HTTP event set;
 - `batch_id` MUST be stable for the complete retry lifecycle of that transport batch;
-- assigning a new `batch_id` to retry the same logical transport batch is forbidden;
+- assigning a new `batch_id` to retry the same assigned logical transport batch is forbidden;
 - once a `batch_id` is assigned, the ordered event payload associated with that batch is immutable;
-- reusing one `batch_id` with materially different event payload is invalid;
 - events added later to the SDK queue form a new transport batch and receive a new `batch_id`;
 - V1 does not require an event-level `event_id` when immutable batch receipt semantics are preserved.
 
-The concrete identifier encoding is an implementation detail as long as it is collision-resistant within the trusted `(app_id, installation_id)` scope and stable across retry/persistence.
+The concrete identifier encoding is an implementation detail as long as it is collision-resistant within the trusted `(app_id, installation_id)` scope and stable across retry/persistence after assignment.
 
 ## 4. Durable acceptance semantics
 
@@ -54,9 +60,14 @@ first request
 → events are NOT inserted a second time
 ```
 
-A retry of an already accepted immutable batch MUST NOT be reported as a failure merely because the batch is a duplicate. Existing short-lived Redis `Idempotent()` behavior is not sufficient evidence for this durable receipt contract.
+Durable identity behavior is frozen as follows:
 
-The contract freezes behavior, not a table/index implementation.
+- same trusted scope + same `batch_id` + same immutable payload => return prior accepted/success semantics without reinsertion;
+- same trusted scope + same `batch_id` + different payload => deterministic non-retryable conflict/rejection; it MUST NOT be returned as successful duplicate acceptance.
+
+The receiving authority MUST retain enough durable receipt material to distinguish those two cases. The concrete digest/index/table mechanism is an implementation detail. Existing short-lived Redis `Idempotent()` behavior is not sufficient evidence for this durable receipt contract.
+
+The contract freezes observable behavior, not a table/index implementation.
 
 ## 5. Time semantics
 
@@ -99,8 +110,9 @@ Every proof-protected canonical HTTP request MUST fit within the currently accep
 
 Requirements:
 
-- splitting MUST use exact serialized request-byte accounting, including envelope/array overhead;
-- queued events MUST be partitioned into final transport batches before identity assignment; each HTTP request carries exactly one immutable `batch_id` event set;
+- sizing MUST use exact serialized request-byte accounting of the complete canonical body, including the provisional `batch_id`, envelope, and array overhead;
+- identity becomes assigned/durable only after that complete serialized request fits the ceiling; if it does not fit, the event set is shrunk/recomputed before assignment;
+- each HTTP request carries exactly one assigned immutable `batch_id` event set;
 - correctness MUST NOT depend on gzip/compression ratio;
 - gzip/compression is OPTIONAL/DEFERRED optimization;
 - increasing the InstallationProof body ceiling is a separate Platform contract change, not an Analytics-local decision.

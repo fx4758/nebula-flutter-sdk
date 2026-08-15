@@ -36,7 +36,7 @@ The concrete identifier encoding is an implementation detail provided it is coll
 
 ## 3. Client diagnostic facts
 
-The canonical V1 diagnostic payload semantics are limited to:
+The canonical V1 client diagnostic payload semantics are limited to:
 
 - `report_id`;
 - `occurred_at`;
@@ -46,6 +46,8 @@ The canonical V1 diagnostic payload semantics are limited to:
 - `request_id` when available;
 - `reported_app_version`;
 - `reported_build_number`.
+
+The receiving authority records a distinct server-authoritative `ingested_at` receipt time. `occurred_at` is the client-side error occurrence time; `ingested_at` is server receipt/persistence time. Offline persistence/retry MUST preserve `occurred_at` and MUST NOT overwrite it with receipt time.
 
 `reported_app_version` and `reported_build_number` are diagnostic snapshots from the time of the error. They are not authorization authority.
 
@@ -119,6 +121,13 @@ The only fatal-path durability promise is **best-effort durable enqueue**. The c
 A retry of the same persisted report MUST retain the same immutable `report_id`.
 
 The receiving authority MUST provide durable report-level deduplication semantics sufficient for `commit → response lost → same report retry` to acknowledge prior acceptance without creating a second logical report instance.
+
+Durable identity behavior is frozen as follows:
+
+- same trusted scope + same `report_id` + same immutable diagnostic report payload => acknowledge prior acceptance without creating a second report instance;
+- same trusted scope + same `report_id` + different diagnostic report payload => deterministic non-retryable conflict/rejection; it MUST NOT be acknowledged as the prior report.
+
+The receiving authority MUST retain enough durable receipt material to distinguish those two cases. The concrete digest/index/table mechanism is an implementation detail.
 
 This contract freezes observable behavior, not a database table or index.
 
