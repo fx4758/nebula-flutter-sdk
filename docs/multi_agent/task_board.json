@@ -662,7 +662,7 @@
       "closure_note": "SDK Error Reporting V1 internal core independently reviewed and canonical. Public SDK export, Backend ingest, provider integration, App wiring, and Analytics implementation remain separately unauthorized."
     },
     "OBS-SDK-ERROR-API-V1-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Architect Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -686,7 +686,17 @@
       "sdk_public_surface_mutation_authorized": false,
       "backend_mutation_authorized": false,
       "app_mutation_authorized": false,
-      "provider_integration_authorized": false
+      "provider_integration_authorized": false,
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "delivery_commit": "38e1333bc4d1f8b6ecd0640a952e512c043dcc21",
+      "delivery_pr": "#33",
+      "formal_review": "#76 APPROVED / reviewer-agent / official=true / exact candidate 38e1333bc4d1f8b6ecd0640a952e512c043dcc21",
+      "delivery_merge_commit": "af41cd7d1349ede5658fce67ba1e930bbc23fa78",
+      "public_surface_freeze": "contracts/ERROR_REPORTING_SDK_PUBLIC_SURFACE_V1.md",
+      "public_surface_symbol_delta": "125 -> 126 predicted; exactly NebulaErrorReporting, mechanically simulated during review",
+      "closure_note": "Error Reporting SDK Public Surface v1 freeze independently reviewed and canonical. Actual capabilities.dart/nebula.dart/client.dart/api_surface snapshot mutation remains unauthorized pending a separate CHANGE_APPROVED surface implementation Story."
     }
   },
   "non_executable_roadmaps": [
