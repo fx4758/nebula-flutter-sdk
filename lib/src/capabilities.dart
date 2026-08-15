@@ -1,5 +1,6 @@
 import 'auth/login_request.dart';
 import 'auth/session.dart';
+import 'foundation/request_id.dart';
 import 'transport/cancellation_token.dart';
 
 abstract interface class NebulaAuth {
@@ -54,3 +55,18 @@ abstract interface class NebulaPayment {}
 
 /// Marker contract. Concrete AI operations are frozen in Sprint F4.
 abstract interface class NebulaAi {}
+
+/// Best-effort Error Reporting V1 capability.
+///
+/// App code supplies only minimal caught-error diagnostics. Trusted App /
+/// installation / platform identity, persistence, retry, provider and
+/// transport remain SDK/platform-owned implementation details.
+abstract interface class NebulaErrorReporting {
+  Future<void> reportCaughtError({
+    required String errorType,
+    required String safeMessage,
+    required StackTrace stackTrace,
+    DateTime? occurredAt,
+    NebulaRequestId? requestId,
+  });
+}

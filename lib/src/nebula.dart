@@ -12,6 +12,7 @@ final class Nebula {
     required this.auth,
     required this.config,
     required this.analytics,
+    this.errorReporting,
   }) : options = options {
     options.validate();
   }
@@ -21,4 +22,5 @@ final class Nebula {
   final NebulaAuth auth;
   final NebulaConfig config;
   final NebulaAnalytics analytics;
+  final NebulaErrorReporting? errorReporting;
 }
