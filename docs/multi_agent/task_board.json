@@ -744,6 +744,52 @@
       "delivery_merge_commit": "21283d888b268f0a6d676074b22525e4cdc63df8",
       "public_surface_symbol_delta": "125 -> 126; exactly src/capabilities.dart class NebulaErrorReporting",
       "closure_note": "Error Reporting SDK Public Surface v1 implementation independently reviewed and canonical; post-merge governance #110 SUCCESS on 21283d888b268f0a6d676074b22525e4cdc63df8. Public surface mutation authorization is closed; Backend ingest, App integration, provider integration, and Analytics implementation remain separately unauthorized."
+    },
+    "OBS-PLATFORM-API-V1-001": {
+      "status": "ACTIVE",
+      "owner": "Mobile Observability Platform Contract Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/OBS-PLATFORM-API-V1-001_MOBILE_OBSERVABILITY_PLATFORM_API_FREEZE.md",
+      "depends_on": [
+        "OBS-CONTRACT-V1-001",
+        "OBS-SDK-ERROR-API-V1-002"
+      ],
+      "platform_api_mode": "CONTRACT_CHANGE",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "obs/platform-api-v1-001-mobile-observability-freeze",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-obs-platform-api-v1-001-mobile-observability-freeze",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "approved_acr": "reports/ACR-MOBILE-OBSERVABILITY-001.md",
+      "approved_adr": "adrs/ADR-MOBILE-OBSERVABILITY-001.md",
+      "frozen_domain_contracts": [
+        "contracts/MOBILE_ANALYTICS_CONTRACT_V1.md",
+        "contracts/ERROR_REPORTING_CONTRACT_V1.md"
+      ],
+      "second_consumer_evidence": [
+        "FlyPost release governance requires Crash/Telemetry/request_id",
+        "FlyPost S6-01 telemetry/release lane"
+      ],
+      "implementation_authorized": false,
+      "backend_mutation_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "required_outputs": [
+        "contracts/MOBILE_ANALYTICS_PLATFORM_API_V1.md",
+        "contracts/ERROR_REPORTING_PLATFORM_API_V1.md"
+      ],
+      "follow_up_queue": [
+        "OBS-BACKEND-ERROR-V1-001",
+        "OBS-SDK-ERROR-TRANSPORT-V1-001",
+        "OBS-BACKEND-ANALYTICS-V1-001",
+        "OBS-SDK-ANALYTICS-TRANSPORT-V1-001",
+        "NEBULA-APP-001D capability re-audit"
+      ]
     }
   },
   "non_executable_roadmaps": [
