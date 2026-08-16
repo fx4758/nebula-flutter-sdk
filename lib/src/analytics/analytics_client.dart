@@ -19,6 +19,7 @@ import '../foundation/errors.dart';
 import 'analytics_sender.dart';
 import 'consent.dart';
 import 'event.dart';
+import 'mobile_analytics_sender.dart';
 import 'nebula_analytics.dart';
 
 /// 队列内一条未发送事件及其入队时间（TTL 依据）。
@@ -27,6 +28,14 @@ final class _Queued {
   final NebulaAnalyticsEvent event;
   final DateTime enqueuedAt;
 }
+
+final class _AssignedRetry {
+  const _AssignedRetry(this.batch, this.items);
+  final AssignedMobileAnalyticsBatch batch;
+  final List<_Queued> items;
+}
+
+enum _MobileBatchOutcome { success, requeue, drop }
 
 final class NebulaAnalyticsClient implements NebulaAnalytics {
   NebulaAnalyticsClient({
@@ -66,6 +75,7 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
   int _sent = 0;
 
   NebulaConsent? _consent;
+  _AssignedRetry? _assignedRetry;
 
   /// 当前缓冲中的未发送事件（诊断用，只读）。
   List<NebulaAnalyticsEvent> get pending =>
@@ -124,19 +134,22 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
 
   void _dropOldest() {
     if (_queue.isEmpty) return;
-    _queuedBytes -= _queue.removeAt(0).event.estimatedBytes;
+    final _Queued removed = _queue.removeAt(0);
+    _invalidateAssignedIfContains(removed);
+    _queuedBytes -= removed.event.estimatedBytes;
     _dropped++;
   }
 
   void _removeWhere(bool Function(NebulaAnalyticsEvent) test) {
     final List<_Queued> kept = <_Queued>[];
     int bytes = 0;
-    for (final _Queued q in _queue) {
-      if (test(q.event)) {
+    for (final _Queued queued in _queue) {
+      if (test(queued.event)) {
+        _invalidateAssignedIfContains(queued);
         _dropped++;
       } else {
-        kept.add(q);
-        bytes += q.event.estimatedBytes;
+        kept.add(queued);
+        bytes += queued.event.estimatedBytes;
       }
     }
     _queue
@@ -145,43 +158,110 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
     _queuedBytes = bytes;
   }
 
-  /// 冲刷未发送事件（F2-04）：剔除 TTL 过期 → 按批发送，单飞；失败批次回队首。
+  /// 冲刷未发送事件。Mobile sender 额外冻结 assigned batch identity；
+  /// legacy host sender 继续沿用原批量语义。
   @override
   Future<void> flush() async {
     final NebulaAnalyticsSender? sender = _sender;
-    if (sender == null) return; // 无 ingest 实现：文档化 no-op（docs/01 §6）。
-    if (_flushing) return; // 单飞：并发 flush 共享一次发送。
+    if (sender == null || _flushing) return;
     _flushing = true;
     try {
       _expireOldEvents();
-      while (_queue.isNotEmpty) {
-        final List<_Queued> taken = _takeBatch();
-        if (taken.isEmpty) break;
-        if (!await _sendWithRetry(
-            sender, taken.map((q) => q.event).toList(growable: false))) {
-          // F2-R1：失败整批以**原 _Queued（保留 enqueuedAt）**回队首——
-          // 反复失败不会重置 TTL，事件仍按原入队时间过期（docs/02 §4）。
-          _queue.insertAll(0, taken);
-          for (final _Queued q in taken) {
-            _queuedBytes += q.event.estimatedBytes;
-          }
-          break;
-        }
-        _sent += taken.length;
+      if (sender is MobileAnalyticsAssignedSender) {
+        await _flushMobile(sender as MobileAnalyticsAssignedSender);
+      } else {
+        await _flushLegacy(sender);
       }
     } finally {
       _flushing = false;
     }
   }
 
-  List<_Queued> _takeBatch() {
-    final int n = _batchSize < _queue.length ? _batchSize : _queue.length;
-    final List<_Queued> taken = _queue.sublist(0, n);
-    _queue.removeRange(0, n);
-    for (final _Queued q in taken) {
-      _queuedBytes -= q.event.estimatedBytes;
+  Future<void> _flushLegacy(NebulaAnalyticsSender sender) async {
+    while (_queue.isNotEmpty) {
+      final List<_Queued> taken = _takeCount(_batchCount());
+      if (!await _sendWithRetry(
+        sender,
+        taken.map((_Queued q) => q.event).toList(growable: false),
+      )) {
+        _requeue(taken);
+        break;
+      }
+      _sent += taken.length;
+    }
+  }
+
+  Future<void> _flushMobile(MobileAnalyticsAssignedSender sender) async {
+    while (_queue.isNotEmpty) {
+      late final AssignedMobileAnalyticsBatch assigned;
+      late final List<_Queued> taken;
+      final _AssignedRetry? retry = _assignedRetry;
+      if (retry != null && _queueStartsWith(retry.items)) {
+        assigned = retry.batch;
+        taken = _takeCount(retry.items.length);
+      } else {
+        _assignedRetry = null;
+        final List<NebulaAnalyticsEvent> candidates = _queue
+            .take(_batchCount())
+            .map((_Queued q) => q.event)
+            .toList(growable: false);
+        try {
+          assigned = sender.assignBatch(candidates);
+        } on Object {
+          return;
+        }
+        taken = _takeCount(assigned.events.length);
+      }
+
+      final _MobileBatchOutcome outcome =
+          await _sendAssignedWithRetry(sender, assigned);
+      switch (outcome) {
+        case _MobileBatchOutcome.success:
+          _assignedRetry = null;
+          _sent += taken.length;
+        case _MobileBatchOutcome.drop:
+          _assignedRetry = null;
+          _dropped += taken.length;
+        case _MobileBatchOutcome.requeue:
+          _requeue(taken);
+          _assignedRetry = _AssignedRetry(assigned, taken);
+          return;
+      }
+    }
+  }
+
+  int _batchCount() => _batchSize < _queue.length ? _batchSize : _queue.length;
+
+  List<_Queued> _takeCount(int count) {
+    if (count <= 0 || count > _queue.length) return const <_Queued>[];
+    final List<_Queued> taken = _queue.sublist(0, count);
+    _queue.removeRange(0, count);
+    for (final _Queued queued in taken) {
+      _queuedBytes -= queued.event.estimatedBytes;
     }
     return taken;
+  }
+
+  void _requeue(List<_Queued> taken) {
+    _queue.insertAll(0, taken);
+    for (final _Queued queued in taken) {
+      _queuedBytes += queued.event.estimatedBytes;
+    }
+  }
+
+  bool _queueStartsWith(List<_Queued> items) {
+    if (items.length > _queue.length) return false;
+    for (int i = 0; i < items.length; i++) {
+      if (!identical(items[i], _queue[i])) return false;
+    }
+    return true;
+  }
+
+  void _invalidateAssignedIfContains(_Queued queued) {
+    final _AssignedRetry? retry = _assignedRetry;
+    if (retry != null && retry.items.contains(queued)) {
+      _assignedRetry = null;
+    }
   }
 
   /// 剔除 TTL 过期事件（docs/02 §4：队列有 TTL 上限），计入丢弃。
@@ -189,12 +269,13 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
     final DateTime now = _now().toUtc();
     final List<_Queued> kept = <_Queued>[];
     int bytes = 0;
-    for (final _Queued q in _queue) {
-      if (now.difference(q.enqueuedAt) > _maxEventAge) {
+    for (final _Queued queued in _queue) {
+      if (now.difference(queued.enqueuedAt) > _maxEventAge) {
+        _invalidateAssignedIfContains(queued);
         _dropped++;
       } else {
-        kept.add(q);
-        bytes += q.event.estimatedBytes;
+        kept.add(queued);
+        bytes += queued.event.estimatedBytes;
       }
     }
     _queue
@@ -222,10 +303,44 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
       }
       if (attempt >= _sendRetries) return false;
       attempt++;
-      final int base = _sendRetryBaseDelay.inMilliseconds;
-      final int exp = base * (1 << (attempt - 1));
-      final int jitter = Random().nextInt(exp ~/ 4 + 1);
-      await Future<void>.delayed(Duration(milliseconds: exp + jitter));
+      await _retryDelay(attempt);
     }
+  }
+
+  Future<_MobileBatchOutcome> _sendAssignedWithRetry(
+    MobileAnalyticsAssignedSender sender,
+    AssignedMobileAnalyticsBatch batch,
+  ) async {
+    int attempt = 0;
+    while (true) {
+      try {
+        final MobileAnalyticsSendDisposition disposition =
+            await sender.sendAssigned(batch);
+        switch (disposition) {
+          case MobileAnalyticsSendDisposition.success:
+            return _MobileBatchOutcome.success;
+          case MobileAnalyticsSendDisposition.defer:
+            return _MobileBatchOutcome.requeue;
+          case MobileAnalyticsSendDisposition.nonRetryable:
+            return _MobileBatchOutcome.drop;
+        }
+      } on NebulaCancelledException {
+        return _MobileBatchOutcome.requeue;
+      } on NebulaException {
+        // Transient/ambiguous failure retries this exact assigned batch object.
+      } on Object {
+        return _MobileBatchOutcome.requeue;
+      }
+      if (attempt >= _sendRetries) return _MobileBatchOutcome.requeue;
+      attempt++;
+      await _retryDelay(attempt);
+    }
+  }
+
+  Future<void> _retryDelay(int attempt) {
+    final int base = _sendRetryBaseDelay.inMilliseconds;
+    final int exp = base * (1 << (attempt - 1));
+    final int jitter = Random().nextInt(exp ~/ 4 + 1);
+    return Future<void>.delayed(Duration(milliseconds: exp + jitter));
   }
 }
