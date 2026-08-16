@@ -1,7 +1,7 @@
 # Mobile Analytics Platform API v1
 
 - **Contract ID**: PLATFORM-API-MOBILE-ANALYTICS-V1
-- **Status**: FREEZE CANDIDATE / INDEPENDENT REVIEW REQUIRED
+- **Status**: FROZEN / REVIEW PASS
 - **Story**: OBS-PLATFORM-API-V1-001
 - **Domain authority**: `contracts/MOBILE_ANALYTICS_CONTRACT_V1.md`
 - **Architecture authority**: `adrs/ADR-MOBILE-OBSERVABILITY-001.md`

@@ -1,7 +1,7 @@
 # Error Reporting Platform API v1
 
 - **Contract ID**: PLATFORM-API-ERROR-REPORTING-V1
-- **Status**: FREEZE CANDIDATE / INDEPENDENT REVIEW REQUIRED
+- **Status**: FROZEN / REVIEW PASS
 - **Story**: OBS-PLATFORM-API-V1-001
 - **Domain authority**: `contracts/ERROR_REPORTING_CONTRACT_V1.md`
 - **SDK public-surface authority**: `contracts/ERROR_REPORTING_SDK_PUBLIC_SURFACE_V1.md`
