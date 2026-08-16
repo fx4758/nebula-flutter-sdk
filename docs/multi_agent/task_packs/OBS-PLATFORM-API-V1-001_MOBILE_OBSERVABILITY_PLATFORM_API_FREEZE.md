@@ -1,14 +1,13 @@
 # OBS-PLATFORM-API-V1-001 — Mobile Observability Platform API Freeze
 
-- ID: `OBS-PLATFORM-API-V1-001`
-- Owner: Mobile Observability Platform Contract Agent
-- Agent: A
-- Reviewer: Architecture Review Agent
-- Status at registration: `ACTIVE`
-- Execution repo: `nebula-flutter-sdk`
-- Platform API mode: `CONTRACT_CHANGE`
-- SDK public API mode: `READ_ONLY`
-- Production implementation authorized: **NO**
+- ID：OBS-PLATFORM-API-V1-001
+- Owner：Mobile Observability Platform Contract Agent A
+- Reviewer：Architecture Review Agent
+- Governance state：`ACTIVE`; Task Board remains Coordinator-only.
+- Execution repo：`.`
+- Platform API mode：`CONTRACT_CHANGE`
+- SDK public API mode：`READ_ONLY`
+- Production implementation authorized：**NO**
 
 ## Goal
 
