@@ -103,7 +103,7 @@ select ordered candidate events
 → retry immutable batch with the same ID
 ```
 
-Correctness MUST NOT depend on compression. An over-ceiling request MUST NOT partially commit events.
+Correctness MUST NOT depend on compression. An over-ceiling request MUST NOT partially commit events. Because the current trust layer enforces this ceiling while reading the proof-covered body, an over-16-KiB request is a proof-layer protocol violation and follows the existing `12001` rejection path; `30001` is reserved for payload/schema/conflict errors after proof succeeds.
 
 ## 6. Durable atomic acceptance
 

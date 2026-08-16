@@ -120,7 +120,7 @@ The authoritative Platform request ceiling is the InstallationProof ceiling: **1
 
 A batch is delivery convenience, not shared identity. Each `report_id` is accepted/deduplicated independently.
 
-Request-level malformed JSON, missing/empty `reports`, >10 reports, or over-ceiling body causes zero report processing. After request syntax is valid, valid reports MAY be accepted while invalid/conflicting reports are returned as non-retryable per-report rejections. This partial result matches the existing SDK `ErrorReportSendResult` seam.
+Request-level malformed JSON, missing/empty `reports`, or >10 reports causes zero report processing with payload-invalid semantics after proof succeeds. An over-16-KiB request is rejected earlier by the proof-covered-body ceiling and therefore follows existing `12001` proof-layer semantics, also with zero report processing. After request syntax is valid, valid reports MAY be accepted while invalid/conflicting reports are returned as non-retryable per-report rejections. This partial result matches the existing SDK `ErrorReportSendResult` seam.
 
 ## 7. Durable report identity
 
