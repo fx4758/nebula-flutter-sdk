@@ -7,11 +7,16 @@
 - Backend authority: FlyPostAPI `Dev=a19bd52372370d4f2f551c06d18194df4f547681`
 - Error seam authority: `OBS-SDK-ERROR-SEAM-V1-001 = DONE / REVIEW PASS`, freeze `0a6dba92cd361186565b043c54c8c0e7c0730b2a`, Architecture Review #105, canonical closure `e7f1df8de4795ad17f278874559917faac05f8b4`
 - M3 reauthorization: `ca040297a790c2a680b7fd0dfdbaab024e75de07`, Review #107, canonical `ac2b5bda9dbbd67864d986f955a00b0eeedd65de`, post-merge UI #149 SUCCESS
-- Delivery state: **READY FOR FORMAL CI / INDEPENDENT SDK REVIEW**
+- First implementation review: #108 `REQUEST_CHANGES / official=true / exact 5bd0939cc3ba91d8943cfec3e21098244def842a` — correctly identified Analytics `12001` trust-recovery callback authorization mismatch
+- Analytics trust scope correction: `af62e96194779eb6652d3cc83bdb194b724da75e`, Review #109 APPROVED, merge `f48018e8e214c627892785844228c9b52fa361a2`, post-merge governance UI #153 SUCCESS
+- Current reviewed base after correction: `f48018e8e214c627892785844228c9b52fa361a2`
+- Delivery state: **READY FOR NEW FORMAL CI / INDEPENDENT SDK REVIEW**
 
 ## Provenance
 
 The earlier exploratory implementation `eda89ef6a59c2a90a0a7223004e4d31edd2e6ce7` is **not** this delivery candidate and was not cherry-picked. Its scope gap was canonicalized separately and fully reverted before the reviewed seam freeze/re-authorization chain. This implementation was rebuilt from fresh canonical base `ac2b5bda9dbbd67864d986f955a00b0eeedd65de` after Task Source Guard made M3 executable again.
+
+Review #108 did not reject the transport mechanics; it rejected a governance mismatch between the frozen Analytics Platform `12001` recovery requirement and the then-current Task Pack wording. Coordinator resolved that mismatch through reviewed governance-only PR #50. The production/test tree remained byte-identical while `f48018e8...` was merged into this branch; no code was changed to bypass the review.
 
 ## Exact production write-set
 
