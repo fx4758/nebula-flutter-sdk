@@ -746,7 +746,7 @@
       "closure_note": "Error Reporting SDK Public Surface v1 implementation independently reviewed and canonical; post-merge governance #110 SUCCESS on 21283d888b268f0a6d676074b22525e4cdc63df8. Public surface mutation authorization is closed; Backend ingest, App integration, provider integration, and Analytics implementation remain separately unauthorized."
     },
     "OBS-PLATFORM-API-V1-001": {
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "owner": "Mobile Observability Platform Contract Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -771,8 +771,8 @@
         "contracts/ERROR_REPORTING_CONTRACT_V1.md"
       ],
       "second_consumer_evidence": [
-        "FlyPost release governance requires Crash/Telemetry/request_id",
-        "FlyPost S6-01 telemetry/release lane"
+        "Nearvia ADR-002: reuse existing Nebula analytics for consent/privacy-compliant product/technical events; PRODUCT_ARCHITECTURE_V1 requires aggregated performance/reliability telemetry.",
+        "StarSprout NEBULA_SDK_CONSUMER_V1: staged INT-005 Runtime Config / Analytics migration; BETA_METRICS documents implemented analytics/session-summary behavior."
       ],
       "implementation_authorized": false,
       "backend_mutation_authorized": false,
@@ -809,13 +809,18 @@
         "second_consumer_evidence": [
           {
             "consumer": "NFC Writer",
-            "evidence": "NEBULA-APP-001D requires generic Analytics + Crash/Error Reporting through Nebula Adapter."
+            "evidence": "NEBULA-APP-001D requires generic Analytics + Error Reporting through the App-owned Nebula Adapter."
           },
           {
-            "consumer": "FlyPost",
-            "evidence": "FlyPost release governance requires Crash/Telemetry/request_id and has S6-01 telemetry/release lane."
+            "consumer": "Nearvia",
+            "evidence": "ADR-002 freezes reuse of existing Nebula analytics for consent/privacy-compliant product/technical events; V1 architecture requires aggregated connection/reliability telemetry."
+          },
+          {
+            "consumer": "StarSprout",
+            "evidence": "NEBULA_SDK_CONSUMER_V1 stages INT-005 Runtime Config / Analytics; BETA_METRICS documents implemented activation/retention/completion/share analytics and idempotent session-summary delivery."
           }
-        ]
+        ],
+        "analytics_promotion_evidence_note": "New mechanically verified evidence found during OBS-PLATFORM-API-V1-001 kickoff resolves the earlier ACR analytics second-consumer gap without relabeling FlyPost Crash/Telemetry evidence."
       }
     }
   },
