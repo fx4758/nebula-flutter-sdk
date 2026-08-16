@@ -81,7 +81,7 @@ reported_build_number
 V1 compatibility bounds:
 
 - `reports`: 1..10 when complete request also fits;
-- `report_id`: non-empty UTF-8, <=128 bytes;
+- `report_id`: client-generated opaque immutable identifier, non-empty UTF-8, <=128 bytes, collision-resistant within the trusted installation scope and stable through the persisted report lifecycle;
 - `occurred_at`: UTC Unix seconds integer;
 - `error_type`: non-empty, <=128 UTF-8 bytes;
 - `safe_message`: <=1024 UTF-8 bytes after redaction;

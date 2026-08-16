@@ -69,7 +69,7 @@ Top-level keys are exactly `batch_id` and `events`. Event keys are exactly `name
 
 V1 rules:
 
-- `batch_id`: non-empty UTF-8, <=128 bytes;
+- `batch_id`: client-generated opaque immutable identifier, non-empty UTF-8, <=128 bytes, collision-resistant within the trusted `(app_id, installation_id)` scope and stable for the complete assigned-batch retry lifecycle;
 - `events`: ordered array, 1..50 when final bytes also fit;
 - `name`: non-empty, <=128 Unicode scalar values;
 - `occurred_at`: UTC Unix seconds integer from SDK event timestamp;
