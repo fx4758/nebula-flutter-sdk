@@ -746,7 +746,7 @@
       "closure_note": "Error Reporting SDK Public Surface v1 implementation independently reviewed and canonical; post-merge governance #110 SUCCESS on 21283d888b268f0a6d676074b22525e4cdc63df8. Public surface mutation authorization is closed; Backend ingest, App integration, provider integration, and Analytics implementation remain separately unauthorized."
     },
     "OBS-PLATFORM-API-V1-001": {
-      "status": "ACTIVE",
+      "status": "READY",
       "owner": "Mobile Observability Platform Contract Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",

@@ -3,8 +3,9 @@
 - ID：OBS-PLATFORM-API-V1-001
 - Owner：Mobile Observability Platform Contract Agent A
 - Reviewer：Architecture Review Agent
-- Governance state：`ACTIVE`; Task Board remains Coordinator-only.
+- Governance state：`READY`; Task Board remains Coordinator-only.
 - Execution repo：`.`
+- Execution branch：`obs/platform-api-v1-001-mobile-observability-freeze`
 - Platform API mode：`CONTRACT_CHANGE`
 - SDK public API mode：`READ_ONLY`
 - Production implementation authorized：**NO**
