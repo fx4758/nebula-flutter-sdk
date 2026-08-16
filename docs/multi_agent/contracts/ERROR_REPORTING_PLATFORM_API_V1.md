@@ -165,7 +165,7 @@ id_conflict
 
 A duplicate accepted report appears in `accepted` with `duplicate=true` and original `ingested_at`. Accepted/rejected IDs are disjoint and subsets of request IDs.
 
-`defer_remaining=true` asks the client to pause later backlog processing after applying this request's results. `retry_after_seconds` is null or non-negative integer seconds and defines the minimum cooldown for later uploads; it does not undo reports already accepted.
+`defer_remaining=true` asks the client to pause later backlog processing after applying this request's results. `retry_after_seconds` is an optional **successful-envelope domain policy hint**: null or a non-negative integer cooldown for later backlog. It is not sourced from HTTP `Retry-After` and does not undo reports already accepted.
 
 ## 9. Error / retry contract
 
@@ -174,12 +174,12 @@ A duplicate accepted report appears in `accepted` with `duplicate=true` and orig
 | valid request processed, including partial rejections | 200 | 0 | delete accepted + non-retryable rejected IDs; retry only IDs absent from both |
 | request-level malformed/invalid envelope | 200 | 30001 | non-retryable construction defect |
 | invalid InstallationProof/token/key/replay | 200 | 12001 | recover installation trust; no blind retry |
-| trusted-installation rate limit before report processing | 429 | 40002 | no report accepted; defer full set, honor `Retry-After` |
+| trusted-installation rate limit before report processing | 429 | 40002 | no report accepted; defer full set with bounded local cooldown |
 | durable receipt/store/provider dependency unavailable before valid result | 200 | 12004 | retain and bounded retry |
 | unexpected server failure before valid ACK | 200 | 50001 | retain and bounded retry |
 | ambiguous transport timeout/5xx/connection loss | transport | — | retry same persisted report IDs; durable dedup makes commit+lost-response safe |
 
-HTTP 429 MUST include non-negative integer-seconds `Retry-After`. Concrete SDK sender maps transport responses into `ErrorReportSendResult` without public SDK expansion.
+HTTP 429 + `code=40002` is the V1 rate-limit signal. Because current public `NebulaTransport` does not expose non-2xx response headers/body, V1 correctness MUST NOT depend on HTTP `Retry-After`. The concrete Error Reporting sender applies a bounded local cooldown on 429. A future generic transport change may expose server-selected retry headers, but that is not part of this contract.
 
 Inside `code=0`, a request report omitted from both `accepted` and `rejected` remains retryable; omission is the only successful-envelope per-report retryable outcome.
 
@@ -188,7 +188,7 @@ Inside `code=0`, a request report omitted from both `accepted` and `rejected` re
 The concrete Error Reporting transport sender MUST map Platform outcomes into the existing `ErrorReportSendResult`/retry seam without changing the public Error Reporting surface:
 
 - `code=0` -> populate accepted/rejected IDs exactly from the response;
-- HTTP 429 + `code=40002` -> no accepted/rejected IDs for the unprocessed request and `deferRemaining=true` with the frozen `Retry-After` cooldown;
+- HTTP 429 -> no accepted/rejected IDs for the unprocessed request and `deferRemaining=true` with a bounded local cooldown; no response-header access is required;
 - `code=12004`, `code=50001`, timeout, connection failure or ambiguous transport failure -> leave affected reports retryable (no false accepted/rejected IDs);
 - request-level `code=30001` -> deterministic non-retryable sender failure for the malformed request; it MUST NOT delete unrelated persisted reports as if individually rejected.
 

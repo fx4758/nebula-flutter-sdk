@@ -75,7 +75,7 @@ V1 rules:
 - `occurred_at`: UTC Unix seconds integer from SDK event timestamp;
 - `identifiable`: boolean privacy classification, not trusted user identity;
 - `properties`: JSON object, <=64 top-level keys;
-- one serialized event <=8 KiB;
+- each source event MUST already satisfy the existing SDK `NebulaAnalyticsEvent` input bound; no additional mapped-event byte cap is frozen beyond the exact 16 KiB final request ceiling;
 - server MUST support up to 50 events when the final body fits; clients MUST split earlier when exact bytes require it;
 - unknown top-level/event fields are invalid payload, not implicit V1 expansion.
 
@@ -149,12 +149,12 @@ Every stored event preserves two clocks: `occurred_at` (client occurrence) and `
 | accepted / duplicate | 200 | 0 | success |
 | malformed/unknown field/invalid event/empty batch/ID conflict | 200 | 30001 | non-retryable |
 | invalid InstallationProof/token/key/replay | 200 | 12001 | recover installation trust; no blind retry |
-| trusted-installation rate limit | 429 | 40002 | defer; honor `Retry-After` |
+| trusted-installation rate limit | 429 | 40002 | defer; no immediate automatic retry loop |
 | durable receipt/storage dependency unavailable | 200 | 12004 | bounded retry, same batch ID |
 | unexpected server failure | 200 | 50001 | bounded retry, same batch ID |
 | transport timeout/5xx/connection failure without accepted envelope | transport | — | ambiguous/transient; bounded retry, same batch ID |
 
-HTTP 429 MUST include non-negative integer-seconds `Retry-After`. A concrete SDK sender may translate HTTP status/envelope into its domain classification without changing generic public transport API.
+HTTP 429 + `code=40002` is the V1 rate-limit signal. The current public `NebulaTransport` does not expose response headers/body for non-2xx responses, so V1 correctness MUST NOT depend on reading `Retry-After`. The concrete sender MUST apply its own bounded cooldown/backoff after 429. Exposing a server-selected retry duration through the generic transport is a separate reviewed transport/API change.
 
 Observability failure is fail-soft and MUST NOT break core App behavior.
 
@@ -162,7 +162,7 @@ Observability failure is fail-soft and MUST NOT break core App behavior.
 
 The existing generic `HttpTransport` is not the Analytics retry policy. The concrete mobile Analytics sender MUST translate frozen Platform outcomes into the existing Analytics sender/client semantics without changing public `NebulaTransport` API:
 
-- HTTP 429 + `code=40002` -> Analytics rate-limit classification so `NebulaAnalyticsClient` does not immediate-auto-retry the batch;
+- HTTP 429 -> Analytics rate-limit classification so `NebulaAnalyticsClient` does not immediate-auto-retry the batch; the sender uses bounded local cooldown and does not require response-header access;
 - `code=12004` or `code=50001` after a valid mobile exchange -> transient Analytics send failure so the existing bounded Analytics backoff retries the **same assigned `batch_id`**;
 - `code=30001` -> non-retryable Analytics failure;
 - timeout/connection/ambiguous transport failure -> transient Analytics send failure with the same assigned `batch_id`;
