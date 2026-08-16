@@ -8,8 +8,9 @@
 - Platform API mode：`READ_ONLY`
 - SDK public API mode：`READ_ONLY`
 - Governance state：`READY`; Task Board remains Coordinator-only.
-- Required upstream：`OBS-BACKEND-V1-001 = DONE / REVIEW PASS` and `OBS-SDK-ERROR-API-V1-002 = DONE / REVIEW PASS`.
+- Required upstream：`OBS-BACKEND-V1-001 = DONE / REVIEW PASS`, `OBS-SDK-ERROR-API-V1-002 = DONE / REVIEW PASS`, and `OBS-SDK-ERROR-SEAM-V1-001 = DONE / REVIEW PASS`.
 - Frozen Platform contracts：`contracts/MOBILE_ANALYTICS_PLATFORM_API_V1.md` + `contracts/ERROR_REPORTING_PLATFORM_API_V1.md`.
+- Frozen internal Error Reporting seam：`contracts/ERROR_REPORTING_SDK_INTERNAL_SEND_SEAM_V1.md` (review #105; canonical closure through `e7f1df8de4795ad17f278874559917faac05f8b4`).
 - Backend canonical：FlyPostAPI `Dev=a19bd52372370d4f2f551c06d18194df4f547681`.
 
 ## Goal
@@ -25,6 +26,8 @@ Expected minimal production write-set:
 
 - `lib/src/analytics/analytics_client.dart` only if required for frozen assigned-batch identity/retry behavior without public signature change;
 - new `lib/src/analytics/mobile_analytics_sender.dart`;
+- `lib/src/error_reporting/client.dart` only for the reviewed send-outcome / retry / cooldown ordering seam;
+- `lib/src/error_reporting/sender.dart` only for the reviewed internal outcome representation;
 - new `lib/src/error_reporting/mobile_error_report_sender.dart`.
 
 Focused tests under `test/analytics/**` and `test/error_reporting/**` plus one Delivery Note under `docs/multi_agent/reports/**` are allowed.
@@ -82,10 +85,28 @@ Required behavior:
 - map `defer_remaining` / `retry_after_seconds` to existing cooldown seam;
 - HTTP 429 defers complete unprocessed set with bounded local cooldown;
 - `12004` / `50001` / transport ambiguity leave reports retryable;
-- request-level `30001` never manufactures per-report ACK/rejection.
+- request-level `30001` never manufactures per-report ACK/rejection;
+- `code=0` + `defer_remaining=true` applies accepted/rejected first, preserves omitted IDs without consuming normal retry-attempt budget, then applies bounded cooldown;
+- HTTP 429 / `40002` preserves the complete unprocessed set without consuming normal retry-attempt budget;
+- `12004` / `50001` / timeout / connection ambiguity use bounded transient retry and preserve immutable `report_id`;
+- request-level `30001` is a deterministic local non-retryable drop with dedicated internal accounting, not server ACK/rejection and not retry exhaustion;
+- `12001` preserves reports, does not consume normal delivery retry budget, enters bounded cooldown, and requires installation trust recovery before the next network send.
 
 ## Proof / trust
 Both senders must use the existing installation-token callback, `RequestProofSigner`, `buildAuthHeaders` with exact resolved path/body, and existing `NebulaTransport`. User access token is not required. The exact body sent must be the body covered by proof and must fit the 16 KiB InstallationProof ceiling.
+
+For Error Reporting only, the reviewed internal seam additionally permits `MobileErrorReportSender` to receive an internal composition callback semantically equivalent to `recoverInstallationTrust() -> Future<bool>`. It delegates to the existing bootstrap/renewal lifecycle; it MUST NOT create a second bootstrap/proof/transport abstraction. After `12001`, no further network send occurs until this recovery succeeds; recovery failure preserves reports and remains outside normal delivery retry-attempt accounting.
+
+## Reauthorization after reviewed scope gap
+
+The prior `BLOCKED_SCOPE_GAP` delivery remains canonical audit evidence. Coordinator reauthorization is based solely on `OBS-SDK-ERROR-SEAM-V1-001 = DONE / REVIEW PASS`. The newly authorized production delta over the original M3 scope is exactly:
+
+```text
+lib/src/error_reporting/client.dart
+lib/src/error_reporting/sender.dart
+```
+
+No public/shared/Backend/App/provider scope is added. If implementation requires any other production/public path beyond the complete authorized scope in this Task Pack and Task Board, STOP and return a new gap instead of expanding scope.
 
 ## Forbidden
 - Backend/App/provider mutation;
