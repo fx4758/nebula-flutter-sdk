@@ -926,14 +926,15 @@
       "closure_note": "Internal Error Reporting send/retry/trust-recovery seam independently reviewed and canonical. This closure does not itself authorize production mutation; blocked OBS-SDK-TRANSPORT-V1-001 requires explicit Coordinator reauthorization with the frozen additional write-set."
     },
     "OBS-SDK-TRANSPORT-V1-001": {
-      "status": "BLOCKED",
+      "status": "READY",
       "owner": "SDK Observability Transport Agent",
       "agent": "A",
       "reviewer": "SDK Review Agent",
       "task_pack": "task_packs/OBS-SDK-TRANSPORT-V1-001_MOBILE_OBSERVABILITY_TRANSPORT.md",
       "depends_on": [
         "OBS-BACKEND-V1-001",
-        "OBS-SDK-ERROR-API-V1-002"
+        "OBS-SDK-ERROR-API-V1-002",
+        "OBS-SDK-ERROR-SEAM-V1-001"
       ],
       "platform_api_mode": "READ_ONLY",
       "sdk_public_api_mode": "READ_ONLY",
@@ -949,8 +950,8 @@
         "contracts/ERROR_REPORTING_PLATFORM_API_V1.md"
       ],
       "backend_canonical_commit": "a19bd52372370d4f2f551c06d18194df4f547681",
-      "implementation_authorized": false,
-      "sdk_production_mutation_authorized": false,
+      "implementation_authorized": true,
+      "sdk_production_mutation_authorized": true,
       "sdk_public_surface_mutation_authorized": false,
       "backend_mutation_authorized": false,
       "app_mutation_authorized": false,
@@ -959,6 +960,8 @@
       "authorized_internal_scope": [
         "lib/src/analytics/analytics_client.dart",
         "lib/src/analytics/mobile_analytics_sender.dart",
+        "lib/src/error_reporting/client.dart",
+        "lib/src/error_reporting/sender.dart",
         "lib/src/error_reporting/mobile_error_report_sender.dart",
         "test/analytics/**",
         "test/error_reporting/**",
@@ -966,9 +969,7 @@
       ],
       "analytics_batch_identity_rule": "Assign batch_id only after full exact UTF-8 body fits <=16 KiB; same assigned batch keeps the same ID across retries; replacement ID on retry forbidden.",
       "error_report_identity_rule": "Preserve immutable report_id values; never manufacture accepted IDs; map partial accepted/rejected exactly.",
-      "review_state": "GAP_CONFIRMED",
-      "review_verdict": "BLOCKED_SCOPE_GAP",
-      "execution_gate": "BLOCKED_DELIVERED_WITH_GAP",
+      "execution_gate": "OPEN",
       "gap_report": "reports/OBS-SDK-TRANSPORT-V1-001_GAP_REPORT.md",
       "gap_delivery_commit": "33dd9ff05d6d3af62e28d7ea53fa0de0dad8b2dd",
       "gap_formal_review": "#101 APPROVED / reviewer-agent / official=true / exact candidate",
@@ -976,7 +977,18 @@
       "gap_merge_commit": "e010d1f89d83e9f95d93ccf9ff0ea3e14073f26d",
       "gap_post_merge_governance": "UI #135 / internal 686 SUCCESS",
       "gap_reason": "Frozen Error Reporting transport semantics cannot be represented by the currently authorized sender-only seam: 429 defer consumes retry budget; request-level 30001 becomes generic retry; frozen 12001 trust recovery/no-blind-retry has no recovery seam.",
-      "required_followup": "Architecture/Coordinator must freeze a separate internal Error Reporting send-result/retry/trust-recovery seam before any M3 production reauthorization. No public API or Platform contract change is implied by this gap."
+      "required_followup": "Architecture/Coordinator must freeze a separate internal Error Reporting send-result/retry/trust-recovery seam before any M3 production reauthorization. No public API or Platform contract change is implied by this gap.",
+      "internal_send_seam_freeze": "contracts/ERROR_REPORTING_SDK_INTERNAL_SEND_SEAM_V1.md",
+      "reauthorization_authority": {
+        "story": "OBS-SDK-ERROR-SEAM-V1-001",
+        "status": "DONE / REVIEW PASS / CLOSED_REVIEW_PASS",
+        "freeze_commit": "0a6dba92cd361186565b043c54c8c0e7c0730b2a",
+        "freeze_review": "#105 APPROVED / reviewer-agent / official=true",
+        "freeze_merge": "ea73cb8e6f310715895447966e328b30b4bb39d5",
+        "closure_merge": "e7f1df8de4795ad17f278874559917faac05f8b4",
+        "closure_post_merge": "UI #146 SUCCESS"
+      },
+      "reauthorization_note": "Prior BLOCKED_SCOPE_GAP evidence remains audit history. Reviewed internal send seam now explicitly authorizes only Error Reporting client.dart + sender.dart in addition to the original M3 scope. Public/shared transport/foundation, Backend, App and provider remain forbidden."
     }
   },
   "non_executable_roadmaps": [
