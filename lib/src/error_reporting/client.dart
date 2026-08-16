@@ -37,6 +37,8 @@ final class ErrorReportingStats {
   int senderFailures = 0;
   int invalidSenderResults = 0;
   int uploadDeferrals = 0;
+  int deterministicDrops = 0;
+  int trustRecoveryDeferrals = 0;
 }
 
 final class ErrorReportingClient implements NebulaErrorReporting {
@@ -173,40 +175,78 @@ final class ErrorReportingClient implements NebulaErrorReporting {
         await _scheduleRetry(batch, now);
         return;
       }
+      final Set<String> affectedIds =
+          result.affectedReportIds ?? Set<String>.of(batchIds);
+      final List<StoredErrorReport> affectedBatch = batch
+          .where((StoredErrorReport stored) =>
+              affectedIds.contains(stored.report.reportId))
+          .toList(growable: false);
 
-      if (result.acceptedReportIds.isNotEmpty) {
-        await _store.deleteById(result.acceptedReportIds);
-        stats.acknowledged += result.acceptedReportIds.length;
-      }
-      if (result.rejectedReportIds.isNotEmpty) {
-        await _store.deleteById(result.rejectedReportIds);
-        stats.rejected += result.rejectedReportIds.length;
-      }
-
-      final Set<String> retryIds = Set<String>.of(batchIds)
-        ..removeAll(result.acceptedReportIds)
-        ..removeAll(result.rejectedReportIds);
-      if (retryIds.isNotEmpty) {
-        await _scheduleRetry(
-          batch
-              .where(
-                (StoredErrorReport stored) =>
-                    retryIds.contains(stored.report.reportId),
-              )
-              .toList(growable: false),
-          now,
-        );
-      }
-      if (result.shouldDefer) {
-        stats.uploadDeferrals++;
-        final Duration cooldown = result.retryAfter ?? _budget.retryBaseDelay;
-        _uploadDeferredUntil = now.add(cooldown);
+      switch (result.disposition) {
+        case ErrorReportSendDisposition.processed:
+          await _applyProcessedResult(result, affectedBatch, affectedIds, now);
+        case ErrorReportSendDisposition.rateLimitedDefer:
+          _applyDefer(result, now);
+        case ErrorReportSendDisposition.transientFailure:
+          await _scheduleRetry(affectedBatch, now);
+        case ErrorReportSendDisposition.deterministicRequestFailure:
+          await _store.deleteById(affectedIds);
+          stats.deterministicDrops += affectedIds.length;
+        case ErrorReportSendDisposition.trustRecoveryRequired:
+          stats.trustRecoveryDeferrals++;
+          _applyDefer(result, now);
       }
     } on Object {
       stats.persistenceFailures++;
     } finally {
       _flushing = false;
     }
+  }
+
+  Future<void> _applyProcessedResult(
+    ErrorReportSendResult result,
+    List<StoredErrorReport> batch,
+    Set<String> batchIds,
+    DateTime now,
+  ) async {
+    if (result.acceptedReportIds.isNotEmpty) {
+      await _store.deleteById(result.acceptedReportIds);
+      stats.acknowledged += result.acceptedReportIds.length;
+    }
+    if (result.rejectedReportIds.isNotEmpty) {
+      await _store.deleteById(result.rejectedReportIds);
+      stats.rejected += result.rejectedReportIds.length;
+    }
+
+    final Set<String> omittedIds = Set<String>.of(batchIds)
+      ..removeAll(result.acceptedReportIds)
+      ..removeAll(result.rejectedReportIds);
+    if (result.shouldDefer) {
+      _applyDefer(result, now);
+      return;
+    }
+    if (omittedIds.isEmpty) return;
+    await _scheduleRetry(
+      batch
+          .where(
+            (StoredErrorReport stored) =>
+                omittedIds.contains(stored.report.reportId),
+          )
+          .toList(growable: false),
+      now,
+    );
+  }
+
+  void _applyDefer(ErrorReportSendResult result, DateTime now) {
+    stats.uploadDeferrals++;
+    Duration cooldown = result.retryAfter ?? _budget.retryBaseDelay;
+    if (cooldown < _budget.retryBaseDelay) {
+      cooldown = _budget.retryBaseDelay;
+    }
+    if (cooldown > _budget.retryMaxDelay) {
+      cooldown = _budget.retryMaxDelay;
+    }
+    _uploadDeferredUntil = now.add(cooldown);
   }
 
   List<StoredErrorReport> _defensivelyBound(
@@ -236,8 +276,19 @@ final class ErrorReportingClient implements NebulaErrorReporting {
   }
 
   bool _validSenderResult(ErrorReportSendResult result, Set<String> batchIds) {
-    return batchIds.containsAll(result.acceptedReportIds) &&
-        batchIds.containsAll(result.rejectedReportIds);
+    final Set<String> affected =
+        result.affectedReportIds ?? Set<String>.of(batchIds);
+    if (!batchIds.containsAll(affected) ||
+        !affected.containsAll(result.acceptedReportIds) ||
+        !affected.containsAll(result.rejectedReportIds)) {
+      return false;
+    }
+    if (result.disposition != ErrorReportSendDisposition.processed &&
+        (result.acceptedReportIds.isNotEmpty ||
+            result.rejectedReportIds.isNotEmpty)) {
+      return false;
+    }
+    return true;
   }
 
   Future<void> _scheduleRetry(
