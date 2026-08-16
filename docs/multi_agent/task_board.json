@@ -746,7 +746,7 @@
       "closure_note": "Error Reporting SDK Public Surface v1 implementation independently reviewed and canonical; post-merge governance #110 SUCCESS on 21283d888b268f0a6d676074b22525e4cdc63df8. Public surface mutation authorization is closed; Backend ingest, App integration, provider integration, and Analytics implementation remain separately unauthorized."
     },
     "OBS-PLATFORM-API-V1-001": {
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "owner": "Mobile Observability Platform Contract Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -771,8 +771,7 @@
         "contracts/ERROR_REPORTING_CONTRACT_V1.md"
       ],
       "second_consumer_evidence": [
-        "Nearvia ADR-002: reuse existing Nebula analytics for consent/privacy-compliant product/technical events; PRODUCT_ARCHITECTURE_V1 requires aggregated performance/reliability telemetry.",
-        "StarSprout NEBULA_SDK_CONSUMER_V1: staged INT-005 Runtime Config / Analytics migration; BETA_METRICS documents implemented analytics/session-summary behavior."
+        "Nearvia origin/main=17a6529592d21bf3ced52f121fa1ebed97f8a87a: ADR-002 reuses Nebula analytics for consent/privacy-compliant product/technical events; PRODUCT_ARCHITECTURE_V1 requires aggregated reliability telemetry."
       ],
       "implementation_authorized": false,
       "backend_mutation_authorized": false,
@@ -784,10 +783,8 @@
         "contracts/ERROR_REPORTING_PLATFORM_API_V1.md"
       ],
       "follow_up_queue": [
-        "OBS-BACKEND-ERROR-V1-001",
-        "OBS-SDK-ERROR-TRANSPORT-V1-001",
-        "OBS-BACKEND-ANALYTICS-V1-001",
-        "OBS-SDK-ANALYTICS-TRANSPORT-V1-001",
+        "OBS-BACKEND-V1-001",
+        "OBS-SDK-TRANSPORT-V1-001",
         "NEBULA-APP-001D capability re-audit"
       ],
       "backend_repo": "../flypost_backend",
@@ -813,15 +810,68 @@
           },
           {
             "consumer": "Nearvia",
-            "evidence": "ADR-002 freezes reuse of existing Nebula analytics for consent/privacy-compliant product/technical events; V1 architecture requires aggregated connection/reliability telemetry."
-          },
-          {
-            "consumer": "StarSprout",
-            "evidence": "NEBULA_SDK_CONSUMER_V1 stages INT-005 Runtime Config / Analytics; BETA_METRICS documents implemented activation/retention/completion/share analytics and idempotent session-summary delivery."
+            "evidence": "Canonical origin/main=17a6529592d21bf3ced52f121fa1ebed97f8a87a; ADR-002 freezes reuse of Nebula analytics for privacy-compliant product/technical events and V1 architecture requires aggregated reliability telemetry."
           }
         ],
-        "analytics_promotion_evidence_note": "New mechanically verified evidence found during OBS-PLATFORM-API-V1-001 kickoff resolves the earlier ACR analytics second-consumer gap without relabeling FlyPost Crash/Telemetry evidence."
-      }
+        "analytics_promotion_evidence_note": "Canonical Nearvia evidence resolves the earlier ACR Analytics second-consumer gap. StarSprout Beta analytics exists on canonical dev, but its explicit Nebula INT-005 consumer-contract text is unmerged and is therefore not used for this Platform promotion gate."
+      },
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "delivery_commit": "a441c19ba98f092cb1ec72d7c7ec3e5bb1d07c47",
+      "delivery_pr": "#40",
+      "formal_review": "#92 APPROVED / reviewer-agent / official=true / exact candidate a441c19ba98f092cb1ec72d7c7ec3e5bb1d07c47 / pre-merge",
+      "delivery_merge_commit": "b804b9bd40987a6f9257ffd51581522d02e019f4",
+      "platform_api_contracts_frozen": [
+        "contracts/MOBILE_ANALYTICS_PLATFORM_API_V1.md",
+        "contracts/ERROR_REPORTING_PLATFORM_API_V1.md"
+      ],
+      "closure_note": "Two independent mobile Platform API v1 contracts reviewed and canonical. Analytics formal promotion uses canonical Nearvia origin/main evidence; noncanonical StarSprout Nebula-migration branch evidence is not used as the authorization gate. No Backend/SDK/App/provider implementation occurred in this Story."
+    },
+    "OBS-BACKEND-V1-001": {
+      "status": "READY",
+      "owner": "Backend Observability Agent",
+      "agent": "A",
+      "reviewer": "Backend Review Agent",
+      "task_pack": "task_packs/OBS-BACKEND-V1-001_MOBILE_OBSERVABILITY_INGEST.md",
+      "depends_on": [
+        "OBS-PLATFORM-API-V1-001"
+      ],
+      "platform_api_mode": "IMPLEMENT_FROZEN_CONTRACT",
+      "sdk_public_api_mode": "NONE",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": "../flypost_backend",
+      "execution_branch": "obs/backend-v1-001-observability-ingest",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-obs-backend-v1-001-observability-ingest",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "backend_repo": "../flypost_backend",
+      "backend_baseline_commit": "c8c6cdc7413ffef1b63729b6b3de54596a3a9ed9",
+      "frozen_platform_contracts": [
+        "contracts/MOBILE_ANALYTICS_PLATFORM_API_V1.md",
+        "contracts/ERROR_REPORTING_PLATFORM_API_V1.md"
+      ],
+      "implementation_authorized": true,
+      "backend_mutation_authorized": true,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "domain_separation_rule": "One Backend milestone/PR is authorized for speed, but Analytics and Error Reporting endpoints, DTOs, service/repository semantics and durable identities remain separate; generic telemetry endpoint/payload/storage is forbidden.",
+      "platform_change_authorization": {
+        "acr_id": "ACR-MOBILE-OBSERVABILITY-001",
+        "acr_path": "reports/ACR-MOBILE-OBSERVABILITY-001.md",
+        "decision": "APPROVED",
+        "frozen_contract": "contracts/MOBILE_ANALYTICS_PLATFORM_API_V1.md + contracts/ERROR_REPORTING_PLATFORM_API_V1.md",
+        "backend_baseline_commit": "c8c6cdc7413ffef1b63729b6b3de54596a3a9ed9",
+        "independent_reviewer": "Architecture Review Agent / Review #92",
+        "adapter_first_analysis": "Frozen mobile ingest endpoints, durable database receipts, trusted server time, dedup/conflict semantics and server errors cannot be implemented by an App Adapter or SDK-only change."
+      },
+      "follow_up_queue": [
+        "OBS-SDK-TRANSPORT-V1-001",
+        "NEBULA-APP-001D capability re-audit"
+      ]
     }
   },
   "non_executable_roadmaps": [
