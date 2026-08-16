@@ -882,7 +882,7 @@
       "closure_note": "FlyPostAPI M2 mobile observability ingest reviewed and canonical on Dev=a19bd52372370d4f2f551c06d18194df4f547681; post-merge Backend/go-sdk/dart-sdk quality all SUCCESS. SDK/App/provider remain unauthorized."
     },
     "OBS-SDK-TRANSPORT-V1-001": {
-      "status": "READY",
+      "status": "BLOCKED",
       "owner": "SDK Observability Transport Agent",
       "agent": "A",
       "reviewer": "SDK Review Agent",
@@ -905,8 +905,8 @@
         "contracts/ERROR_REPORTING_PLATFORM_API_V1.md"
       ],
       "backend_canonical_commit": "a19bd52372370d4f2f551c06d18194df4f547681",
-      "implementation_authorized": true,
-      "sdk_production_mutation_authorized": true,
+      "implementation_authorized": false,
+      "sdk_production_mutation_authorized": false,
       "sdk_public_surface_mutation_authorized": false,
       "backend_mutation_authorized": false,
       "app_mutation_authorized": false,
@@ -921,7 +921,18 @@
         "docs/multi_agent/reports/**"
       ],
       "analytics_batch_identity_rule": "Assign batch_id only after full exact UTF-8 body fits <=16 KiB; same assigned batch keeps the same ID across retries; replacement ID on retry forbidden.",
-      "error_report_identity_rule": "Preserve immutable report_id values; never manufacture accepted IDs; map partial accepted/rejected exactly."
+      "error_report_identity_rule": "Preserve immutable report_id values; never manufacture accepted IDs; map partial accepted/rejected exactly.",
+      "review_state": "GAP_CONFIRMED",
+      "review_verdict": "BLOCKED_SCOPE_GAP",
+      "execution_gate": "BLOCKED_DELIVERED_WITH_GAP",
+      "gap_report": "reports/OBS-SDK-TRANSPORT-V1-001_GAP_REPORT.md",
+      "gap_delivery_commit": "33dd9ff05d6d3af62e28d7ea53fa0de0dad8b2dd",
+      "gap_formal_review": "#101 APPROVED / reviewer-agent / official=true / exact candidate",
+      "gap_delivery_pr": "#43 MERGED",
+      "gap_merge_commit": "e010d1f89d83e9f95d93ccf9ff0ea3e14073f26d",
+      "gap_post_merge_governance": "UI #135 / internal 686 SUCCESS",
+      "gap_reason": "Frozen Error Reporting transport semantics cannot be represented by the currently authorized sender-only seam: 429 defer consumes retry budget; request-level 30001 becomes generic retry; frozen 12001 trust recovery/no-blind-retry has no recovery seam.",
+      "required_followup": "Architecture/Coordinator must freeze a separate internal Error Reporting send-result/retry/trust-recovery seam before any M3 production reauthorization. No public API or Platform contract change is implied by this gap."
     }
   },
   "non_executable_roadmaps": [
