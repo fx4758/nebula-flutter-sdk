@@ -9,13 +9,16 @@ final class _Auth implements NebulaAuth {
   String? get accessToken => null;
 
   @override
-  Stream<NebulaSessionEvent> get events => const Stream<NebulaSessionEvent>.empty();
+  Stream<NebulaSessionEvent> get events =>
+      const Stream<NebulaSessionEvent>.empty();
 
   @override
   NebulaSessionState get state => NebulaSessionState.uninitialized;
 
   @override
-  Future<String> getAccessToken({NebulaCancellationToken? cancellationToken}) async => '';
+  Future<String> getAccessToken(
+          {NebulaCancellationToken? cancellationToken}) async =>
+      '';
 
   @override
   Future<void> login(
@@ -24,7 +27,8 @@ final class _Auth implements NebulaAuth {
   }) async {}
 
   @override
-  Future<SessionTokenPair> refresh({NebulaCancellationToken? cancellationToken}) async =>
+  Future<SessionTokenPair> refresh(
+          {NebulaCancellationToken? cancellationToken}) async =>
       const SessionTokenPair(accessToken: '', refreshToken: '');
 
   @override
@@ -44,7 +48,8 @@ final class _Config implements NebulaConfig {
   @override
   Future<NebulaEffectiveConfig> getEffectiveConfig({
     NebulaCancellationToken? cancellationToken,
-  }) => Future<NebulaEffectiveConfig>.error(UnimplementedError());
+  }) =>
+      Future<NebulaEffectiveConfig>.error(UnimplementedError());
 }
 
 final class _Analytics implements NebulaAnalytics {
@@ -96,7 +101,8 @@ void main() {
     expect(withCapability.errorReporting, same(client));
   });
 
-  test('caught-error surface maps frozen diagnostic facts and request id', () async {
+  test('caught-error surface maps frozen diagnostic facts and request id',
+      () async {
     final FakeBoundedErrorStore store = FakeBoundedErrorStore();
     final ErrorReportingClient client = ErrorReportingClient(
       store: store,
@@ -123,7 +129,8 @@ void main() {
   });
 
   test('public reporting remains fail-soft when persistence fails', () async {
-    final FakeBoundedErrorStore store = FakeBoundedErrorStore()..throwOnSave = true;
+    final FakeBoundedErrorStore store = FakeBoundedErrorStore()
+      ..throwOnSave = true;
     final NebulaErrorReporting capability = ErrorReportingClient(
       store: store,
       idGenerator: FixedErrorReportIdGenerator(),
