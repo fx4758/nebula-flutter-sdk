@@ -926,7 +926,7 @@
       "closure_note": "Internal Error Reporting send/retry/trust-recovery seam independently reviewed and canonical. This closure does not itself authorize production mutation; blocked OBS-SDK-TRANSPORT-V1-001 requires explicit Coordinator reauthorization with the frozen additional write-set."
     },
     "OBS-SDK-TRANSPORT-V1-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Observability Transport Agent",
       "agent": "A",
       "reviewer": "SDK Review Agent",
@@ -950,8 +950,8 @@
         "contracts/ERROR_REPORTING_PLATFORM_API_V1.md"
       ],
       "backend_canonical_commit": "a19bd52372370d4f2f551c06d18194df4f547681",
-      "implementation_authorized": true,
-      "sdk_production_mutation_authorized": true,
+      "implementation_authorized": false,
+      "sdk_production_mutation_authorized": false,
       "sdk_public_surface_mutation_authorized": false,
       "backend_mutation_authorized": false,
       "app_mutation_authorized": false,
@@ -969,7 +969,7 @@
       ],
       "analytics_batch_identity_rule": "Assign batch_id only after full exact UTF-8 body fits <=16 KiB; same assigned batch keeps the same ID across retries; replacement ID on retry forbidden.",
       "error_report_identity_rule": "Preserve immutable report_id values; never manufacture accepted IDs; map partial accepted/rejected exactly.",
-      "execution_gate": "OPEN",
+      "execution_gate": "CLOSED_REVIEW_PASS",
       "gap_report": "reports/OBS-SDK-TRANSPORT-V1-001_GAP_REPORT.md",
       "gap_delivery_commit": "33dd9ff05d6d3af62e28d7ea53fa0de0dad8b2dd",
       "gap_formal_review": "#101 APPROVED / reviewer-agent / official=true / exact candidate",
@@ -988,7 +988,17 @@
         "closure_merge": "e7f1df8de4795ad17f278874559917faac05f8b4",
         "closure_post_merge": "UI #146 SUCCESS"
       },
-      "reauthorization_note": "Prior BLOCKED_SCOPE_GAP evidence remains audit history. Reviewed internal send seam now explicitly authorizes only Error Reporting client.dart + sender.dart in addition to the original M3 scope. Public/shared transport/foundation, Backend, App and provider remain forbidden. Analytics trust-recovery scope correction: frozen MOBILE_ANALYTICS_PLATFORM_API_V1 12001 recovery/no-blind-retry may be implemented by an internal-only recoverInstallationTrust callback inside already-authorized lib/src/analytics/mobile_analytics_sender.dart. No new production path/public/shared/auth/bootstrap mutation is authorized. Implementation candidate 5bd0939... review #108 REQUEST_CHANGES is the trigger for this correction, not approval evidence."
+      "reauthorization_note": "Prior BLOCKED_SCOPE_GAP evidence remains audit history. Reviewed internal send seam now explicitly authorizes only Error Reporting client.dart + sender.dart in addition to the original M3 scope. Public/shared transport/foundation, Backend, App and provider remain forbidden. Analytics trust-recovery scope correction: frozen MOBILE_ANALYTICS_PLATFORM_API_V1 12001 recovery/no-blind-retry may be implemented by an internal-only recoverInstallationTrust callback inside already-authorized lib/src/analytics/mobile_analytics_sender.dart. No new production path/public/shared/auth/bootstrap mutation is authorized. Implementation candidate 5bd0939... review #108 REQUEST_CHANGES is the trigger for this correction, not approval evidence.",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "core_implementation_commit": "aca4860a4679518d1926aecc7ab5660d450e190c",
+      "delivery_commit": "bb0e406a2b1d5f8740831042d8d37bfb89dfae56",
+      "delivery_pr": "#49",
+      "formal_ci": "UI #154 SUCCESS / exact candidate bb0e406a2b1d5f8740831042d8d37bfb89dfae56",
+      "formal_review": "#110 APPROVED / reviewer-agent / official=true / exact candidate bb0e406a2b1d5f8740831042d8d37bfb89dfae56",
+      "delivery_merge_commit": "6b408aff27dc22462ca960dd160a78a74ddf684b",
+      "post_merge_governance": "UI #155 SUCCESS",
+      "closure_note": "Mobile Observability transport bindings independently reviewed and canonical. Prior implementation Review #108 REQUEST_CHANGES on 5bd0939... remains audit history; its Analytics 12001 scope mismatch was resolved by governance-only correction af62e961... / Review #109 / merge f48018e8 before final Review #110. M3 production authorization is now closed. App/NFC Writer integration remains separately unauthorized pending NEBULA-APP-001D capability re-audit; S1-F01-002 remains unrelated."
     }
   },
   "non_executable_roadmaps": [
