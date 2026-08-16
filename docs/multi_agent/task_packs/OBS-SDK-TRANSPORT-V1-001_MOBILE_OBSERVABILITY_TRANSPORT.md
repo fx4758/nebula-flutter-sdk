@@ -70,6 +70,7 @@ Outcome mapping:
 - HTTP 429 / `40002` => rate-limit/defer, no immediate retry loop;
 - `12004` / `50001` / timeout / connection ambiguity => bounded retry with the same assigned batch ID;
 - `30001` => non-retryable;
+- `12001` => preserve the same assigned batch, enter bounded trust-recovery defer, and perform installation-trust recovery before the next network send; normal Analytics transient retry/backoff MUST NOT blindly resend while trust remains invalid;
 - malformed/mismatched success data => never success.
 
 ## Error Reporting requirements
@@ -95,7 +96,24 @@ Required behavior:
 ## Proof / trust
 Both senders must use the existing installation-token callback, `RequestProofSigner`, `buildAuthHeaders` with exact resolved path/body, and existing `NebulaTransport`. User access token is not required. The exact body sent must be the body covered by proof and must fit the 16 KiB InstallationProof ceiling.
 
-For Error Reporting only, the reviewed internal seam additionally permits `MobileErrorReportSender` to receive an internal composition callback semantically equivalent to `recoverInstallationTrust() -> Future<bool>`. It delegates to the existing bootstrap/renewal lifecycle; it MUST NOT create a second bootstrap/proof/transport abstraction. After `12001`, no further network send occurs until this recovery succeeds; recovery failure preserves reports and remains outside normal delivery retry-attempt accounting.
+The concrete mobile senders may receive an **internal-only composition callback** semantically equivalent to `recoverInstallationTrust() -> Future<bool>` when required by their frozen `12001` handling. The callback delegates to the existing bootstrap/renewal lifecycle; it MUST NOT create a second bootstrap/proof/transport abstraction and MUST NOT become public SDK surface.
+
+For Error Reporting, the reviewed `ERROR_REPORTING_SDK_INTERNAL_SEND_SEAM_V1.md` semantics remain authoritative: reports are preserved, normal delivery retry budget is not consumed, and no further network send occurs until recovery succeeds.
+
+For Analytics, this callback is authorized **only inside `lib/src/analytics/mobile_analytics_sender.dart`** to satisfy the already-frozen `MOBILE_ANALYTICS_PLATFORM_API_V1.md` rule `12001 -> recover installation trust; no blind retry`. The same immutable assigned `batch_id`/body is retained. After `12001`, the sender enters bounded local defer; the next network send may occur only after the recovery callback succeeds. Recovery false/throw performs no network send and does not generate a replacement `batch_id`.
+
+## Analytics trust-recovery scope correction
+
+Independent SDK Review #108 on implementation candidate `5bd0939cc3ba91d8943cfec3e21098244def842a` correctly identified a governance mismatch: the frozen Analytics Platform contract already required `12001` trust recovery/no blind retry, but the prior reauthorization text granted the recovery callback only to Error Reporting.
+
+This Coordinator correction authorizes **no new production path**. It only makes the existing Analytics sender path's internal composition seam explicit:
+
+```text
+lib/src/analytics/mobile_analytics_sender.dart
+  may receive internal recoverInstallationTrust() -> Future<bool>
+```
+
+No change is authorized to Analytics public API, `analytics_client.dart` scope, shared `transport/**`, `foundation/**`, bootstrap/auth production files, Backend, App, or provider integration. If implementation requires recovery logic outside the already-authorized sender file, STOP and return a new gap.
 
 ## Reauthorization after reviewed scope gap
 

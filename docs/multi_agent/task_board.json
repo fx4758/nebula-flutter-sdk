@@ -988,7 +988,7 @@
         "closure_merge": "e7f1df8de4795ad17f278874559917faac05f8b4",
         "closure_post_merge": "UI #146 SUCCESS"
       },
-      "reauthorization_note": "Prior BLOCKED_SCOPE_GAP evidence remains audit history. Reviewed internal send seam now explicitly authorizes only Error Reporting client.dart + sender.dart in addition to the original M3 scope. Public/shared transport/foundation, Backend, App and provider remain forbidden."
+      "reauthorization_note": "Prior BLOCKED_SCOPE_GAP evidence remains audit history. Reviewed internal send seam now explicitly authorizes only Error Reporting client.dart + sender.dart in addition to the original M3 scope. Public/shared transport/foundation, Backend, App and provider remain forbidden. Analytics trust-recovery scope correction: frozen MOBILE_ANALYTICS_PLATFORM_API_V1 12001 recovery/no-blind-retry may be implemented by an internal-only recoverInstallationTrust callback inside already-authorized lib/src/analytics/mobile_analytics_sender.dart. No new production path/public/shared/auth/bootstrap mutation is authorized. Implementation candidate 5bd0939... review #108 REQUEST_CHANGES is the trigger for this correction, not approval evidence."
     }
   },
   "non_executable_roadmaps": [
