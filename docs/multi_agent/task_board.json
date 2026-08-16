@@ -789,7 +789,34 @@
         "OBS-BACKEND-ANALYTICS-V1-001",
         "OBS-SDK-ANALYTICS-TRANSPORT-V1-001",
         "NEBULA-APP-001D capability re-audit"
-      ]
+      ],
+      "backend_repo": "../flypost_backend",
+      "backend_baseline_commit": "c8c6cdc7413ffef1b63729b6b3de54596a3a9ed9",
+      "platform_change_authorization": {
+        "acr_id": "ACR-MOBILE-OBSERVABILITY-001",
+        "acr_path": "reports/ACR-MOBILE-OBSERVABILITY-001.md",
+        "decision": "APPROVED",
+        "frozen_contract": "contracts/MOBILE_ANALYTICS_CONTRACT_V1.md + contracts/ERROR_REPORTING_CONTRACT_V1.md",
+        "backend_baseline_commit": "c8c6cdc7413ffef1b63729b6b3de54596a3a9ed9",
+        "independent_reviewer": "Architecture Review Agent",
+        "adapter_first_analysis": "Concrete mobile ingest endpoint/wire/error/idempotency semantics are server-facing Platform contracts and cannot be supplied by an App Adapter or SDK-internal implementation without inventing Backend behavior.",
+        "adr_id": "ADR-MOBILE-OBSERVABILITY-001",
+        "adr_path": "adrs/ADR-MOBILE-OBSERVABILITY-001.md",
+        "contract_version": "Mobile Analytics Platform API v1 + Error Reporting Platform API v1",
+        "compatibility_plan": "Add mobile InstallationProof-based observability contracts without declaring the legacy HMAC analytics endpoint equivalent; preserve existing legacy consumers until separately migrated.",
+        "rollback_plan": "Contract publication is documentation-only. Before implementation, rollback is removal/supersession by reviewed contract revision; after later implementation, each Backend/SDK Story must carry its own rollback plan and may not change this frozen contract implicitly.",
+        "triggering_product": "NFC Writer",
+        "second_consumer_evidence": [
+          {
+            "consumer": "NFC Writer",
+            "evidence": "NEBULA-APP-001D requires generic Analytics + Crash/Error Reporting through Nebula Adapter."
+          },
+          {
+            "consumer": "FlyPost",
+            "evidence": "FlyPost release governance requires Crash/Telemetry/request_id and has S6-01 telemetry/release lane."
+          }
+        ]
+      }
     }
   },
   "non_executable_roadmaps": [
