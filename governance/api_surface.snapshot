@@ -67,6 +67,7 @@ src/auth/token_store.dart function tokenNamespace
 src/capabilities.dart class NebulaAi
 src/capabilities.dart class NebulaAsset
 src/capabilities.dart class NebulaAuth
+src/capabilities.dart class NebulaErrorReporting
 src/capabilities.dart class NebulaNotification
 src/capabilities.dart class NebulaPayment
 src/config/config_client.dart class NebulaConfigClient

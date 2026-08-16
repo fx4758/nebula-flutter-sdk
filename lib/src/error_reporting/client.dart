@@ -1,5 +1,7 @@
 library;
 
+import '../capabilities.dart';
+import '../foundation/request_id.dart';
 import 'budget.dart';
 import 'normalizer.dart';
 import 'report.dart';
@@ -37,7 +39,7 @@ final class ErrorReportingStats {
   int uploadDeferrals = 0;
 }
 
-final class ErrorReportingClient {
+final class ErrorReportingClient implements NebulaErrorReporting {
   ErrorReportingClient({
     required ErrorReportStore store,
     ErrorReportSender? sender,
@@ -62,6 +64,30 @@ final class ErrorReportingClient {
   final ErrorReportingStats stats = ErrorReportingStats();
   bool _flushing = false;
   DateTime? _uploadDeferredUntil;
+
+  @override
+  Future<void> reportCaughtError({
+    required String errorType,
+    required String safeMessage,
+    required StackTrace stackTrace,
+    DateTime? occurredAt,
+    NebulaRequestId? requestId,
+  }) async {
+    try {
+      await capture(
+        ErrorReportInput(
+          errorType: errorType,
+          message: safeMessage,
+          stack: stackTrace.toString(),
+          occurredAt: occurredAt,
+          requestId: requestId?.value,
+        ),
+      );
+    } on Object {
+      // Public Error Reporting is best-effort and must never become App
+      // control-flow failure. Internal accounting remains private.
+    }
+  }
 
   Future<ErrorCaptureResult> capture(ErrorReportInput input) async {
     stats.captured++;
