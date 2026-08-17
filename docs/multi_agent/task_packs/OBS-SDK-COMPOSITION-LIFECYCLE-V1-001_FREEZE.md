@@ -1,6 +1,10 @@
 # OBS-SDK-COMPOSITION-LIFECYCLE-V1-001 — Mobile Observability Composition Lifecycle Freeze
 
-Task ID: `OBS-SDK-COMPOSITION-LIFECYCLE-V1-001`
+- ID：OBS-SDK-COMPOSITION-LIFECYCLE-V1-001
+- Execution repo：`.`
+- Execution branch：`obs/sdk-composition-lifecycle-v1-001-freeze`
+- Platform API mode：`READ_ONLY`
+- SDK public API mode：`READ_ONLY`
 
 Status: **READY / FREEZE ONLY**
 
