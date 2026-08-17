@@ -13,8 +13,11 @@ import '../foundation/options.dart';
 import '../storage/cache_storage.dart';
 import '../transport.dart';
 
-({NebulaAnalytics analytics, NebulaErrorReporting errorReporting})
-    createMobileObservabilityComposition({
+({
+  NebulaAnalytics analytics,
+  NebulaErrorReporting errorReporting,
+  Future<void> Function() flush,
+}) createMobileObservabilityComposition({
   required NebulaOptions options,
   required NebulaTransport transport,
   required RequestProofSigner proofSigner,
@@ -57,5 +60,25 @@ import '../transport.dart';
     sender: errorSender,
   );
 
-  return (analytics: analytics, errorReporting: errorReporting);
+  Future<void> runFailSoft(Future<void> Function() operation) async {
+    try {
+      await operation();
+    } on Object {
+      // A lifecycle opportunity is best-effort. One observability domain must
+      // never suppress the other or become App control-flow failure.
+    }
+  }
+
+  Future<void> flush() async {
+    await Future.wait<void>(<Future<void>>[
+      runFailSoft(analytics.flush),
+      runFailSoft(errorReporting.flush),
+    ]);
+  }
+
+  return (
+    analytics: analytics,
+    errorReporting: errorReporting,
+    flush: flush,
+  );
 }
