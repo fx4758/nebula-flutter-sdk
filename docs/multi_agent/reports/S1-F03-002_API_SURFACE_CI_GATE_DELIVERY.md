@@ -14,8 +14,8 @@ The core gates already existed on canonical main and were already blocking in `.
 It adds only the missing release evidence:
 
 1. explicit fail-closed unknown/legacy Story negative probe;
-2. a CI-binding regression that fails if the Platform self-check, Platform negative probes, governance negative probes, or API-surface gate are removed from the governance workflow;
-3. explicit proof that CI never invokes `api_surface.dart --update` and therefore cannot self-approve public API drift.
+2. a CI-binding regression that mechanically verifies the required Platform/API/governance commands and forbids `api_surface.dart --update`;
+3. Coordinator publication is required to bind this new regression as one additional blocking governance-workflow step; Agent C does not mutate the protected workflow.
 
 No `lib/**`, public API snapshot, Platform production API, Backend, App or Task Board mutation is included.
 
@@ -39,3 +39,8 @@ Smoke                                   PASS
 ```
 
 CI is explicitly forbidden from calling `api_surface.dart --update`; public API drift therefore still requires reviewed compatibility authorization rather than self-updating the snapshot.
+
+
+## Coordinator publication handoff
+
+After independent Review, Coordinator must add exactly `dart run tool/api_platform_ci_binding_test.dart` immediately after the existing `platform_api_guard_test.dart` step in `.github/workflows/governance.yml`, then run publication CI. No other workflow change is required.
