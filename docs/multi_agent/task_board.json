@@ -1043,6 +1043,60 @@
       "public_surface_delta": "126 -> 127; exactly src/nebula.dart class NebulaMobileObservability in a separately registered CHANGE_APPROVED implementation Story",
       "post_merge_governance": "UI #163 / internal 723 SUCCESS",
       "closure_note": "Mobile Observability SDK composition + durable Error Reporting store freeze independently reviewed and canonical. This closure authorizes no production/public mutation by itself. Coordinator must separately register the exact CHANGE_APPROVED composition implementation Story before lib/** or api_surface snapshot mutation. NFC Writer NEBULA-APP-001D remains WAIT until that implementation canonical-closes and one final immutable SDK repin is reviewed. S1-F01-002 remains unrelated."
+    },
+    "OBS-SDK-COMPOSITION-V1-002": {
+      "status": "READY",
+      "owner": "SDK Mobile Observability Composition Agent",
+      "agent": "A",
+      "reviewer": "SDK Review Agent",
+      "task_pack": "task_packs/OBS-SDK-COMPOSITION-V1-002_MOBILE_OBSERVABILITY_COMPOSITION_IMPLEMENTATION.md",
+      "depends_on": [
+        "OBS-SDK-COMPOSITION-V1-001"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "CHANGE_APPROVED",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "obs/sdk-composition-v1-002-mobile-observability-implementation",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-obs-sdk-composition-v1-002-mobile-observability-implementation",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "frozen_composition": "contracts/MOBILE_OBSERVABILITY_SDK_COMPOSITION_V1.md",
+      "implementation_authorized": true,
+      "sdk_production_mutation_authorized": true,
+      "sdk_public_surface_mutation_authorized": true,
+      "authorized_write_set": [
+        "lib/src/nebula.dart",
+        "lib/src/observability/mobile_observability_composition.dart",
+        "lib/src/error_reporting/cache_error_report_store.dart",
+        "governance/api_surface.snapshot"
+      ],
+      "focused_test_scope": [
+        "test/observability/**",
+        "test/error_reporting/cache_error_report_store_test.dart",
+        "docs/multi_agent/reports/**"
+      ],
+      "required_unchanged_paths": [
+        "lib/nebula_sdk.dart",
+        "governance/public_api.txt",
+        "lib/src/capabilities.dart",
+        "lib/src/analytics/analytics_sender.dart",
+        "lib/src/error_reporting/sender.dart",
+        "lib/src/transport.dart",
+        "lib/src/transport/**",
+        "lib/src/foundation/**",
+        "lib/src/auth/**"
+      ],
+      "expected_api_surface": "126 -> 127; only new top-level symbol src/nebula.dart class NebulaMobileObservability",
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "analytics_mutation_authorized": false,
+      "app_repin_authorized": false,
+      "execution_gate": "OPEN",
+      "triggering_consumer": "NFC Writer NEBULA-APP-001D",
+      "unblock_rule": "Implementation must independently review and canonical-close before one final immutable NFC Writer SDK repin/capability re-audit may be registered; S1-F01-002 remains unrelated."
     }
   },
   "non_executable_roadmaps": [
