@@ -571,7 +571,7 @@
       "closure_note": "API surface + Platform boundary CI gate independently reviewed and canonical. Unknown Story is fail-closed, READ_ONLY Platform mutations block, API surface snapshot is blocking, and CI cannot self-update the snapshot. Coordinator publication binds the dedicated CI regression. SDK release-governance gates are now closed; next action is separately reviewed v0.1.0-rc1 packaging/tag publication."
     },
     "NEBULA-SDK-RELEASE-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Release Agent",
       "agent": "C",
       "reviewer": "Governance Review Agent",
@@ -589,9 +589,9 @@
       "execution_worktree": "wt-nebula-sdk-release-001-rc1",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": true,
-      "release_packaging_authorized": true,
-      "tag_publication_authorized": "AFTER_REVIEW_FAST_FORWARD_POSTMERGE_PASS",
+      "implementation_authorized": false,
+      "release_packaging_authorized": false,
+      "tag_publication_authorized": false,
       "authorized_write_set": [
         "pubspec.yaml",
         "CHANGELOG.md",
@@ -607,7 +607,22 @@
       "backend_mutation_authorized": false,
       "app_mutation_authorized": false,
       "provider_integration_authorized": false,
-      "execution_gate": "OPEN_RC1_PACKAGING"
+      "execution_gate": "CLOSED_RELEASE_PASS",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "64df49af6ff7554da94d5fa2ebaef27bdba35465",
+      "delivery_pr": "#68",
+      "formal_ci": "UI #211 SUCCESS / exact candidate 64df49af6ff7554da94d5fa2ebaef27bdba35465",
+      "formal_review": "#155 APPROVED / reviewer-agent / official=true / exact candidate 64df49af6ff7554da94d5fa2ebaef27bdba35465",
+      "delivery_merge_commit": "64df49af6ff7554da94d5fa2ebaef27bdba35465 (fast-forward-only)",
+      "post_merge_governance": "UI #212 SUCCESS",
+      "release_version": "0.1.0-rc1",
+      "release_tag": "v0.1.0-rc1",
+      "release_tag_commit": "64df49af6ff7554da94d5fa2ebaef27bdba35465",
+      "release_gate": "UI #213 / internal 817 / verify-tag job 1080 SUCCESS",
+      "distribution": "immutable Forgejo Git tag; publish_to:none; no registry publication",
+      "review_evidence": "reports/NEBULA-SDK-RELEASE-001_COORDINATOR_ACCEPTANCE.md",
+      "closure_note": "Nebula Flutter SDK first RC is released. v0.1.0-rc1 is immutable and resolves exactly to the independently reviewed canonical commit 64df49af.... Tag-triggered release gate passed API surface 127, release metadata, secret scan, analyze, 261 tests and smoke. Packaging/tag authorization is closed; consumer Apps may now repin this immutable release through their own dependency governance."
     },
     "S1-F04-001": {
       "status": "DONE",
