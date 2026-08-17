@@ -93,6 +93,7 @@ jobs:
           esac
       - run: dart run tool/platform_api_guard.dart --self-check
       - run: dart run tool/platform_api_guard_test.dart
+      - run: dart run tool/api_platform_ci_binding_test.dart
       - run: dart run tool/governance_test.dart
       - run: dart run tool/api_surface.dart
       - run: dart run tool/secret_scan.dart
