@@ -1110,6 +1110,37 @@
       "follow_up_queue": [
         "NFC Writer NEBULA-APP-001D final immutable SDK repin + capability re-audit"
       ]
+    },
+    "OBS-SDK-COMPOSITION-LIFECYCLE-V1-001": {
+      "status": "READY",
+      "owner": "SDK Mobile Observability Lifecycle Architecture Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/OBS-SDK-COMPOSITION-LIFECYCLE-V1-001_FREEZE.md",
+      "depends_on": [
+        "OBS-SDK-COMPOSITION-V1-002"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "obs/sdk-composition-lifecycle-v1-001-freeze",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-obs-sdk-composition-lifecycle-v1-001-freeze",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "required_output": "contracts/MOBILE_OBSERVABILITY_SDK_LIFECYCLE_V1.md",
+      "implementation_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "analytics_mutation_authorized": false,
+      "execution_gate": "OPEN_FREEZE_ONLY",
+      "triggering_consumer": "NFC Writer NEBULA-APP-001D",
+      "triggering_consumer_evidence": "Final embedded SDK 969530d... public preflight: NebulaErrorReporting exposes capture only; internal ErrorReportingClient.flush has no public/lifecycle bridge; NebulaMobileObservability has no lifecycle trigger or scheduler, so durable Error Reporting backlog cannot be legally delivered by the App.",
+      "unblock_rule": "Freeze must independently review and canonical-close before Coordinator may register any SDK production/public-surface lifecycle implementation. NFC Writer 001D remains BLOCKED until that implementation closes and a new final immutable App SDK repin/re-audit passes."
     }
   },
   "non_executable_roadmaps": [
