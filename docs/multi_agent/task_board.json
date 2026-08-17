@@ -514,7 +514,7 @@
       "review_evidence": "reports/NEBULA-ID-002_COORDINATOR_ACCEPTANCE.md"
     },
     "S1-F03-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Governance Agent",
       "agent": "C",
       "reviewer": "Governance Review Agent",
@@ -527,7 +527,18 @@
       "execution_remote": "lan",
       "execution_worktree": "wt-s1f03-001-sdk",
       "state_write_authority": "COORDINATOR_ONLY",
-      "agent_may_edit_task_board": false
+      "agent_may_edit_task_board": false,
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "2dbd06f119f2eff54e376a23e1373dd7a05c7edc",
+      "delivery_pr": "#12",
+      "formal_ci": "UI #193 SUCCESS / exact candidate 2dbd06f119f2eff54e376a23e1373dd7a05c7edc",
+      "formal_review": "#150 APPROVED / reviewer-agent / official=true / exact candidate 2dbd06f119f2eff54e376a23e1373dd7a05c7edc",
+      "delivery_merge_commit": "5f2b1eb84e3f18e623720d4159109e5b285ef1e0",
+      "post_merge_governance": "UI #194 SUCCESS",
+      "review_evidence": "reports/S1-F03-001_COORDINATOR_ACCEPTANCE.md",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "closure_note": "SDK release workflow independently reviewed and canonical on fresh main. Release channels and immutable tag gate are frozen; no version/tag/package publication occurred. S1-F03-002 is now the remaining release-governance gate before an independently reviewed v0.1.0-rc1 packaging commit/tag."
     },
     "S1-F03-002": {
       "status": "READY",
