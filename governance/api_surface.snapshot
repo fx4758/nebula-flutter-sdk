@@ -108,6 +108,7 @@ src/foundation/options.dart class NebulaOptions
 src/foundation/options.dart enum NebulaEnvironment
 src/foundation/request_id.dart class NebulaRequestId
 src/nebula.dart class Nebula
+src/nebula.dart class NebulaMobileObservability
 src/storage/cache_storage.dart class CacheStorage
 src/storage/cache_storage.dart class InMemoryCacheStorage
 src/storage/secure_storage.dart class InMemorySecureStorage
