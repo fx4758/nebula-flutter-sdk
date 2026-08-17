@@ -198,7 +198,7 @@
 | S1-F02-001 Backend Runtime Config Audit | Agent B | READY | flypost_backend | `s1/f02-001-runtime-config-audit` |
 | S1-F02-002 SDK Runtime Config Closure | Agent B | READY (after F02-001) | nebula-flutter-sdk | `s1/f02-002-sdk-config` |
 | S1-F03-001 SDK Release Workflow | Agent C | **DONE / REVIEW PASS** | nebula-flutter-sdk | `s1/f03-001-release` |
-| S1-F03-002 API Surface CI Gate | Agent C | **READY** | nebula-flutter-sdk | `s1/f03-002-api-gate` |
+| S1-F03-002 API Surface CI Gate | Agent C | **DONE / REVIEW PASS** | nebula-flutter-sdk | `s1/f03-002-api-gate` |
 
 ### GOV-P0 incident closures
 

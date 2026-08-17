@@ -541,7 +541,7 @@
       "closure_note": "SDK release workflow independently reviewed and canonical on fresh main. Release channels and immutable tag gate are frozen; no version/tag/package publication occurred. S1-F03-002 is now the remaining release-governance gate before an independently reviewed v0.1.0-rc1 packaging commit/tag."
     },
     "S1-F03-002": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Governance Agent",
       "agent": "C",
       "reviewer": "Governance Review Agent",
@@ -557,7 +557,18 @@
       "execution_remote": "lan",
       "execution_worktree": "wt-s1f03-002-sdk",
       "state_write_authority": "COORDINATOR_ONLY",
-      "agent_may_edit_task_board": false
+      "agent_may_edit_task_board": false,
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "delivery_commit": "889c8df6372d560266e73bbd11a516cdc861459c",
+      "delivery_pr": "#65",
+      "formal_ci": "UI #200 SUCCESS / exact candidate 889c8df6372d560266e73bbd11a516cdc861459c",
+      "formal_review": "#152 APPROVED / reviewer-agent / official=true / exact candidate 889c8df6372d560266e73bbd11a516cdc861459c",
+      "delivery_merge_commit": "4a76e502ca58b91e097766a613aa63878fbbeeec",
+      "post_merge_governance": "UI #201 SUCCESS",
+      "review_evidence": "reports/S1-F03-002_COORDINATOR_ACCEPTANCE.md",
+      "closure_note": "API surface + Platform boundary CI gate independently reviewed and canonical. Unknown Story is fail-closed, READ_ONLY Platform mutations block, API surface snapshot is blocking, and CI cannot self-update the snapshot. Coordinator publication binds the dedicated CI regression. SDK release-governance gates are now closed; next action is separately reviewed v0.1.0-rc1 packaging/tag publication."
     },
     "S1-F04-001": {
       "status": "DONE",
