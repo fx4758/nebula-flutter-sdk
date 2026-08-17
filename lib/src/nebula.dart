@@ -33,10 +33,18 @@ final class NebulaMobileObservability {
   NebulaMobileObservability._({
     required this.analytics,
     required this.errorReporting,
-  });
+    required Future<void> Function() flush,
+  }) : _flush = flush;
 
   final NebulaAnalytics analytics;
   final NebulaErrorReporting errorReporting;
+  final Future<void> Function() _flush;
+
+  /// Offers both observability domains one best-effort delivery opportunity.
+  ///
+  /// The host owns when lifecycle opportunities occur. The SDK keeps queue,
+  /// retry, trust recovery, ACK and domain failure handling internal.
+  Future<void> flush() => _flush();
 
   static NebulaMobileObservability create({
     required NebulaOptions options,
@@ -48,7 +56,8 @@ final class NebulaMobileObservability {
   }) {
     final ({
       NebulaAnalytics analytics,
-      NebulaErrorReporting errorReporting
+      NebulaErrorReporting errorReporting,
+      Future<void> Function() flush,
     }) composed = createMobileObservabilityComposition(
       options: options,
       transport: transport,
@@ -60,6 +69,7 @@ final class NebulaMobileObservability {
     return NebulaMobileObservability._(
       analytics: composed.analytics,
       errorReporting: composed.errorReporting,
+      flush: composed.flush,
     );
   }
 }
