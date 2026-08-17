@@ -1,15 +1,15 @@
 # NEBULA-SDK-RELEASE-001 — Nebula SDK 0.1.0-rc1 Packaging
 
-- ID: `NEBULA-SDK-RELEASE-001`
+- ID：NEBULA-SDK-RELEASE-001
 - Owner: SDK Release Agent
 - Agent: C
 - Reviewer: Governance Review Agent
-- Execution repo: `.`
-- Execution branch: `sdk-release/NEBULA-SDK-RELEASE-001-rc1`
+- Execution repo：`.`
+- Execution branch：`sdk-release/NEBULA-SDK-RELEASE-001-rc1`
 - Execution remote: `hub`
 - Execution worktree: `wt-nebula-sdk-release-001-rc1`
-- Platform API mode: `NONE`
-- SDK public API mode: `READ_ONLY`
+- Platform API mode：`NONE`
+- SDK public API mode：`READ_ONLY`
 - Required upstream: `S1-F03-001 = DONE / REVIEW PASS`, `S1-F03-002 = DONE / REVIEW PASS`.
 - State write authority: Coordinator only.
 
