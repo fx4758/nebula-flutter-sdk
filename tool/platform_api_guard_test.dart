@@ -11,13 +11,14 @@ void expect(bool condition, String label) {
 ProcessResult git(String repo, List<String> args) =>
     Process.runSync('git', ['-C', repo, ...args]);
 
-ProcessResult guard(String repo, String base) => Process.runSync(
+ProcessResult guardStory(String repo, String base, String story) =>
+    Process.runSync(
       Platform.resolvedExecutable,
       [
         'run',
         'tool/platform_api_guard.dart',
         '--story',
-        'S1-F02-001',
+        story,
         '--backend-repo',
         repo,
         '--base',
@@ -50,9 +51,14 @@ void main() {
         'baseline commit');
     final base = git(repo, ['rev-parse', 'HEAD']).stdout.toString().trim();
 
+    expect(
+      guardStory(repo, base, 'LEGACY-UNKNOWN-STORY').exitCode != 0,
+      'unknown Story is fail-closed',
+    );
+
     File('$repo/internal/module/runtimeconfig/runtimeconfig_test.go')
         .writeAsStringSync('// test only\n', mode: FileMode.append);
-    expect(guard(repo, base).exitCode == 0,
+    expect(guardStory(repo, base, 'S1-F02-001').exitCode == 0,
         'READ_ONLY permits runtime-config test changes');
     git(repo, [
       'checkout',
@@ -62,18 +68,19 @@ void main() {
 
     File('$repo/internal/module/runtimeconfig/handler.go')
         .writeAsStringSync('// shortcut\n', mode: FileMode.append);
-    expect(guard(repo, base).exitCode != 0,
+    expect(guardStory(repo, base, 'S1-F02-001').exitCode != 0,
         'READ_ONLY blocks runtime-config production changes');
     git(repo, ['checkout', '--', 'internal/module/runtimeconfig/handler.go']);
 
     File('$repo/internal/router/router.go')
         .writeAsStringSync('// new route\n', mode: FileMode.append);
-    expect(guard(repo, base).exitCode != 0, 'READ_ONLY blocks router changes');
+    expect(guardStory(repo, base, 'S1-F02-001').exitCode != 0,
+        'READ_ONLY blocks router changes');
     git(repo, ['checkout', '--', 'internal/router/router.go']);
 
     File('$repo/sdk/CONTRACT.md')
         .writeAsStringSync('new field\n', mode: FileMode.append);
-    expect(guard(repo, base).exitCode != 0,
+    expect(guardStory(repo, base, 'S1-F02-001').exitCode != 0,
         'READ_ONLY blocks Platform contract changes');
   } finally {
     temp.deleteSync(recursive: true);
