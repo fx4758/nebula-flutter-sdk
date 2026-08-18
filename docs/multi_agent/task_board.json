@@ -1426,6 +1426,38 @@
       "acr_report": "reports/ACR-FEEDBACK-PLATFORM-V1-001.md",
       "blocked_on": "MECHANICALLY_VERIFIED_SECOND_CONSUMER_WITH_SAME_ENTRY_SESSION_SEMANTICS",
       "closure_note": "ACR independently accepts DEFER. FlyPostAPI has a real feedback domain but FlyPost canonical App does not yet prove the same Feedback entry/session consumer semantics. Platform remains READ_ONLY; no Feedback Mobile endpoint, SDK production client, or provider-neutral NFC Writer adapter is authorized."
+    },
+    "FEEDBACK-TXC-AGG-V1-001": {
+      "status": "READY",
+      "owner": "Feedback Provider Architecture Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/FEEDBACK-TXC-AGG-V1-001_PROVIDER_AGGREGATION_FREEZE.md",
+      "depends_on": [
+        "FEEDBACK-ARCH-V1-001",
+        "FEEDBACK-PLATFORM-ACR-V1-001"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "execution_repo": ".",
+      "execution_branch": "feedback/txc-agg-v1-001-provider-aggregation-freeze",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-feedback-txc-agg-v1-001-freeze",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "required_output": "contracts/FEEDBACK_PROVIDER_AGGREGATION_V1.md only; no production/schema/provider mutation.",
+      "implementation_authorized": false,
+      "backend_mutation_authorized": false,
+      "admin_mutation_authorized": false,
+      "db_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "sdk_mutation_authorized": false,
+      "provider_credential_access_authorized": false,
+      "execution_gate": "OPEN",
+      "triggering_provider": "Tencent TXC/兔小巢 for NFC Writer China legacy/current low-cost feedback",
+      "mobile_ingress_dependency": "BLOCKED / explicitly out of scope; this Story must not bypass FEEDBACK-PLATFORM-ACR-V1-001",
+      "unblock_rule": "Provider aggregation contract must independently review and canonical-close before any Backend/Admin implementation Story may be registered.",
+      "product_adapter_rule": "ADAPTER_FIRST"
     }
   },
   "non_executable_roadmaps": [
