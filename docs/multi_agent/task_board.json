@@ -1288,6 +1288,51 @@
       "post_merge_governance": "UI #189 SUCCESS",
       "public_surface_result": "127 -> 127; zero new top-level symbol; NebulaMobileObservability.flush() member added only",
       "closure_note": "Composition lifecycle delivery trigger independently reviewed and canonical. Public composition can now trigger fail-soft Analytics + internal Error Reporting delivery without exposing ErrorReporting internals. Next release-critical action is NFC Writer NEBULA-APP-001D one final immutable SDK repin + capability re-audit; App production remains separately gated until that publication."
+    },
+    "FEEDBACK-ARCH-V1-001": {
+      "status": "READY",
+      "owner": "Feedback Architecture Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/FEEDBACK-ARCH-V1-001_PROVIDER_NEUTRAL_ENTRY_FREEZE.md",
+      "depends_on": [
+        "NEBULA-SDK-RELEASE-001"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "feedback/arch-v1-001-provider-neutral-entry-freeze",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-feedback-arch-v1-001-freeze",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "required_output": "contracts/FEEDBACK_PROVIDER_ARCHITECTURE_V1.md only; no production/public API/provider mutation in this Story.",
+      "implementation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "capability_id_change_authorized": false,
+      "execution_gate": "OPEN",
+      "triggering_consumer": "NFC Writer help/feedback entry; current Flutter RouteName.help is PlaceholderPage; released China path historically uses Tencent TXC/兔小巢.",
+      "future_consumers": [
+        "Nearvia",
+        "StarSprout",
+        "FlyPost"
+      ],
+      "architecture_direction": "App -> Nebula SDK -> first-party feedback entry/session -> server-owned provider routing (TXC China legacy / future Native Global).",
+      "txc_policy": "KEEP_AS_LOW_COST_PROVIDER / NOT SSOT",
+      "native_policy": "DEFER IMPLEMENTATION; must fit same App/SDK entry",
+      "current_capability_set_unchanged": [
+        "identity",
+        "payment",
+        "notification",
+        "ai",
+        "storage",
+        "analytics"
+      ],
+      "unblock_rule": "Freeze must independently review and canonical-close before Coordinator may register any SDK public-surface, Platform API, TXC adapter, Native provider or App integration implementation Story."
     }
   },
   "non_executable_roadmaps": [
