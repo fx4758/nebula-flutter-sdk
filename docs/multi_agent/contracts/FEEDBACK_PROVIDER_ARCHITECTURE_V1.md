@@ -1,8 +1,8 @@
 # Feedback Provider Architecture v1
 
-> Story: `FEEDBACK-ARCH-V1-001`  
-> Status: **FREEZE CANDIDATE**  
-> Scope: Architecture / provider-neutral App boundary only  
+> Story: `FEEDBACK-ARCH-V1-001`
+> Status: **FREEZE CANDIDATE**
+> Scope: Architecture / provider-neutral App boundary only
 > Production implementation authority: **NONE**
 
 ## 1. Decision summary
