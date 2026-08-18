@@ -1456,7 +1456,8 @@
       "execution_gate": "OPEN",
       "triggering_provider": "Tencent TXC/兔小巢 for NFC Writer China legacy/current low-cost feedback",
       "mobile_ingress_dependency": "BLOCKED / explicitly out of scope; this Story must not bypass FEEDBACK-PLATFORM-ACR-V1-001",
-      "unblock_rule": "Provider aggregation contract must independently review and canonical-close before any Backend/Admin implementation Story may be registered."
+      "unblock_rule": "Provider aggregation contract must independently review and canonical-close before any Backend/Admin implementation Story may be registered.",
+      "product_adapter_rule": "ADAPTER_FIRST"
     }
   },
   "non_executable_roadmaps": [
