@@ -1385,7 +1385,7 @@
       "closure_note": "Exact V1 public surface frozen: one new top-level concrete NebulaFeedback symbol; entry()->Future<Uri?>; no Nebula facade/capabilities.dart/native-submit/provider/capability-ID changes. Implementation remains blocked on a separately governed Platform API contract."
     },
     "FEEDBACK-PLATFORM-ACR-V1-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Platform Architecture Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -1410,11 +1410,22 @@
       "backend_mutation_authorized": false,
       "app_mutation_authorized": false,
       "provider_integration_authorized": false,
-      "execution_gate": "OPEN",
+      "execution_gate": "CLOSED_DEFERRED_SECOND_CONSUMER",
       "triggering_consumer": "NFC Writer provider-neutral Feedback entry/session",
       "candidate_second_consumer": "FlyPost: canonical Backend/Admin user_feedback domain; ACR must decide whether this proves same-semantic consumer despite no canonical App feedback entry evidence.",
       "fresh_evidence_note": "Fresh root/FlyPost main did not contain the stale local UX feedback documents; those documents are forbidden as second-consumer evidence.",
-      "unblock_rule": "Only an independently reviewed APPROVED_FOR_CONTRACT_FREEZE ACR may allow Coordinator to register a CONTRACT_CHANGE Feedback Platform API contract Story."
+      "unblock_rule": "Only an independently reviewed APPROVED_FOR_CONTRACT_FREEZE ACR may allow Coordinator to register a CONTRACT_CHANGE Feedback Platform API contract Story.",
+      "review_state": "PASS",
+      "review_verdict": "DEFERRED_SECOND_CONSUMER_INSUFFICIENT",
+      "delivery_commit": "0034ee5da022485f927492ee37a5050690a0d570",
+      "delivery_pr": "#75",
+      "formal_ci": "governance UI #232 SUCCESS / exact candidate 0034ee5da022485f927492ee37a5050690a0d570",
+      "formal_review": "#195 APPROVED / reviewer-agent / official=true / exact candidate 0034ee5da022485f927492ee37a5050690a0d570",
+      "delivery_merge_commit": "a2623a9ba8cfad5fd200e16a96dd3b36c9ac0354",
+      "post_merge_governance": "UI #233 SUCCESS",
+      "acr_report": "reports/ACR-FEEDBACK-PLATFORM-V1-001.md",
+      "blocked_on": "MECHANICALLY_VERIFIED_SECOND_CONSUMER_WITH_SAME_ENTRY_SESSION_SEMANTICS",
+      "closure_note": "ACR independently accepts DEFER. FlyPostAPI has a real feedback domain but FlyPost canonical App does not yet prove the same Feedback entry/session consumer semantics. Platform remains READ_ONLY; no Feedback Mobile endpoint, SDK production client, or provider-neutral NFC Writer adapter is authorized."
     }
   },
   "non_executable_roadmaps": [
