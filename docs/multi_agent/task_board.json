@@ -1345,7 +1345,7 @@
       "closure_note": "Provider-neutral Feedback V1 architecture independently reviewed and canonical. App integration is SDK -> first-party entry/session; TXC China and future Native Global stay behind server-owned routing. No Feedback capability ID, SDK production/public mutation, Backend/App/provider implementation or Native submit is authorized by this closure."
     },
     "FEEDBACK-SDK-SURFACE-V1-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Architect Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -1370,9 +1370,51 @@
       "app_mutation_authorized": false,
       "provider_integration_authorized": false,
       "capability_id_change_authorized": false,
-      "execution_gate": "OPEN",
+      "execution_gate": "CLOSED_REVIEW_PASS",
       "expected_direction": "one provider-neutral Feedback entry operation; pure-Dart SDK; no provider/region/App identity inputs; no Native submit V1.",
-      "unblock_rule": "Public-surface freeze must independently review and canonical-close before any CHANGE_APPROVED SDK implementation Story may be registered."
+      "unblock_rule": "Public-surface freeze must independently review and canonical-close before any CHANGE_APPROVED SDK implementation Story may be registered.",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "282150f0f0fe07bb031b72e473a09edf75837fd4",
+      "delivery_pr": "#73",
+      "formal_ci": "governance UI #227 SUCCESS / exact candidate 282150f0f0fe07bb031b72e473a09edf75837fd4",
+      "formal_review": "#193 APPROVED / reviewer-agent / official=true / exact candidate 282150f0f0fe07bb031b72e473a09edf75837fd4",
+      "delivery_merge_commit": "2e2a5e93ed06b7e358d88735c129eae873e5840b",
+      "post_merge_governance": "UI #228 SUCCESS",
+      "surface_freeze": "contracts/FEEDBACK_SDK_PUBLIC_SURFACE_V1.md",
+      "closure_note": "Exact V1 public surface frozen: one new top-level concrete NebulaFeedback symbol; entry()->Future<Uri?>; no Nebula facade/capabilities.dart/native-submit/provider/capability-ID changes. Implementation remains blocked on a separately governed Platform API contract."
+    },
+    "FEEDBACK-PLATFORM-ACR-V1-001": {
+      "status": "READY",
+      "owner": "Platform Architecture Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/FEEDBACK-PLATFORM-ACR-V1-001_SECOND_CONSUMER_REVIEW.md",
+      "depends_on": [
+        "FEEDBACK-ARCH-V1-001",
+        "FEEDBACK-SDK-SURFACE-V1-001"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "feedback/platform-acr-v1-001-second-consumer",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-feedback-platform-acr-v1-001",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "required_output": "reports/ACR-FEEDBACK-PLATFORM-V1-001.md only; no Platform/SDK/App/provider mutation.",
+      "implementation_authorized": false,
+      "platform_contract_change_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "execution_gate": "OPEN",
+      "triggering_consumer": "NFC Writer provider-neutral Feedback entry/session",
+      "candidate_second_consumer": "FlyPost: canonical Backend/Admin user_feedback domain; ACR must decide whether this proves same-semantic consumer despite no canonical App feedback entry evidence.",
+      "fresh_evidence_note": "Fresh root/FlyPost main did not contain the stale local UX feedback documents; those documents are forbidden as second-consumer evidence.",
+      "unblock_rule": "Only an independently reviewed APPROVED_FOR_CONTRACT_FREEZE ACR may allow Coordinator to register a CONTRACT_CHANGE Feedback Platform API contract Story."
     }
   },
   "non_executable_roadmaps": [
