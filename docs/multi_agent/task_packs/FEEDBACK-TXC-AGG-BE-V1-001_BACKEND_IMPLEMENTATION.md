@@ -25,13 +25,17 @@ Expected next migration if still free at execution time:
 internal/migrations/048_feedback_provider_aggregation_v1.sql
 ```
 
-The migration may create only the reviewed V1 structures:
+The migration may create only the reviewed V1 logical structures, using the canonical FlyPostAPI physical table mapping frozen by `reports/FEEDBACK-TXC-AGG-BE-V1-001_SCHEMA_NAME_RECONCILIATION.md`:
 
 ```text
-feedback_provider
-app_feedback_provider_item
-feedback_provider_sync_state
+logical / contract identifier       physical FlyPostAPI table
+----------------------------------------------------------------
+feedback_provider                  -> product_feedback_provider
+app_feedback_provider_item         -> app_feedback_provider_item
+feedback_provider_sync_state       -> app_feedback_provider_sync_state
 ```
+
+`feedback_provider` remains the product resource type string and contract vocabulary; it is not a physical table name. Do not add a `feedback_` database prefix, modify the Backend naming guard, or add a pending-rename exception.
 
 If migration number 048 is occupied on fresh Dev, choose the next free number and record the reason; do not renumber canonical migrations.
 
