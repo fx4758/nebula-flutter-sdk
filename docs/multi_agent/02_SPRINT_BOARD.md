@@ -178,7 +178,7 @@
 
 ## Sprint 1-A Foundation Integration（Execution Epoch 2）
 
-状态：**IN PROGRESS / GOVERNED · F01-002 READY**。Coordinator 已确认 App canonical `dev=6fa58b2` 同时包含 `NEBULA-APP-SECURE-001` 与 `NEBULA-APP-PROFILE-001` 的 DONE / REVIEW PASS publication，SDK immutable pin=`ad2da9d...` 验证通过，并已从该 App dev 全新重建 `wt-s1f01-002-app`。`S1-F01-002` 现允许在冻结 execution branch 内执行。
+状态：**IN PROGRESS / GOVERNED · F01-002 DONE / REVIEW PASS**。`S1-F01-002` 已在 fresh App `dev=62ccf233...` 上以 tests/docs-only closure 完成：candidate/fast-forward merge=`a6d01ba...`，PR #48，reviewer-agent Review #273 APPROVED，PR governance 与 post-merge capability-guard 均 SUCCESS；本 Story production / SDK / Backend diff=0。
 
 唯一任务源：`task_board.json`。Implementation Agent 只读，不得自行 claim/DELIVERED/DONE 落盘。
 
@@ -189,7 +189,7 @@
 | Story | Owner | State | Execution Repo | Execution Branch |
 |---|---|---|---|---|
 | S1-F01-001 Adapter Boundary | Agent A | **DONE / PASS** | Flutter NFC Writer | `s1/f01-001-adapter` |
-| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **READY** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
+| S1-F01-002 NFC Writer Reference Bootstrap Integration | Agent A | **DONE / REVIEW PASS** | Flutter NFC Writer | `s1/f01-002-bootstrap` |
 | S1-F01-003 Bootstrap Contract Reconciliation | Agent D | **DONE / REVIEW PASS** | nebula-flutter-sdk | `s1/f01-003-bootstrap-contract-reconcile` |
 | S1-F01-004 SDK Bootstrap Surface Closure | Agent D | **DONE / INDEPENDENT R2 PASS** | nebula-flutter-sdk | `s1/f01-004-sdk-bootstrap-surface-r2` |
 | S1-F01-004A Public Surface Owner Recovery | SDK Architect | **DONE / OWNER CONTRIBUTION PASS** | nebula-flutter-sdk | `s1/f01-004a-public-surface-owner` |

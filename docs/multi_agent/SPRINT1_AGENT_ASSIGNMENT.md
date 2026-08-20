@@ -4,7 +4,7 @@ Status: **CONTROLLED BY COORDINATOR**
 
 SSOT: `task_board.json`. Implementation Agent reads but never edits Task Board. Each Story has one execution repo/branch.
 
-- Agent A: `S1-F01-001` 已 DONE；`S1-F01-002` 现 **READY**。Coordinator 已确认 App canonical `dev=6fa58b2` 的 Secure/Profile 两项 prerequisite 均 DONE / REVIEW PASS、SDK pin=`ad2da9d...`，并已全新重建 `wt-s1f01-002-app` / `s1/f01-002-bootstrap`；Agent A 只能在该 execution surface 内施工。
+- Agent A: `S1-F01-001`、`S1-F01-002` 均 **DONE / REVIEW PASS**。F01-002 exact App candidate/merge=`a6d01ba...`，PR #48，reviewer-agent Review #273 APPROVED；PR governance 与 post-merge capability-guard SUCCESS。Agent A 停止该 Story 施工；任何后续 Bootstrap lifecycle/public-surface 变更必须走新的 ACR/Story。
 - Agent D / SDK Core: `S1-F01-003`、`S1-F01-004` 均 DONE。F01-004 reviewed candidate=`07e26d5`，Independent SDK Review R2=`e33ebeb` PASS。SDK Core 停止施工；任何后续 Bootstrap contract/public-surface 变更必须走新 ACR/Story。
 - SDK Architect: `S1-F01-004A` DONE，owner delivery=`c1fced21`。
 - Architecture/PM: `S1-F01-004B` DONE，owner delivery=`b7d380bb`。

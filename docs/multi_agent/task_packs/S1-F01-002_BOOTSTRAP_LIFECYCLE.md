@@ -12,7 +12,9 @@
 
 ## Execution gate
 
-**READY / COORDINATOR PREFLIGHT PASS.** 以下冻结前置条件已机械满足：
+**CLOSED / REVIEW PASS.** Coordinator 于 2026-08-20 完成 canonical closure：App PR #48 exact candidate=`a6d01ba31a2ff5beb506fcfdf9c97422a45b13cb`，reviewer-agent Review #273 APPROVED，fast-forward merge 后 `dev` 与 candidate 相同；PR governance 与 post-merge capability-guard 均 SUCCESS。该 closure 为 tests/docs-only，production / SDK / Backend diff=0。
+
+历史 READY preflight 的冻结前置条件如下，保留作追溯：
 
 1. `S1-F01-003 = DONE`（bootstrap contract reconciliation）；
 2. `S1-F01-004 = DONE`（canonical SDK bootstrap surface closure）；

@@ -84,7 +84,7 @@
       ]
     },
     "S1-F01-002": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Flutter Integration Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -110,17 +110,31 @@
         "StarSprout",
         "FlyPost"
       ],
-      "execution_gate": "OPEN",
+      "execution_gate": "CLOSED_REVIEW_PASS",
       "external_dependencies": [
         "flutter NFC Writer:NEBULA-DEP-001=DONE",
         "flutter NFC Writer:NEBULA-APP-001A=DONE",
         "flutter NFC Writer:NEBULA-DEP-002=DONE"
       ],
       "preflight_acr": "0fd061d51bd89313eb86cd774bb1ef5413d5a0d0",
-      "app_canonical_dev": "6fa58b2050032ddbdd10ecf19a99424d47abbb8d",
+      "app_canonical_dev": "a6d01ba31a2ff5beb506fcfdf9c97422a45b13cb",
       "external_prerequisites": [
         "NEBULA-APP-SECURE-001",
         "NEBULA-APP-PROFILE-001"
+      ],
+      "delivery_commit": "a6d01ba31a2ff5beb506fcfdf9c97422a45b13cb",
+      "review_verdict": "PASS",
+      "review_evidence": "flutter_NFC_Writer PR #48 / reviewer-agent Review #273",
+      "app_pr": 48,
+      "app_review_id": 273,
+      "app_review_commit": "a6d01ba31a2ff5beb506fcfdf9c97422a45b13cb",
+      "app_merge_commit": "a6d01ba31a2ff5beb506fcfdf9c97422a45b13cb",
+      "completed_at": "2026-08-20T17:14:37+08:00",
+      "acceptance_note": "Coordinator verified tests/docs-only closure on fresh App dev 62ccf233..., exact PR #48 head/base, reviewer-agent Review #273 APPROVED, PR governance SUCCESS, post-merge capability-guard SUCCESS, fast-forward-only merge to dev=a6d01ba..., and 0 App production / SDK / Backend diff for this Story.",
+      "ci_evidence": [
+        "PR governance latest status id=3 SUCCESS / Successful in 1m57s",
+        "post-merge capability-guard latest status id=6 SUCCESS / Successful in 1m50s",
+        "Forgejo combined-status endpoint retained older pending rows; closure uses latest status per context and records the deviation explicitly."
       ]
     },
     "S1-F01-003": {
