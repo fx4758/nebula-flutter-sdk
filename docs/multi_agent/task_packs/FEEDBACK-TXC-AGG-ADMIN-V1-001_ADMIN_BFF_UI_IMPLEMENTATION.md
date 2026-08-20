@@ -4,7 +4,7 @@
 - Execution repo：`../flypost_admin_platform` (`root/FlyPostBackend`)
 - Execution branch：`feedback/txc-agg-admin-v1-001`
 - Execution remote：`origin`
-- Platform Mobile API mode：`READ_ONLY / NO CHANGE`
+- Platform Mobile API mode：`READ_ONLY`
 - Backend Admin API mode：`READ_ONLY CONSUMER OF FROZEN CONTRACT`
 - SDK public API mode：`NONE`
 - Required upstream：`FEEDBACK-TXC-AGG-BE-V1-001 = DONE / REVIEW PASS / CLOSED_REVIEW_PASS`
