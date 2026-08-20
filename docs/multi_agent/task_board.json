@@ -1517,7 +1517,7 @@
       "closure_note": "TXC Feedback aggregation Backend/Admin implementation independently reviewed and canonical on FlyPostAPI Dev=c9220eaa725a797a40a94c6b1e3970a69b2931f5. Physical tables are product_feedback_provider, app_feedback_provider_item, app_feedback_provider_sync_state while product_resource_binding.resource_type remains logical feedback_provider. Core candidate 2750d3a already used the reconciled physical names, so no no-op schema rename was introduced; final corrective 7feddbcc fixes backfill_next_page != empty -> sync_state=backfill and completion -> idle, with bounded-resume tests. Mobile/SDK/App/BFF/UI remain unauthorized by this Story."
     },
     "FEEDBACK-TXC-AGG-ADMIN-V1-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Admin Feedback Aggregation Agent",
       "agent": "A",
       "reviewer": "Admin Review Agent",
@@ -1535,20 +1535,30 @@
       "execution_worktree": "wt-feedback-txc-agg-admin-v1-001",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": true,
+      "implementation_authorized": false,
       "backend_mutation_authorized": false,
       "db_mutation_authorized": false,
       "admin_api_mutation_authorized": false,
       "mobile_api_mutation_authorized": false,
       "sdk_mutation_authorized": false,
       "app_mutation_authorized": false,
-      "bff_ui_mutation_authorized": true,
+      "bff_ui_mutation_authorized": false,
       "provider_credential_material_authorized": false,
       "architecture_contract": "contracts/FEEDBACK_PROVIDER_AGGREGATION_V1.md",
       "required_output": "FlyPostBackend Admin BFF/UI PR only: thin frozen-route proxy + App provider readiness + normalized feedback UI; no Backend/Mobile/SDK/App/provider-direct mutation.",
-      "execution_gate": "OPEN",
+      "execution_gate": "CLOSED_REVIEW_PASS",
       "registration_baseline": "root/FlyPostBackend Dev@dcffff58a1a76a393ebff0fa475c4141b25e65a8; execution must fresh fetch",
-      "unblock_rule": "Deliver READY_FOR_REVIEW only. Mobile/SDK/NFC Writer provider-neutral implementation remains blocked by the deferred second-consumer Platform ACR."
+      "unblock_rule": "Story is closed. TEST deployment remains separately unauthorized. Mobile/SDK/NFC Writer provider-neutral implementation remains blocked by the deferred second-consumer Platform ACR.",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "1e6ee25a74f96ae1ad3c1e78319e8942186ce19e",
+      "delivery_pr": "root/FlyPostBackend#4",
+      "formal_review": "#266 APPROVED / reviewer-agent / official=true / stale=false / exact candidate 1e6ee25a74f96ae1ad3c1e78319e8942186ce19e / blockers=0",
+      "formal_ci": "FlyPostBackend exact candidate: client-secret-guard SUCCESS + backend-secret-guard SUCCESS + combined aggregate SUCCESS",
+      "delivery_merge_commit": "610f9f72533b3208264f9ae19aad7df00bd22dfb",
+      "post_merge_quality": "FlyPostBackend Dev exact 610f9f72533b3208264f9ae19aad7df00bd22dfb: secret-guard-frontend push #23 SUCCESS + secret-guard push #24 SUCCESS",
+      "final_report": "reports/FEEDBACK-TXC-AGG-ADMIN-V1-001_FINAL_ACCEPTANCE.md",
+      "closure_note": "Admin BFF/UI Feedback aggregation is canonical on FlyPostBackend Dev=610f9f72533b3208264f9ae19aad7df00bd22dfb. The BFF remains a same-path provider-blind proxy; App Feedback is scoped to current App/Region/Environment and reads normalized Backend cache; provider secret remains write-only. TEST deployment and Mobile/SDK/NFC Writer provider-neutral Feedback remain unauthorized; FEEDBACK-PLATFORM-ACR-V1-001 stays deferred at the second-consumer gate."
     }
   },
   "non_executable_roadmaps": [
