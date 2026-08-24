@@ -4,10 +4,10 @@
 - Owner: SDK Release Agent
 - Agent: C
 - Reviewer: Governance Review Agent
-- Execution repo: `.`
-- Execution branch: `sdk-release/NEBULA-SDK-RELEASE-002-rc2`
-- Execution remote: `hub`
-- Execution worktree: `wt-nebula-sdk-release-002-rc2`
+- Execution repo：`.`
+- Execution branch：`sdk-release/NEBULA-SDK-RELEASE-002-rc2`
+- Execution remote：`hub`
+- Execution worktree：`wt-nebula-sdk-release-002-rc2`
 - Platform API mode：`NONE`
 - SDK public API mode：`READ_ONLY`
 - Required upstream: `S1-F03-001 = DONE`, `S1-F03-002 = DONE`, `NEBULA-SDK-RELEASE-001 = DONE / CLOSED_RELEASE_PASS`, `AUTH-V2-SDK-002 = DONE / CLOSED_REVIEW_PASS`.
