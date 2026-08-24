@@ -1,13 +1,4 @@
-/// Concrete user-session capability (F1-02).
-///
-/// Wires the FS-02 [NebulaSession] state machine to a real [NebulaTransport] so
-/// that login, single-flight refresh and sign-out perform actual network calls
-/// (docs/08 §6/§7). Proof headers are attached via the injected
-/// [RequestProofSigner] Port (FS-01); the core contains no crypto plugin.
-///
-/// Single-flight refresh is inherited from [NebulaSession]: concurrent callers
-/// of [refresh]/[getAccessToken] await one in-flight refresh future, so a 401
-/// storm triggers exactly one refresh HTTP request (F1 acceptance).
+/// Transport-backed user-session capability (F1-02 / Auth V2).
 library;
 
 import 'dart:async';
@@ -42,9 +33,6 @@ final class NebulaSessionAuth implements NebulaAuth {
         _proofSigner = proofSigner,
         _installationToken = installationToken,
         _namespace = tokenNamespace(options.environment, options.appId) {
-    // Assigned in the body (not the initializer list) because the session needs
-    // the transport-backed executor and remote-logout hook, which close over
-    // `this` (instance methods cannot be referenced in an initializer list).
     _session = NebulaSession(
       namespace: _namespace,
       tokenStore: _tokenStore,
@@ -73,10 +61,7 @@ final class NebulaSessionAuth implements NebulaAuth {
   @override
   Stream<NebulaSessionEvent> get events => _session.events;
 
-  /// Advances the session to INSTALLATION_ACTIVE after the host completes the
-  /// installation bootstrap (FS-01). The auth capability does not perform the
-  /// bootstrap network call itself; it only reflects the resulting state so that
-  /// [login] may proceed (docs/08 §7).
+  /// Reflects a successful host installation bootstrap.
   Future<void> onInstallationBootstrapSucceeded() async {
     if (_session.state == NebulaSessionState.uninitialized) {
       await _session.beginBootstrap();
@@ -225,8 +210,6 @@ final class NebulaSessionAuth implements NebulaAuth {
   @override
   Future<void> signOut() => _session.signOut();
 
-  // --- internals -----------------------------------------------------------
-
   Future<SessionTokenPair> _loginRequest(
     Map<String, Object?> body, {
     NebulaCancellationToken? cancellationToken,
@@ -268,9 +251,7 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   Future<void> _remoteLogout() async {
-    // Best-effort: the session state machine clears local state regardless of
-    // whether this succeeds (docs/08 §6.4). Failures are swallowed by the
-    // session's signOut path.
+    // Best-effort remote logout; local cleanup remains authoritative.
     await _sendWithProof(
       NebulaHttpMethod.post,
       endpoints.logout,
@@ -308,7 +289,6 @@ final class NebulaSessionAuth implements NebulaAuth {
     try {
       return await _transport.send(request);
     } on NebulaApiException catch (error) {
-      // Envelope business error: map the server code to a typed category.
       throw classifySessionError(
         statusCode: 200,
         code: error.code,
