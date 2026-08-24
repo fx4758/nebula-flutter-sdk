@@ -18,6 +18,9 @@ const int nebulaCodeClientOutdated = 12003;
 /// 12004 — temporarily_unavailable (FB-01 allocation).
 const int nebulaCodeTemporarilyUnavailable = 12004;
 
+/// 10001 — invalid login / verification credentials (Auth V2).
+const int nebulaCodeInvalidCredentials = 10001;
+
 /// 10003 — token invalid (legacy stable code).
 const int nebulaCodeTokenInvalid = 10003;
 
@@ -43,6 +46,12 @@ sealed class NebulaSessionError implements Exception {
 final class InvalidInstallationError extends NebulaSessionError {
   const InvalidInstallationError({super.code, super.requestId})
       : super('installation is invalid, revoked or expired');
+}
+
+/// Invalid login or verification credentials. No account-existence detail.
+final class InvalidCredentialsError extends NebulaSessionError {
+  const InvalidCredentialsError({super.code, super.requestId})
+      : super('invalid credentials');
 }
 
 /// access missing/expired → single-flight refresh if a refresh token exists.
@@ -104,6 +113,10 @@ NebulaSessionError classifySessionError({
     );
   }
   return switch (code) {
+    nebulaCodeInvalidCredentials => InvalidCredentialsError(
+        code: code,
+        requestId: requestId,
+      ),
     nebulaCodeInstallationInvalid => InvalidInstallationError(
         code: code,
         requestId: requestId,

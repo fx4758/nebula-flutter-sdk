@@ -1,23 +1,30 @@
-/// Login request contract (F1-02).
-///
-/// Mirrors the docs/08 §4.3 mobile auth routes: phone/code, or a supported
-/// provider OAuth exchange. Field names and limits follow docs/08 §4.1 (string
-/// maximum 128 characters). The request is validated locally before any network
-/// call (docs/06 §2: input objects are immutable and validated up front).
+/// Login request contract (F1-02 / Auth V2).
 library;
 
-/// Supported login providers (docs/08 §4.3).
-///
-/// OAuth remains disabled until a real adapter exists (MB-12); the SDK only
-/// models the input shape so the contract is stable.
-enum NebulaLoginProvider { phone, oauth }
+import 'dart:convert';
 
-/// Immutable login request (F1-02).
+/// Supported login providers.
+enum NebulaLoginProvider { phone, email, oauth }
+
+/// Supported OAuth providers for Auth V2.
+enum NebulaOAuthProvider { apple, google }
+
+/// Purpose bound to an EMAIL verification code.
+enum NebulaEmailCodePurpose { register, resetPassword }
+
+/// Immutable login request.
 final class NebulaLoginRequest {
-  const NebulaLoginRequest.phone({
-    required this.phone,
-    required this.code,
-  })  : provider = NebulaLoginProvider.phone,
+  const NebulaLoginRequest.phone({required this.phone, required this.code})
+      : provider = NebulaLoginProvider.phone,
+        email = null,
+        password = null,
+        oauthProvider = null,
+        oauthCode = null;
+
+  const NebulaLoginRequest.email({required this.email, required this.password})
+      : provider = NebulaLoginProvider.email,
+        phone = null,
+        code = null,
         oauthProvider = null,
         oauthCode = null;
 
@@ -26,23 +33,29 @@ final class NebulaLoginRequest {
     required this.oauthCode,
   })  : provider = NebulaLoginProvider.oauth,
         phone = null,
-        code = null;
+        code = null,
+        email = null,
+        password = null;
 
   final NebulaLoginProvider provider;
   final String? phone;
   final String? code;
-  final String? oauthProvider;
+  final String? email;
+  final String? password;
+  final NebulaOAuthProvider? oauthProvider;
   final String? oauthCode;
 
-  /// Applies the docs/08 §4.1 string caps (non-empty, <= 128 chars).
+  /// Validates request bounds before any network call.
   void validate() {
     switch (provider) {
       case NebulaLoginProvider.phone:
-        _require(phone, 'phone');
-        _require(code, 'code');
+        _requireLegacy(phone, 'phone');
+        _requireLegacy(code, 'code');
+      case NebulaLoginProvider.email:
+        _requireUtf8(email, 'email', minBytes: 1, maxBytes: 254);
+        _requireUtf8(password, 'password', minBytes: 8, maxBytes: 128);
       case NebulaLoginProvider.oauth:
-        _require(oauthProvider, 'oauthProvider');
-        _require(oauthCode, 'oauthCode');
+        _requireUtf8(oauthCode, 'oauthCode', minBytes: 1, maxBytes: 4096);
     }
   }
 
@@ -53,19 +66,45 @@ final class NebulaLoginRequest {
             'phone': phone,
             'code': code,
           },
+        NebulaLoginProvider.email => <String, Object?>{
+            'provider': 'EMAIL',
+            'email': email,
+            'password': password,
+          },
         NebulaLoginProvider.oauth => <String, Object?>{
             'provider': 'OAUTH',
-            'oauth_provider': oauthProvider,
+            'oauth_provider': switch (oauthProvider!) {
+              NebulaOAuthProvider.apple => 'APPLE',
+              NebulaOAuthProvider.google => 'GOOGLE',
+            },
             'oauth_code': oauthCode,
           },
       };
 
-  void _require(String? value, String field) {
+  // PHONE keeps its pre-V2 compatibility bounds and behavior.
+  void _requireLegacy(String? value, String field) {
     if (value == null || value.isEmpty || value.length > 128) {
       throw ArgumentError.value(
         value,
         field,
         'must be non-empty and <= 128 chars',
+      );
+    }
+  }
+
+  // Auth V2 secrets are deliberately omitted from exception messages.
+  void _requireUtf8(
+    String? value,
+    String field, {
+    required int minBytes,
+    required int maxBytes,
+  }) {
+    if (value == null) throw ArgumentError('$field is required', field);
+    final int bytes = utf8.encode(value).length;
+    if (bytes < minBytes || bytes > maxBytes) {
+      throw ArgumentError(
+        '$field must be $minBytes..$maxBytes UTF-8 bytes',
+        field,
       );
     }
   }

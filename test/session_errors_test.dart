@@ -21,6 +21,10 @@ void main() {
         isA<TemporarilyUnavailableError>(),
       );
       expect(
+        classifySessionError(statusCode: 200, code: 10001),
+        isA<InvalidCredentialsError>(),
+      );
+      expect(
         classifySessionError(statusCode: 200, code: 10003),
         isA<AuthenticationRequiredError>(),
       );

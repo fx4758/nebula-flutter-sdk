@@ -11,6 +11,7 @@
 library;
 
 import 'dart:async';
+import 'dart:convert';
 
 import '../capabilities.dart';
 import '../foundation/errors.dart';
@@ -130,6 +131,79 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   @override
+  Future<void> sendEmailCode({
+    required String email,
+    required NebulaEmailCodePurpose purpose,
+    NebulaCancellationToken? cancellationToken,
+  }) async {
+    _validateEmail(email);
+    await _sendWithProof(
+      NebulaHttpMethod.post,
+      endpoints.emailCodeSend,
+      body: <String, Object?>{
+        'email': email,
+        'purpose': _emailPurposeWire(purpose),
+      },
+      cancellationToken: cancellationToken,
+    );
+  }
+
+  @override
+  Future<void> registerEmail({
+    required String email,
+    required String password,
+    required String code,
+    NebulaCancellationToken? cancellationToken,
+  }) async {
+    _validateEmail(email);
+    _validatePassword(password, 'password');
+    _validateEmailCode(code);
+    await _session.beginAuthenticating();
+    try {
+      final SessionTokenPair pair = await _tokenRequest(
+        endpoints.emailRegister,
+        <String, Object?>{
+          'email': email,
+          'password': password,
+          'code': code,
+        },
+        cancellationToken: cancellationToken,
+      );
+      await _session.onAuthenticated(pair);
+    } on NebulaSessionError catch (error) {
+      await _session.onFailure(error);
+      rethrow;
+    } catch (error) {
+      final NebulaSessionError mapped = _mapException(error);
+      await _session.onFailure(mapped);
+      throw mapped;
+    }
+  }
+
+  @override
+  Future<void> resetEmailPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+    NebulaCancellationToken? cancellationToken,
+  }) async {
+    _validateEmail(email);
+    _validateEmailCode(code);
+    _validatePassword(newPassword, 'newPassword');
+    await _sendWithProof(
+      NebulaHttpMethod.post,
+      endpoints.emailPasswordReset,
+      body: <String, Object?>{
+        'email': email,
+        'code': code,
+        'new_password': newPassword,
+      },
+      cancellationToken: cancellationToken,
+    );
+    await _session.onPasswordResetSucceeded();
+  }
+
+  @override
   Future<String> getAccessToken({
     NebulaCancellationToken? cancellationToken,
   }) async {
@@ -156,10 +230,21 @@ final class NebulaSessionAuth implements NebulaAuth {
   Future<SessionTokenPair> _loginRequest(
     Map<String, Object?> body, {
     NebulaCancellationToken? cancellationToken,
+  }) =>
+      _tokenRequest(
+        endpoints.login,
+        body,
+        cancellationToken: cancellationToken,
+      );
+
+  Future<SessionTokenPair> _tokenRequest(
+    String endpointPath,
+    Map<String, Object?> body, {
+    NebulaCancellationToken? cancellationToken,
   }) async {
     final NebulaResponse response = await _sendWithProof(
       NebulaHttpMethod.post,
-      endpoints.login,
+      endpointPath,
       body: body,
       cancellationToken: cancellationToken,
     );
@@ -281,6 +366,39 @@ final class NebulaSessionAuth implements NebulaAuth {
       return AuthenticationRequiredError(requestId: error.requestId);
     }
     return TemporarilyUnavailableError(requestId: error.requestId);
+  }
+
+  String _emailPurposeWire(NebulaEmailCodePurpose purpose) => switch (purpose) {
+        NebulaEmailCodePurpose.register => 'REGISTER',
+        NebulaEmailCodePurpose.resetPassword => 'RESET_PASSWORD',
+      };
+
+  void _validateEmail(String email) =>
+      _validateUtf8(email, 'email', minBytes: 1, maxBytes: 254);
+
+  void _validatePassword(String password, String field) =>
+      _validateUtf8(password, field, minBytes: 8, maxBytes: 128);
+
+  void _validateEmailCode(String code) {
+    if (!RegExp(r'^[0-9]{6}$').hasMatch(code)) {
+      throw ArgumentError(
+          'code must be exactly 6 ASCII decimal digits', 'code');
+    }
+  }
+
+  void _validateUtf8(
+    String value,
+    String field, {
+    required int minBytes,
+    required int maxBytes,
+  }) {
+    final int bytes = utf8.encode(value).length;
+    if (bytes < minBytes || bytes > maxBytes) {
+      throw ArgumentError(
+        '$field must be $minBytes..$maxBytes UTF-8 bytes',
+        field,
+      );
+    }
   }
 
   String _resolvePath(String endpointPath) {
