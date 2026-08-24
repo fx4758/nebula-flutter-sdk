@@ -49,10 +49,24 @@ POST /api/v1/mobile/auth/login
 ```
 
 Rules:
-- email is trimmed and canonicalized for identity lookup;
+- email identity lookup uses the deterministic canonical key defined below;
 - password is never logged, returned, persisted in plaintext, included in analytics, or placed in push payloads;
 - failed login does not disclose whether the email exists, is frozen, pending deletion, or has another provider;
 - successful login issues the existing installation-bound access/refresh session; refresh/logout semantics do not change.
+
+### Email canonical identity key
+
+V2 MUST NOT leave email identity normalization to database collation or provider-specific heuristics. The server canonical key is deterministic:
+
+1. trim leading/trailing Unicode whitespace;
+2. normalize the complete address to Unicode NFC;
+3. split into one non-empty local part and one non-empty domain; display-name/comment forms are rejected at the API boundary;
+4. apply Unicode default case folding to the local part;
+5. canonicalize the domain with IDNA2008/UTS-46 non-transitional processing, then lowercase its ASCII A-label form;
+6. join as `canonical_local@canonical_domain`;
+7. do not apply provider-specific dot removal, plus-tag stripping, Gmail/Yahoo rules, or mailbox alias guessing.
+
+The canonical key must be <=254 UTF-8 bytes. The original request value is not an identity key. All register/login/reset lookups and uniqueness checks use exactly this canonical key.
 
 ## 3. Phone/SMS code — supported optional method
 
@@ -88,8 +102,12 @@ or `oauth_provider=GOOGLE`.
 Rules:
 - accepted OAuth providers in V2 are exactly APPLE and GOOGLE;
 - provider authorization code is exchanged/verified server-side by a real provider adapter;
+- the authoritative `app_id` from InstallationProof selects that App's provider configuration and accepted client/audience; client-supplied fields can never select another App's client ID, audience, redirect identity, secret, or key material;
+- provider verification MUST validate the official exchange result and signed identity material: signature/JWKS (or provider-equivalent trust chain), issuer, configured audience/client ID, expiry/not-before where present, and a non-empty provider subject;
+- authorization codes are single-use credentials: no automatic login retry after an exchange attempt, no raw-code persistence/logging, and provider replay/reuse failure is terminal `invalid_credentials`;
+- if a selected provider flow requires PKCE verifier or nonce material that is absent from this V2 request, that flow MUST remain disabled until a contract/public-surface amendment adds the required typed proof;
 - client-supplied subject/openid/email is never authoritative;
-- provider credentials/tokens are never written into `user_account.provider_uid` directly;
+- only the server-verified provider subject may become the provider identity key; provider credentials/tokens are never written into `user_account.provider_uid` directly;
 - the old placeholder behavior “code == provider UID” is forbidden and remains unreachable;
 - raw provider credentials are not persisted or logged.
 
@@ -126,7 +144,18 @@ POST /api/v1/mobile/auth/email/register
 }
 ```
 
-On success: verify code+purpose, create/bind EMAIL identity, create password credential using the approved KDF, mark email verified, and issue the normal installation-bound user session. The response uses the same token/user shape as login.
+On success: verify code+purpose, create/bind EMAIL identity, create the password credential using the frozen Argon2id policy below, mark email verified, and issue the normal installation-bound user session. The response uses the same token/user shape as login.
+
+### Production email-code delivery
+
+`REGISTER` and `RESET_PASSWORD` are not production-ready unless the code reaches the target through a real email delivery adapter. The current Backend `GatewaySender` sandbox behavior (`sandbox_EMAIL_*` accepted without external I/O) MUST NOT satisfy Auth V2 production acceptance. Deterministic/fake delivery is allowed only in dev/test under explicit non-production configuration.
+
+Production rules:
+- provider/SMTP/API credentials are server-side secrets and are never returned to SDK/Apps;
+- the auth endpoint becomes enabled for an App only when its production email sender is configured and health-checked;
+- a delivery failure invalidates the newly issued verification code and returns a safe low-cardinality availability error;
+- outage/error behavior must not become an account-existence oracle;
+- raw verification codes are never logged, persisted in notification delivery payloads, analytics, or error reports.
 
 ## 6. Password reset
 
@@ -146,9 +175,13 @@ Successful password reset MUST invalidate all pre-reset user sessions before ret
 
 ## 7. Persistence
 
-Existing generic identity tables remain authoritative: `user_global`, `user_account`, `user_identity`, `user_token`. `user_account.Provider` already models PHONE/APPLE/GOOGLE/EMAIL and remains provider-neutral. EMAIL identity lookup MUST use a server-canonicalized email key and MUST have authoritative uniqueness for `(provider=EMAIL, provider_uid=canonical_email)`; application-level find-then-create without a uniqueness guard is insufficient.
+Existing generic identity tables remain authoritative: `user_global`, `user_account`, `user_identity`, `user_token`. `user_account.Provider` already models PHONE/APPLE/GOOGLE/EMAIL and remains provider-neutral.
 
-Email password material MUST NOT be stored in `user_account.provider_uid` or `user_global`. V2 introduces a dedicated password-credential record keyed to the EMAIL account identity, with at least:
+Baseline persistence has a hard compatibility gap that V2 Backend migration MUST close before EMAIL is enabled: both `user_account.provider_uid` and `user_identity.provider_uid` are currently `VARCHAR(128)`, while the frozen EMAIL canonical key permits up to 254 UTF-8 bytes. V2 MUST widen the relevant provider-UID storage to at least 254 UTF-8 bytes with byte-stable/binary comparison for identity keys; truncation is forbidden.
+
+Authoritative EMAIL uniqueness is the database uniqueness guard on `user_identity(provider=EMAIL, provider_uid=canonical_email)`. Registration creates the corresponding EMAIL `user_account` and `user_identity` in one transaction; concurrent duplicate creation must lose on the database uniqueness guard, never on an application-only find-then-create race. Migration preflight MUST detect incompatible duplicate/colliding legacy rows and abort rather than delete, merge, or rewrite accounts automatically.
+
+Email password material MUST NOT be stored in `user_account.provider_uid`, `user_identity.provider_uid`, or `user_global`. V2 introduces a dedicated password-credential record keyed to the EMAIL account identity, with at least:
 
 ```text
 user_account_id
@@ -161,6 +194,12 @@ updated_at
 ```
 
 Exact migration/table naming is Backend-owned; credential data is private and never appears in API responses.
+
+### Password hash policy V1
+
+Password credential version 1 uses **Argon2id** with minimum memory 19 MiB, minimum 2 iterations, minimum parallelism 1, a CSPRNG salt of at least 16 bytes per credential, and output of at least 32 bytes. The stored hash encoding MUST be self-describing/versioned (for example PHC format) so parameters and salt are recoverable without plaintext. Implementations may raise work factors after capacity measurement but may not go below these floors.
+
+Verification uses a vetted constant-time implementation. Plaintext or reversible password storage is forbidden. `password_algorithm/password_version` are authoritative migration metadata. On successful login, credentials below the current policy are rehashed with fresh salt before/with session issuance. A future KDF/parameter change increments the policy version and never reinterprets old hashes. Optional server-side pepper is a separate key-management decision and does not replace per-credential random salt.
 
 ## 8. Account linking
 
@@ -183,7 +222,7 @@ Auth V2 changes credential acquisition, not session trust.
 ## 10. Validation / abuse controls
 
 Minimum bounds:
-- email: normalized, non-empty, <=254 UTF-8 bytes;
+- email input: non-empty, <=254 UTF-8 bytes before canonicalization; canonical key must also be <=254 UTF-8 bytes and follow §2 exactly;
 - password: 8..128 UTF-8 bytes at API boundary;
 - verification code: exactly 6 decimal digits;
 - OAuth provider: enum allowlist;

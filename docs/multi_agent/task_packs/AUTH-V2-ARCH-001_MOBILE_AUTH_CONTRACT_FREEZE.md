@@ -43,6 +43,10 @@ Freeze one product-neutral Mobile Auth V2 contract that adds email/password as a
 10. Anti-enumeration and independent email/SMS/provider rate limits are frozen.
 11. Apps choose provider UI order; Platform does not encode default UI.
 12. Push registration is downstream and outside Auth V2.
+13. EMAIL identity canonicalization is deterministic and database-enforced; 254-byte canonical keys require provider UID storage migration with no truncation or collation-dependent identity.
+14. Production email verification/reset requires a real email sender; sandbox acceptance is non-production evidence only.
+15. OAuth trust is App-scoped from authoritative InstallationProof app_id and validates provider issuer/audience/signature/expiry/subject; provider-required PKCE/nonce cannot be silently omitted.
+16. Password credentials use the frozen versioned Argon2id policy, random per-credential salt and rehash-on-policy-upgrade semantics.
 
 ## Allowed Paths
 - `docs/multi_agent/contracts/MOBILE_AUTH_V2.md`

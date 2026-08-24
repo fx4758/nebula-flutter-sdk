@@ -61,9 +61,9 @@ Compatibility: additive for PHONE; old sessions remain valid.
 ## Scope Impact
 - Platform API: CHANGE REQUIRED.
 - SDK public API: CHANGE REQUIRED in later Story.
-- Database/migration: EMAIL password credential persistence required.
+- Database/migration: EMAIL password credential persistence + provider UID width/collation migration + authoritative `user_identity(provider,provider_uid)` uniqueness required; duplicate/collision preflight must fail closed.
 - App integration: adapter-only follow-up.
-- Security/cost: email/SMS/OAuth budgets bounded independently.
+- Security/cost: email/SMS/OAuth budgets bounded independently; production email delivery and per-App OAuth provider credentials are external-resource prerequisites and may not be satisfied by sandbox adapters.
 - Dependency: Contract -> Backend -> SDK -> consumer Apps.
 
 ## Temporary Workaround
