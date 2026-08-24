@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.0-rc2 - 2026-08-25
+
+Second immutable release candidate of the Nebula Flutter SDK. RC2 packages the already-reviewed Mobile Auth V2 SDK surface on top of RC1.
+
+### Added since RC1
+
+- Typed EMAIL/password login through `NebulaLoginRequest.email(...)`.
+- Typed Apple/Google authorization-code login through `NebulaOAuthProvider`.
+- Purpose-bound EMAIL verification codes through `NebulaEmailCodePurpose`.
+- EMAIL registration and password reset operations on `NebulaAuth`.
+- Stable invalid-credentials mapping `nebulaCodeInvalidCredentials = 10001` / `InvalidCredentialsError`.
+
+### Compatibility / release invariants
+
+- PHONE/SMS login behavior remains preserved.
+- Public API surface is exactly 131 top-level symbols (RC1: 127; Auth V2 added four symbols before packaging).
+- RC2 packaging changes no `lib/**` source and no API snapshot.
+- `publish_to: none` remains intentional; RC2 is distributed by immutable Forgejo tag `v0.1.0-rc2`, not a package registry.
+- Consumer apps obtain Apple/Google authorization codes through their App/provider adapters and pass only the authorization code to the SDK; provider secrets never belong in the App or SDK package.
+- Consumer apps must repin through their own reviewed immutable dependency workflow.
+
 ## 0.1.0-rc1 - 2026-08-18
 
 First immutable release candidate of the Nebula Flutter SDK.
