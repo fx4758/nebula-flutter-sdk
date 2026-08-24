@@ -1769,7 +1769,8 @@
         "test/session_auth_test.dart",
         "test/session_errors_test.dart",
         "test/session_test.dart",
-        "docs/multi_agent/reports/AUTH-V2-SDK-002*"
+        "docs/multi_agent/reports/AUTH-V2-SDK-002*",
+        "test/error_reporting/error_reporting_public_surface_test.dart"
       ],
       "required_unchanged_paths": [
         "lib/nebula_sdk.dart",
@@ -1790,7 +1791,14 @@
       "provider_credential_material_authorized": false,
       "provider_authorization_acquisition_authorized": false,
       "execution_gate": "OPEN",
-      "unblock_rule": "Implement only the canonical Auth V2 SDK surface. Independent exact review + canonical closure required before any consumer App repin/integration."
+      "unblock_rule": "Implement only the canonical Auth V2 SDK surface. Independent exact review + canonical closure required before any consumer App repin/integration.",
+      "test_compatibility_scope_amendment": {
+        "reason": "NebulaAuth gained the three frozen Auth V2 methods, causing the pre-existing error-reporting _Auth test fake to fail compile/load.",
+        "authorized_path": "test/error_reporting/error_reporting_public_surface_test.dart",
+        "authorized_change": "Update only the local _Auth fake to implement sendEmailCode, registerEmail, and resetEmailPassword with test-only compatibility stubs.",
+        "production_public_delta": "0; no lib/**, API snapshot, Backend, App, provider, or consumer integration authority is added.",
+        "exit_rule": "After the compatibility stub is added, rerun full dart analyze + full dart test in addition to the already-required focused/governance/secret checks."
+      }
     }
   },
   "non_executable_roadmaps": [
