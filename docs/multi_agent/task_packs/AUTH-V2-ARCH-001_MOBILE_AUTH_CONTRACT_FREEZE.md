@@ -1,18 +1,18 @@
 # AUTH-V2-ARCH-001 — Mobile Auth V2 Contract Freeze
 
 ## Story
-- ID: `AUTH-V2-ARCH-001`
+- ID：AUTH-V2-ARCH-001
 - Owner Role: Auth Architecture Agent
 - Reviewer: Architecture Review Agent
 - Depends: `NEBULA-SDK-RELEASE-001`
 
 ## Execution Boundary
-- Execution repo: `.`
-- Execution branch: `auth/v2-arch-001-freeze`
-- Execution remote: `hub`
+- Execution repo：`.`
+- Execution branch：`auth/v2-arch-001-freeze`
+- Execution remote：`hub`
 - Governance state: architecture/contract only
-- Platform API mode: `CONTRACT_CHANGE`
-- SDK public API mode: `READ_ONLY`
+- Platform API mode：`CONTRACT_CHANGE`
+- SDK public API mode：`READ_ONLY`
 
 ## Goal
 Freeze one product-neutral Mobile Auth V2 contract that adds email/password as a supported primary account method without deleting phone/SMS login, and defines real Apple/Google OAuth boundaries while preserving current installation-bound session semantics.

@@ -1573,6 +1573,108 @@
       "post_merge_quality": "FlyPostBackend Dev exact 610f9f72533b3208264f9ae19aad7df00bd22dfb: secret-guard-frontend push #23 SUCCESS + secret-guard push #24 SUCCESS",
       "final_report": "reports/FEEDBACK-TXC-AGG-ADMIN-V1-001_FINAL_ACCEPTANCE.md",
       "closure_note": "Admin BFF/UI Feedback aggregation is canonical on FlyPostBackend Dev=610f9f72533b3208264f9ae19aad7df00bd22dfb. The BFF remains a same-path provider-blind proxy; App Feedback is scoped to current App/Region/Environment and reads normalized Backend cache; provider secret remains write-only. TEST deployment and Mobile/SDK/NFC Writer provider-neutral Feedback remain unauthorized; FEEDBACK-PLATFORM-ACR-V1-001 stays deferred at the second-consumer gate."
+    },
+    "AUTH-V2-ARCH-001": {
+      "status": "DONE",
+      "owner": "Auth Architecture Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/AUTH-V2-ARCH-001_MOBILE_AUTH_CONTRACT_FREEZE.md",
+      "depends_on": [
+        "NEBULA-SDK-RELEASE-001"
+      ],
+      "platform_api_mode": "CONTRACT_CHANGE",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "auth/v2-arch-001-freeze",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-auth-v2-arch-001",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": false,
+      "backend_mutation_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "architecture_contract": "contracts/MOBILE_AUTH_V2.md",
+      "platform_change_authorization": {
+        "acr_id": "ACR-MOBILE-AUTH-V2-001",
+        "acr_path": "reports/ACR-MOBILE-AUTH-V2-001.md",
+        "decision": "APPROVED",
+        "frozen_contract": "contracts/MOBILE_AUTH_V2.md",
+        "backend_baseline_commit": "c9220eaa725a797a40a94c6b1e3970a69b2931f5",
+        "independent_reviewer": "reviewer-agent / Review #372",
+        "adapter_first_analysis": "Password authority, email verification delivery, provider exchange, durable identity uniqueness and session revocation are server Platform responsibilities and cannot be safely implemented by a product App Adapter or SDK-only change.",
+        "adr_id": "ADR-MOBILE-AUTH-V2-001",
+        "adr_path": "adrs/ADR-MOBILE-AUTH-V2-001.md",
+        "contract_version": "Mobile Auth V2",
+        "compatibility_plan": "PHONE + phone + code and existing installation-bound session/refresh/logout semantics remain unchanged; EMAIL/OAuth are additive and may be App-gated.",
+        "rollback_plan": "Disable EMAIL/OAuth per App while preserving PHONE/refresh/logout; never rewrite PHONE identities or auto-merge provider accounts.",
+        "triggering_product": "Nearvia",
+        "second_consumer_evidence": [
+          {
+            "consumer": "Nearvia",
+            "evidence": "Requires EMAIL-first presentation, Apple/Google third-party sign-in, and PHONE/SMS retained as an optional method."
+          },
+          {
+            "consumer": "NFC Writer",
+            "evidence": "Already consumes the shared PHONE/APPLE/GOOGLE provider/session platform; Auth V2 must remain additive and PHONE-compatible for this existing consumer."
+          }
+        ]
+      },
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "ebc207b2587495acc995036e432adc01e393b7b4",
+      "delivery_pr": "#85",
+      "formal_ci": "governance UI #264 / internal #1148 SUCCESS",
+      "formal_review": "#372 APPROVED / reviewer-agent / official=true / stale=false / exact ebc207b2587495acc995036e432adc01e393b7b4",
+      "delivery_merge_commit": "ebc207b2587495acc995036e432adc01e393b7b4",
+      "post_merge_governance": "UI #265 SUCCESS",
+      "closure_note": "Mobile Auth V2 contract is canonical. EMAIL/password is additive, PHONE/SMS remains wire/session compatible, Apple/Google require real App-scoped provider verification, and implementation authority now moves to the separate Backend Story only."
+    },
+    "AUTH-V2-BE-001": {
+      "status": "READY",
+      "owner": "Backend Auth V2 Agent",
+      "agent": "A",
+      "reviewer": "Backend Review Agent",
+      "task_pack": "task_packs/AUTH-V2-BE-001_BACKEND_IMPLEMENTATION.md",
+      "depends_on": [
+        "AUTH-V2-ARCH-001"
+      ],
+      "platform_api_mode": "IMPLEMENT_FROZEN_CONTRACT",
+      "sdk_public_api_mode": "NONE",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": "../flypost_backend",
+      "execution_branch": "auth/v2-be-001-backend",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-auth-v2-be-001-backend",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "backend_repo": "../flypost_backend",
+      "backend_baseline_commit": "c9220eaa725a797a40a94c6b1e3970a69b2931f5",
+      "implementation_authorized": true,
+      "backend_mutation_authorized": true,
+      "db_mutation_authorized": true,
+      "provider_integration_authorized": true,
+      "provider_credential_material_authorized": false,
+      "sdk_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "architecture_contract": "contracts/MOBILE_AUTH_V2.md",
+      "required_output": "Backend Auth V2 implementation PR only: EMAIL/password + preserved PHONE/SMS + real Apple/Google provider verification + production email delivery boundary; no SDK/App mutation.",
+      "execution_gate": "OPEN",
+      "registration_baseline": "root/FlyPostAPI Dev@c9220eaa725a797a40a94c6b1e3970a69b2931f5; execution must fresh fetch and reconcile migration numbering.",
+      "platform_change_authorization": {
+        "acr_id": "ACR-MOBILE-AUTH-V2-001",
+        "acr_path": "reports/ACR-MOBILE-AUTH-V2-001.md",
+        "decision": "APPROVED",
+        "frozen_contract": "contracts/MOBILE_AUTH_V2.md",
+        "backend_baseline_commit": "c9220eaa725a797a40a94c6b1e3970a69b2931f5",
+        "independent_reviewer": "reviewer-agent / Review #372",
+        "adapter_first_analysis": "EMAIL password/KDF, verification-code authority/delivery, provider OAuth exchange, durable identity uniqueness and all-session reset revocation require Backend authority; App/SDK workarounds are forbidden."
+      },
+      "unblock_rule": "Deliver READY_FOR_REVIEW only. SDK Auth V2 may be registered only after exact Backend candidate independently reviews, merges to canonical Dev, and post-merge quality passes."
     }
   },
   "non_executable_roadmaps": [
