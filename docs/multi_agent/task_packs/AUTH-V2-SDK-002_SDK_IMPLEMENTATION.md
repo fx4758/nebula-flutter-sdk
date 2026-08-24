@@ -33,7 +33,9 @@ Only these production/governance files may change:
 6. `lib/src/auth/session.dart`
 7. `governance/api_surface.snapshot`
 
-Focused tests/evidence may change only under `test/login_request_test.dart`, `test/session_auth_test.dart`, `test/session_errors_test.dart`, `test/session_test.dart`, and `docs/multi_agent/reports/AUTH-V2-SDK-002*`.
+Focused tests/evidence may change only under `test/login_request_test.dart`, `test/session_auth_test.dart`, `test/session_errors_test.dart`, `test/session_test.dart`, `test/error_reporting/error_reporting_public_surface_test.dart`, and `docs/multi_agent/reports/AUTH-V2-SDK-002*`.
+
+The added `test/error_reporting/error_reporting_public_surface_test.dart` authority is a narrow compatibility amendment only: update the pre-existing local `_Auth implements NebulaAuth` fake to implement the three frozen Auth V2 methods (`sendEmailCode`, `registerEmail`, `resetEmailPassword`). It authorizes no production/public API mutation, no behavior expansion, and no changes outside that test file.
 
 Any required eighth production/public path is a scope gap: STOP and return a Delivery Note. Do not widen the write-set.
 
@@ -120,7 +122,7 @@ Also forbidden: Backend/schema/config mutation; Nearvia/NFC Writer/App mutation 
 - `10001 -> InvalidCredentialsError`; existing mappings unchanged.
 - API surface exactly `131`, with the four frozen additions and zero removals.
 - `lib/nebula_sdk.dart` + `governance/public_api.txt` byte-identical to base.
-- focused tests + full analyzer/tests/governance/secret scan PASS.
+- focused tests + full analyzer/tests/governance/secret scan PASS; the compatibility-amended error-reporting public-surface test must compile/load/pass.
 - Delivery Note records exact base/candidate, path diff, 127->131 proof, unchanged hashes and Backend/App/provider mutation = 0.
 
 ## Exit
