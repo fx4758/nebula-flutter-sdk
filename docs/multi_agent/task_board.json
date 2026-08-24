@@ -1810,6 +1810,49 @@
       "public_api_closure": "127 -> 131; exactly NebulaOAuthProvider, NebulaEmailCodePurpose, nebulaCodeInvalidCredentials, InvalidCredentialsError added; zero removals",
       "final_report": "reports/AUTH-V2-SDK-002_FINAL_ACCEPTANCE.md",
       "closure_note": "Mobile Auth V2 SDK implementation is independently reviewed and canonical on nebula-flutter-sdk main=0ee33686c35e49e29d9eb38034c3c16c300a969d. PHONE/SMS remains preserved; typed EMAIL/password plus Apple/Google authorization-code Auth V2 SDK surface is canonical; API surface is 131. Backend/App/provider acquisition/configuration mutation remains outside this Story. Consumer App integration and provider migration require dedicated downstream Coordinator registration."
+    },
+    "NEBULA-SDK-RELEASE-002": {
+      "status": "READY",
+      "owner": "SDK Release Agent",
+      "agent": "C",
+      "reviewer": "Governance Review Agent",
+      "task_pack": "task_packs/NEBULA-SDK-RELEASE-002_RC2_PACKAGING.md",
+      "depends_on": [
+        "S1-F03-001",
+        "S1-F03-002",
+        "NEBULA-SDK-RELEASE-001",
+        "AUTH-V2-SDK-002"
+      ],
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "sdk-release/NEBULA-SDK-RELEASE-002-rc2",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-nebula-sdk-release-002-rc2",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": true,
+      "release_packaging_authorized": true,
+      "tag_publication_authorized": false,
+      "authorized_write_set": [
+        "pubspec.yaml",
+        "CHANGELOG.md",
+        "docs/API_REFERENCE_RC2.md",
+        "docs/INTEGRATION_GUIDE_RC2.md",
+        "docs/MIGRATION_GUIDE_RC2.md",
+        "docs/releases/0.1.0-rc2.md",
+        "docs/releases/NEBULA-SDK-RELEASE-002-DELIVERY.md"
+      ],
+      "expected_version": "0.1.0-rc2",
+      "expected_tag": "v0.1.0-rc2",
+      "expected_api_surface": "131 -> 131; packaging changes only; no public symbol change relative to canonical main 3b7066fae16c78e528104f78f64df51b99fb90a6",
+      "release_baseline": "root/nebula-flutter-sdk main@3b7066fae16c78e528104f78f64df51b99fb90a6; API surface 131; AUTH-V2-SDK-002 DONE / CLOSED_REVIEW_PASS",
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "execution_gate": "OPEN",
+      "unblock_rule": "Package only the current canonical SDK as immutable v0.1.0-rc2. No lib/**, API snapshot, Platform API, Backend, consumer App, provider credential/acquisition, or provider migration mutation. Independent exact review + Coordinator fast-forward publication + tag-triggered release gate are mandatory before App repin."
     }
   },
   "non_executable_roadmaps": [
