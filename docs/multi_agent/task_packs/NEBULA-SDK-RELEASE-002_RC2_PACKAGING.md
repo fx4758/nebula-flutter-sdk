@@ -1,6 +1,6 @@
 # NEBULA-SDK-RELEASE-002 — Nebula SDK 0.1.0-rc2 Packaging
 
-- ID: `NEBULA-SDK-RELEASE-002`
+- ID：NEBULA-SDK-RELEASE-002
 - Owner: SDK Release Agent
 - Agent: C
 - Reviewer: Governance Review Agent
