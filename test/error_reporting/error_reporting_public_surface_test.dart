@@ -27,6 +27,29 @@ final class _Auth implements NebulaAuth {
   }) async {}
 
   @override
+  Future<void> sendEmailCode({
+    required String email,
+    required NebulaEmailCodePurpose purpose,
+    NebulaCancellationToken? cancellationToken,
+  }) async {}
+
+  @override
+  Future<void> registerEmail({
+    required String email,
+    required String password,
+    required String code,
+    NebulaCancellationToken? cancellationToken,
+  }) async {}
+
+  @override
+  Future<void> resetEmailPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+    NebulaCancellationToken? cancellationToken,
+  }) async {}
+
+  @override
   Future<SessionTokenPair> refresh(
           {NebulaCancellationToken? cancellationToken}) async =>
       const SessionTokenPair(accessToken: '', refreshToken: '');

@@ -33,6 +33,16 @@ class _FakeTransport implements NebulaTransport {
   int get logoutCount =>
       requests.where((NebulaRequest r) => r.path.endsWith('/logout')).length;
 
+  int get emailCodeCount => requests
+      .where((NebulaRequest r) => r.path.endsWith('/email/code/send'))
+      .length;
+  int get emailRegisterCount => requests
+      .where((NebulaRequest r) => r.path.endsWith('/email/register'))
+      .length;
+  int get emailResetCount => requests
+      .where((NebulaRequest r) => r.path.endsWith('/email/password/reset'))
+      .length;
+
   NebulaRequest get lastRefresh =>
       requests.lastWhere((NebulaRequest r) => r.path.endsWith('/refresh'));
   NebulaRequest get lastLogin =>
@@ -63,6 +73,30 @@ class _FakeTransport implements NebulaTransport {
           'refresh_token': 'r-login'
         },
         requestId: 'req-login',
+      );
+    }
+    if (request.path.endsWith('/email/code/send')) {
+      return const NebulaResponse(
+        statusCode: 200,
+        data: <String, Object?>{},
+        requestId: 'req-email-code',
+      );
+    }
+    if (request.path.endsWith('/email/register')) {
+      return const NebulaResponse(
+        statusCode: 200,
+        data: <String, Object?>{
+          'access_token': 'a-register',
+          'refresh_token': 'r-register',
+        },
+        requestId: 'req-email-register',
+      );
+    }
+    if (request.path.endsWith('/email/password/reset')) {
+      return const NebulaResponse(
+        statusCode: 200,
+        data: <String, Object?>{},
+        requestId: 'req-email-reset',
       );
     }
     if (request.path.endsWith('/refresh')) {
@@ -181,6 +215,138 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
       expect(transport.loginCount, 0);
+    });
+  });
+
+  group('NebulaSessionAuth Auth V2 EMAIL operations', () {
+    test('EMAIL login uses frozen wire and authenticated path', () async {
+      final transport = _FakeTransport();
+      final auth = _auth(transport);
+      await auth.onInstallationBootstrapSucceeded();
+
+      await auth.login(const NebulaLoginRequest.email(
+        email: 'user@example.com',
+        password: 'correct-horse',
+      ));
+
+      expect(auth.state, NebulaSessionState.authenticated);
+      expect(transport.lastLogin.body, <String, Object?>{
+        'provider': 'EMAIL',
+        'email': 'user@example.com',
+        'password': 'correct-horse',
+      });
+    });
+
+    test('sendEmailCode maps typed purpose and does not change session',
+        () async {
+      final transport = _FakeTransport();
+      final auth = _auth(transport);
+      await auth.onInstallationBootstrapSucceeded();
+
+      await auth.sendEmailCode(
+        email: 'user@example.com',
+        purpose: NebulaEmailCodePurpose.resetPassword,
+      );
+
+      expect(auth.state, NebulaSessionState.installationActive);
+      expect(transport.emailCodeCount, 1);
+      expect(
+        transport.requests
+            .lastWhere((r) => r.path.endsWith('/email/code/send'))
+            .body,
+        <String, Object?>{
+          'email': 'user@example.com',
+          'purpose': 'RESET_PASSWORD',
+        },
+      );
+    });
+
+    test('registerEmail consumes token pair through authenticated session',
+        () async {
+      final transport = _FakeTransport();
+      final store = InMemoryTokenStore();
+      final auth = _auth(transport, store: store);
+      await auth.onInstallationBootstrapSucceeded();
+
+      await auth.registerEmail(
+        email: 'user@example.com',
+        password: 'correct-horse',
+        code: '123456',
+      );
+
+      expect(auth.state, NebulaSessionState.authenticated);
+      expect(auth.accessToken, 'a-register');
+      expect(
+          await store.read(namespace: _ns, key: tokenKeyRefresh), 'r-register');
+      expect(transport.emailRegisterCount, 1);
+      expect(
+        transport.requests
+            .lastWhere((r) => r.path.endsWith('/email/register'))
+            .body,
+        <String, Object?>{
+          'email': 'user@example.com',
+          'password': 'correct-horse',
+          'code': '123456',
+        },
+      );
+    });
+
+    test('password reset clears user scope but preserves installation identity',
+        () async {
+      final transport = _FakeTransport();
+      final store = InMemoryTokenStore();
+      await store.write(
+        namespace: _ns,
+        key: tokenKeyInstallation,
+        value: 'installation-saved',
+      );
+      final auth = _auth(transport, store: store);
+      await auth.onInstallationBootstrapSucceeded();
+      await auth.login(
+        const NebulaLoginRequest.phone(phone: '13800000000', code: '123456'),
+      );
+
+      await auth.resetEmailPassword(
+        email: 'user@example.com',
+        code: '654321',
+        newPassword: 'new-password',
+      );
+
+      expect(auth.state, NebulaSessionState.installationActive);
+      expect(auth.accessToken, isNull);
+      expect(await store.read(namespace: _ns, key: tokenKeyRefresh), isNull);
+      expect(
+        await store.read(namespace: _ns, key: tokenKeyInstallation),
+        'installation-saved',
+      );
+      expect(transport.emailResetCount, 1);
+      expect(transport.logoutCount, 0,
+          reason: 'password reset cleanup must not issue remote logout');
+    });
+
+    test('EMAIL code/password validation fails before transport', () async {
+      final transport = _FakeTransport();
+      final auth = _auth(transport);
+      await auth.onInstallationBootstrapSucceeded();
+
+      await expectLater(
+        auth.registerEmail(
+          email: 'user@example.com',
+          password: '12345678',
+          code: '１２３４５６',
+        ),
+        throwsArgumentError,
+      );
+      await expectLater(
+        auth.resetEmailPassword(
+          email: 'user@example.com',
+          code: '123456',
+          newPassword: 'short',
+        ),
+        throwsArgumentError,
+      );
+      expect(transport.emailRegisterCount, 0);
+      expect(transport.emailResetCount, 0);
     });
   });
 

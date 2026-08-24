@@ -1,16 +1,8 @@
-/// Concrete user-session capability (F1-02).
-///
-/// Wires the FS-02 [NebulaSession] state machine to a real [NebulaTransport] so
-/// that login, single-flight refresh and sign-out perform actual network calls
-/// (docs/08 §6/§7). Proof headers are attached via the injected
-/// [RequestProofSigner] Port (FS-01); the core contains no crypto plugin.
-///
-/// Single-flight refresh is inherited from [NebulaSession]: concurrent callers
-/// of [refresh]/[getAccessToken] await one in-flight refresh future, so a 401
-/// storm triggers exactly one refresh HTTP request (F1 acceptance).
+/// Transport-backed user-session capability (F1-02 / Auth V2).
 library;
 
 import 'dart:async';
+import 'dart:convert';
 
 import '../capabilities.dart';
 import '../foundation/errors.dart';
@@ -41,9 +33,6 @@ final class NebulaSessionAuth implements NebulaAuth {
         _proofSigner = proofSigner,
         _installationToken = installationToken,
         _namespace = tokenNamespace(options.environment, options.appId) {
-    // Assigned in the body (not the initializer list) because the session needs
-    // the transport-backed executor and remote-logout hook, which close over
-    // `this` (instance methods cannot be referenced in an initializer list).
     _session = NebulaSession(
       namespace: _namespace,
       tokenStore: _tokenStore,
@@ -72,10 +61,7 @@ final class NebulaSessionAuth implements NebulaAuth {
   @override
   Stream<NebulaSessionEvent> get events => _session.events;
 
-  /// Advances the session to INSTALLATION_ACTIVE after the host completes the
-  /// installation bootstrap (FS-01). The auth capability does not perform the
-  /// bootstrap network call itself; it only reflects the resulting state so that
-  /// [login] may proceed (docs/08 §7).
+  /// Reflects a successful host installation bootstrap.
   Future<void> onInstallationBootstrapSucceeded() async {
     if (_session.state == NebulaSessionState.uninitialized) {
       await _session.beginBootstrap();
@@ -130,6 +116,79 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   @override
+  Future<void> sendEmailCode({
+    required String email,
+    required NebulaEmailCodePurpose purpose,
+    NebulaCancellationToken? cancellationToken,
+  }) async {
+    _validateEmail(email);
+    await _sendWithProof(
+      NebulaHttpMethod.post,
+      endpoints.emailCodeSend,
+      body: <String, Object?>{
+        'email': email,
+        'purpose': _emailPurposeWire(purpose),
+      },
+      cancellationToken: cancellationToken,
+    );
+  }
+
+  @override
+  Future<void> registerEmail({
+    required String email,
+    required String password,
+    required String code,
+    NebulaCancellationToken? cancellationToken,
+  }) async {
+    _validateEmail(email);
+    _validatePassword(password, 'password');
+    _validateEmailCode(code);
+    await _session.beginAuthenticating();
+    try {
+      final SessionTokenPair pair = await _tokenRequest(
+        endpoints.emailRegister,
+        <String, Object?>{
+          'email': email,
+          'password': password,
+          'code': code,
+        },
+        cancellationToken: cancellationToken,
+      );
+      await _session.onAuthenticated(pair);
+    } on NebulaSessionError catch (error) {
+      await _session.onFailure(error);
+      rethrow;
+    } catch (error) {
+      final NebulaSessionError mapped = _mapException(error);
+      await _session.onFailure(mapped);
+      throw mapped;
+    }
+  }
+
+  @override
+  Future<void> resetEmailPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+    NebulaCancellationToken? cancellationToken,
+  }) async {
+    _validateEmail(email);
+    _validateEmailCode(code);
+    _validatePassword(newPassword, 'newPassword');
+    await _sendWithProof(
+      NebulaHttpMethod.post,
+      endpoints.emailPasswordReset,
+      body: <String, Object?>{
+        'email': email,
+        'code': code,
+        'new_password': newPassword,
+      },
+      cancellationToken: cancellationToken,
+    );
+    await _session.onPasswordResetSucceeded();
+  }
+
+  @override
   Future<String> getAccessToken({
     NebulaCancellationToken? cancellationToken,
   }) async {
@@ -151,15 +210,24 @@ final class NebulaSessionAuth implements NebulaAuth {
   @override
   Future<void> signOut() => _session.signOut();
 
-  // --- internals -----------------------------------------------------------
-
   Future<SessionTokenPair> _loginRequest(
+    Map<String, Object?> body, {
+    NebulaCancellationToken? cancellationToken,
+  }) =>
+      _tokenRequest(
+        endpoints.login,
+        body,
+        cancellationToken: cancellationToken,
+      );
+
+  Future<SessionTokenPair> _tokenRequest(
+    String endpointPath,
     Map<String, Object?> body, {
     NebulaCancellationToken? cancellationToken,
   }) async {
     final NebulaResponse response = await _sendWithProof(
       NebulaHttpMethod.post,
-      endpoints.login,
+      endpointPath,
       body: body,
       cancellationToken: cancellationToken,
     );
@@ -183,9 +251,7 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   Future<void> _remoteLogout() async {
-    // Best-effort: the session state machine clears local state regardless of
-    // whether this succeeds (docs/08 §6.4). Failures are swallowed by the
-    // session's signOut path.
+    // Best-effort remote logout; local cleanup remains authoritative.
     await _sendWithProof(
       NebulaHttpMethod.post,
       endpoints.logout,
@@ -223,7 +289,6 @@ final class NebulaSessionAuth implements NebulaAuth {
     try {
       return await _transport.send(request);
     } on NebulaApiException catch (error) {
-      // Envelope business error: map the server code to a typed category.
       throw classifySessionError(
         statusCode: 200,
         code: error.code,
@@ -281,6 +346,39 @@ final class NebulaSessionAuth implements NebulaAuth {
       return AuthenticationRequiredError(requestId: error.requestId);
     }
     return TemporarilyUnavailableError(requestId: error.requestId);
+  }
+
+  String _emailPurposeWire(NebulaEmailCodePurpose purpose) => switch (purpose) {
+        NebulaEmailCodePurpose.register => 'REGISTER',
+        NebulaEmailCodePurpose.resetPassword => 'RESET_PASSWORD',
+      };
+
+  void _validateEmail(String email) =>
+      _validateUtf8(email, 'email', minBytes: 1, maxBytes: 254);
+
+  void _validatePassword(String password, String field) =>
+      _validateUtf8(password, field, minBytes: 8, maxBytes: 128);
+
+  void _validateEmailCode(String code) {
+    if (!RegExp(r'^[0-9]{6}$').hasMatch(code)) {
+      throw ArgumentError(
+          'code must be exactly 6 ASCII decimal digits', 'code');
+    }
+  }
+
+  void _validateUtf8(
+    String value,
+    String field, {
+    required int minBytes,
+    required int maxBytes,
+  }) {
+    final int bytes = utf8.encode(value).length;
+    if (bytes < minBytes || bytes > maxBytes) {
+      throw ArgumentError(
+        '$field must be $minBytes..$maxBytes UTF-8 bytes',
+        field,
+      );
+    }
   }
 
   String _resolvePath(String endpointPath) {

@@ -27,7 +27,9 @@ src/auth/key_store.dart class FakeInstallationKeyPort
 src/auth/key_store.dart class InstallationKeyPair
 src/auth/key_store.dart class InstallationKeyPort
 src/auth/login_request.dart class NebulaLoginRequest
+src/auth/login_request.dart enum NebulaEmailCodePurpose
 src/auth/login_request.dart enum NebulaLoginProvider
+src/auth/login_request.dart enum NebulaOAuthProvider
 src/auth/proof.dart class ProofCanonicalInput
 src/auth/proof.dart class RecordingProofSigner
 src/auth/proof.dart class RequestProofSigner
@@ -45,6 +47,7 @@ src/auth/session_auth.dart class NebulaSessionAuth
 src/auth/session_endpoints.dart class SessionEndpoints
 src/auth/session_errors.dart class AuthenticationRequiredError
 src/auth/session_errors.dart class ClientOutdatedError
+src/auth/session_errors.dart class InvalidCredentialsError
 src/auth/session_errors.dart class InvalidInstallationError
 src/auth/session_errors.dart class InvalidRequestError
 src/auth/session_errors.dart class NebulaSessionError
@@ -53,6 +56,7 @@ src/auth/session_errors.dart class SessionRevokedError
 src/auth/session_errors.dart class TemporarilyUnavailableError
 src/auth/session_errors.dart const nebulaCodeClientOutdated
 src/auth/session_errors.dart const nebulaCodeInstallationInvalid
+src/auth/session_errors.dart const nebulaCodeInvalidCredentials
 src/auth/session_errors.dart const nebulaCodeParam
 src/auth/session_errors.dart const nebulaCodeRateLimited
 src/auth/session_errors.dart const nebulaCodeSessionRevoked

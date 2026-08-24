@@ -169,6 +169,10 @@ final class NebulaSession {
       (NebulaSessionState.authenticated, NebulaSessionState.signingOut) ||
       (
         NebulaSessionState.authenticated,
+        NebulaSessionState.installationActive
+      ) ||
+      (
+        NebulaSessionState.authenticated,
         NebulaSessionState.recoverableFailure
       ) ||
       (NebulaSessionState.refreshing, NebulaSessionState.authenticated) ||
@@ -182,6 +186,10 @@ final class NebulaSession {
       (
         NebulaSessionState.recoverableFailure,
         NebulaSessionState.uninitialized
+      ) ||
+      (
+        NebulaSessionState.recoverableFailure,
+        NebulaSessionState.installationActive
       ) ||
       (NebulaSessionState.revoked, NebulaSessionState.bootstrapping) =>
         true,
@@ -313,6 +321,26 @@ final class NebulaSession {
         }
         await _clearLocalSession();
         _transition(NebulaSessionState.installationActive);
+      });
+
+  /// Clears user credentials after a successful EMAIL password reset.
+  ///
+  /// Backend reset success revokes every pre-reset user session. Local cleanup
+  /// therefore clears access/refresh credentials without issuing logout.
+  Future<void> onPasswordResetSucceeded() => _serialized(() async {
+        await _clearLocalSession();
+        if (_state == NebulaSessionState.installationActive) return;
+        if (_state == NebulaSessionState.authenticated ||
+            _state == NebulaSessionState.recoverableFailure) {
+          _transition(
+            NebulaSessionState.installationActive,
+            reason: 'password reset',
+          );
+          return;
+        }
+        throw StateError(
+          'password reset cleanup requires an active installation',
+        );
       });
 
   /// Any trusted state -> REVOKED -> BOOTSTRAPPING (§7).

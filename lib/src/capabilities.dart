@@ -28,6 +28,29 @@ abstract interface class NebulaAuth {
     NebulaCancellationToken? cancellationToken,
   });
 
+  /// Sends a purpose-bound EMAIL verification code.
+  Future<void> sendEmailCode({
+    required String email,
+    required NebulaEmailCodePurpose purpose,
+    NebulaCancellationToken? cancellationToken,
+  });
+
+  /// Completes EMAIL registration and enters an authenticated session.
+  Future<void> registerEmail({
+    required String email,
+    required String password,
+    required String code,
+    NebulaCancellationToken? cancellationToken,
+  });
+
+  /// Resets an EMAIL password and clears any current local user session.
+  Future<void> resetEmailPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+    NebulaCancellationToken? cancellationToken,
+  });
+
   /// Returns a valid access token, performing a single-flight refresh if the
   /// current one is missing or needs rotation.
   Future<String> getAccessToken({

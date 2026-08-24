@@ -288,6 +288,33 @@ void main() {
     });
   });
 
+  group('password reset cleanup', () {
+    test('authenticated user scope is cleared without remote logout', () async {
+      var logoutCalls = 0;
+      final s = session(remoteLogout: () async => logoutCalls++);
+      await bootstrapToAuthenticated(s);
+
+      await s.onPasswordResetSucceeded();
+
+      expect(s.state, NebulaSessionState.installationActive);
+      expect(s.accessToken, isNull);
+      expect(await store.read(namespace: ns, key: tokenKeyRefresh), isNull);
+      expect(logoutCalls, 0);
+      s.dispose();
+    });
+
+    test('installation-active state remains installation-active', () async {
+      final s = session();
+      await s.beginBootstrap();
+      await s.onBootstrapSucceeded();
+
+      await s.onPasswordResetSucceeded();
+
+      expect(s.state, NebulaSessionState.installationActive);
+      s.dispose();
+    });
+  });
+
   group('logout (docs/08 §6.4)', () {
     test('clears local state even when remote logout fails', () async {
       final s = session(
