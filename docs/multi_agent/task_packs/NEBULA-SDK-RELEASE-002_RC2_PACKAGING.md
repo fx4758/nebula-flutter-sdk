@@ -8,8 +8,8 @@
 - Execution branch: `sdk-release/NEBULA-SDK-RELEASE-002-rc2`
 - Execution remote: `hub`
 - Execution worktree: `wt-nebula-sdk-release-002-rc2`
-- Platform API mode: `NONE`
-- SDK public API mode: `READ_ONLY`
+- Platform API mode：`NONE`
+- SDK public API mode：`READ_ONLY`
 - Required upstream: `S1-F03-001 = DONE`, `S1-F03-002 = DONE`, `NEBULA-SDK-RELEASE-001 = DONE / CLOSED_RELEASE_PASS`, `AUTH-V2-SDK-002 = DONE / CLOSED_REVIEW_PASS`.
 - Execution baseline: `main@3b7066fae16c78e528104f78f64df51b99fb90a6`.
 - State write authority: Coordinator only.
