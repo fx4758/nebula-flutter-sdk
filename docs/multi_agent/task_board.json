@@ -1731,7 +1731,7 @@
       "closure_note": "Mobile Auth V2 SDK public surface freeze is independently reviewed and canonical. Actual lib/** and API snapshot mutation moves only to separately registered AUTH-V2-SDK-002."
     },
     "AUTH-V2-SDK-002": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Auth V2 Implementation Agent",
       "agent": "A",
       "reviewer": "SDK Review Agent",
@@ -1752,9 +1752,9 @@
       "frozen_public_surface": "contracts/MOBILE_AUTH_V2_SDK_PUBLIC_SURFACE.md",
       "backend_authority": "root/FlyPostAPI Dev@d9ad6c3c0e9186e574081e22d88450d93542fd29",
       "registration_baseline": "root/nebula-flutter-sdk main@04d1c1481846d3d170f83b71fc4f553dff5d5146",
-      "implementation_authorized": true,
-      "sdk_production_mutation_authorized": true,
-      "sdk_public_surface_mutation_authorized": true,
+      "implementation_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
       "authorized_write_set": [
         "lib/src/auth/login_request.dart",
         "lib/src/capabilities.dart",
@@ -1790,15 +1790,26 @@
       "app_mutation_authorized": false,
       "provider_credential_material_authorized": false,
       "provider_authorization_acquisition_authorized": false,
-      "execution_gate": "OPEN",
-      "unblock_rule": "Implement only the canonical Auth V2 SDK surface. Independent exact review + canonical closure required before any consumer App repin/integration.",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "unblock_rule": "Story is closed. Consumer App repin/integration and provider migration remain separately unauthorized until Coordinator registers dedicated downstream Stories against this canonical SDK closure.",
       "test_compatibility_scope_amendment": {
         "reason": "NebulaAuth gained the three frozen Auth V2 methods, causing the pre-existing error-reporting _Auth test fake to fail compile/load.",
         "authorized_path": "test/error_reporting/error_reporting_public_surface_test.dart",
         "authorized_change": "Update only the local _Auth fake to implement sendEmailCode, registerEmail, and resetEmailPassword with test-only compatibility stubs.",
         "production_public_delta": "0; no lib/**, API snapshot, Backend, App, provider, or consumer integration authority is added.",
         "exit_rule": "After the compatibility stub is added, rerun full dart analyze + full dart test in addition to the already-required focused/governance/secret checks."
-      }
+      },
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "559d88497fce25e454f8a36a8c33b9e27732e2de",
+      "delivery_pr": "#94",
+      "formal_ci": "governance UI #286 SUCCESS on exact 559d88497fce25e454f8a36a8c33b9e27732e2de",
+      "formal_review": "#395 APPROVED / reviewer-agent / official=true / stale=false / exact 559d88497fce25e454f8a36a8c33b9e27732e2de / blockers=0",
+      "delivery_merge_commit": "0ee33686c35e49e29d9eb38034c3c16c300a969d",
+      "post_merge_governance": "governance UI #287 SUCCESS on main exact 0ee33686c35e49e29d9eb38034c3c16c300a969d; candidate 559d88497fce25e454f8a36a8c33b9e27732e2de is an ancestor",
+      "public_api_closure": "127 -> 131; exactly NebulaOAuthProvider, NebulaEmailCodePurpose, nebulaCodeInvalidCredentials, InvalidCredentialsError added; zero removals",
+      "final_report": "reports/AUTH-V2-SDK-002_FINAL_ACCEPTANCE.md",
+      "closure_note": "Mobile Auth V2 SDK implementation is independently reviewed and canonical on nebula-flutter-sdk main=0ee33686c35e49e29d9eb38034c3c16c300a969d. PHONE/SMS remains preserved; typed EMAIL/password plus Apple/Google authorization-code Auth V2 SDK surface is canonical; API surface is 131. Backend/App/provider acquisition/configuration mutation remains outside this Story. Consumer App integration and provider migration require dedicated downstream Coordinator registration."
     }
   },
   "non_executable_roadmaps": [
