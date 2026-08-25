@@ -23,11 +23,11 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import '../auth/proof.dart';
 import '../foundation/error_classification.dart';
 import '../foundation/errors.dart';
 import '../foundation/logging.dart';
 import '../foundation/options.dart';
+import '../foundation/request_proof.dart';
 import '../foundation/sha256.dart';
 import '../storage/cache_storage.dart';
 import '../storage/storage_namespace.dart';

@@ -1,8 +1,8 @@
 import 'analytics/nebula_analytics.dart';
-import 'auth/proof.dart';
 import 'capabilities.dart';
 import 'config/nebula_config.dart';
 import 'foundation/options.dart';
+import 'foundation/request_proof.dart';
 import 'observability/mobile_observability_composition.dart';
 import 'storage/cache_storage.dart';
 import 'transport.dart';
