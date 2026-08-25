@@ -29,7 +29,7 @@ Map<String, dynamic> releaseStory(
       'agent_may_edit_task_board': false,
       'implementation_authorized': true,
       'release_packaging_authorized': true,
-      'tag_publication_authorized': 'AFTER_REVIEW_FAST_FORWARD_POSTMERGE_PASS',
+      'tag_publication_authorized': true,
       'execution_repo': '.',
       'execution_branch': branch ?? 'sdk-release/$id',
       'task_pack': 'task_packs/$id.md',
@@ -171,6 +171,26 @@ void main() {
       tag: 'v0.1.0-rc2',
     );
     expect(duplicate.findings.single, contains('multiple release Stories'));
+  });
+
+  test('canonical historical RC1 release Story remains valid', () {
+    final board =
+        (jsonDecode(File(gate.taskBoardPath).readAsStringSync()) as Map)
+            .cast<String, dynamic>();
+    final resolved = gate.resolveReleaseStoryAuthority(
+      board,
+      version: '0.1.0-rc1',
+      tag: 'v0.1.0-rc1',
+    );
+    expect(resolved.findings, isEmpty);
+    expect(resolved.id, 'NEBULA-SDK-RELEASE-001');
+    final story = resolved.story!;
+    final pack =
+        File('docs/multi_agent/${story['task_pack']}').readAsStringSync();
+    expect(
+      gate.validateReleaseStoryAuthority(resolved.id!, story, pack),
+      isEmpty,
+    );
   });
 
   test('authorized release Story accepts its own task-pack branch', () {

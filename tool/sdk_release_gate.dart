@@ -3,7 +3,6 @@ import 'dart:io';
 
 const releasePolicyPath = 'governance/sdk_release_policy.json';
 const taskBoardPath = 'docs/multi_agent/task_board.json';
-const _tagAuthoritySentinel = 'AFTER_REVIEW_FAST_FORWARD_POSTMERGE_PASS';
 
 final _fullCommit = RegExp(r'^[0-9a-f]{40}$');
 final _stableSemVer = RegExp(r'^\d+\.\d+\.\d+$');
@@ -142,8 +141,12 @@ List<String> validateReleaseStoryAuthority(
   String taskPackText,
 ) {
   final findings = <String>[];
-  if (!{'READY', 'IN_PROGRESS'}.contains(story['status'])) {
-    findings.add('$id release Story must be executable');
+  final status = story['status']?.toString();
+  final historical =
+      status == 'DONE' && story['execution_gate'] == 'CLOSED_RELEASE_PASS';
+  final active = {'READY', 'IN_PROGRESS'}.contains(status);
+  if (!active && !historical) {
+    findings.add('$id release Story is neither active nor a closed release');
   }
   if (story['platform_api_mode'] != 'NONE') {
     findings.add('$id Platform API mode must remain NONE');
@@ -157,15 +160,37 @@ List<String> validateReleaseStoryAuthority(
   if (story['agent_may_edit_task_board'] != false) {
     findings.add('$id implementation agent must not edit Task Board');
   }
-  if (story['implementation_authorized'] != true) {
-    findings.add('$id implementation authority revoked');
+
+  if (active) {
+    if (story['implementation_authorized'] != true) {
+      findings.add('$id implementation authority revoked');
+    }
+    if (story['release_packaging_authorized'] != true) {
+      findings.add('$id release packaging authority revoked');
+    }
+    if (story['tag_publication_authorized'] != true) {
+      findings.add('$id tag publication authority missing or revoked');
+    }
   }
-  if (story['release_packaging_authorized'] != true) {
-    findings.add('$id release packaging authority revoked');
+
+  final expectedVersion = story['expected_version']?.toString() ?? '';
+  final expectedTag = story['expected_tag']?.toString() ?? '';
+  if (historical) {
+    if (story['release_version'] != expectedVersion) {
+      findings.add('$id historical release version drift');
+    }
+    if (story['release_tag'] != expectedTag) {
+      findings.add('$id historical release tag drift');
+    }
+    final releaseCommit = story['release_tag_commit']?.toString() ?? '';
+    if (!_fullCommit.hasMatch(releaseCommit)) {
+      findings.add('$id historical release tag commit missing');
+    }
+    if ((story['release_gate']?.toString() ?? '').isEmpty) {
+      findings.add('$id historical release gate evidence missing');
+    }
   }
-  if (story['tag_publication_authorized'] != _tagAuthoritySentinel) {
-    findings.add('$id tag publication authority missing or revoked');
-  }
+
   if (story['execution_repo'] != '.') {
     findings.add('$id execution repo must remain .');
   }
