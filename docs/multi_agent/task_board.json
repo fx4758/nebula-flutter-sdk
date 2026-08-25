@@ -2247,7 +2247,8 @@
         "lib/src/observability/mobile_observability_composition.dart",
         "lib/src/nebula.dart",
         "lib/nebula_sdk.dart",
-        "governance/api_surface.snapshot"
+        "governance/api_surface.snapshot",
+        "governance/public_api.txt"
       ],
       "focused_test_scope": [
         "test/proof_test.dart",
@@ -2260,7 +2261,6 @@
       "required_unchanged_paths": [
         "pubspec.yaml",
         "pubspec.lock",
-        "governance/public_api.txt",
         ".github/**",
         "tool/**",
         "docs/multi_agent/task_board.json",
@@ -2268,10 +2268,18 @@
         "consumer Apps",
         "all lib/** paths not listed in authorized_write_set"
       ],
-      "expected_api_surface": "131 -> 131; exactly 4 source-path ownership removals from src/auth/proof.dart and 4 additions under src/foundation/request_proof.dart + src/testing/recording_proof_signer.dart; zero public symbol-name/kind changes",
+      "expected_api_surface": "131 -> 131; exactly 4 source-path ownership removals from src/auth/proof.dart and 4 additions under src/foundation/request_proof.dart + src/testing/recording_proof_signer.dart; zero public symbol-name/kind changes; public export allowlist 37 -> 39 by adding only the two authoritative owner paths while preserving auth/proof compatibility export",
       "required_behavior": "Relocate generic proof runtime primitives to foundation and RecordingProofSigner to testing; leave auth/proof.dart compatibility re-export; repair all frozen production imports; update API snapshot path ownership only; add deterministic App-A/App-B shared-storage isolation regression. Do not implement Layer Graph/Product-Erasure guards in this Story.",
       "execution_gate": "OPEN_IMPLEMENTATION",
-      "unblock_rule": "Implementation may start only from fresh canonical main after this Coordinator registration is independently reviewed and canonical. Delivery stops at exact candidate READY_FOR_REVIEW; no self-review, merge, Task Board mutation or governance-guard implementation."
+      "unblock_rule": "Implementation may start only from fresh canonical main after this Coordinator registration is independently reviewed and canonical. Delivery stops at exact candidate READY_FOR_REVIEW; no self-review, merge, Task Board mutation or governance-guard implementation.",
+      "registration_scope_amendment": {
+        "reason": "mac-mini exact e654268ef59c1c568d9d1c9c11f42dab07abace9 passed analyze/focused/full tests but governance.dart correctly rejected the two architecture-frozen direct barrel exports because governance/public_api.txt was incorrectly marked immutable by the initial Coordinator registration.",
+        "architecture_authority": "docs/multi_agent/contracts/SDK_INTERNAL_BOUNDARY_HARDENING.md lines 148 and 400-403 require direct barrel exports of authoritative declaration files; Architecture freeze itself does not require governance/public_api.txt immutability.",
+        "authorized_path": "governance/public_api.txt",
+        "authorized_change": "Add exactly src/foundation/request_proof.dart and src/testing/recording_proof_signer.dart; preserve src/auth/proof.dart compatibility export. 37 -> 39 exports, under existing max_public_exports=40.",
+        "production_semantic_delta": "0; no symbol add/remove/rename/kind/wire/behavior change; no Backend/App/dependency mutation.",
+        "superseded_pre_amend_candidate": "e654268ef59c1c568d9d1c9c11f42dab07abace9 is pre-amend implementation evidence only and must not be submitted for review until implementation is rebased onto this canonical registration amendment."
+      }
     }
   },
   "non_executable_roadmaps": [
