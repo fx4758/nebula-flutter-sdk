@@ -1987,7 +1987,7 @@
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
       "execution_repo": "../flutter NFC Writer",
-      "execution_branch": "auth/v2-nfc-app-001-freeze",
+      "execution_branch": "ai/AUTH-V2-NFC-APP-001-freeze",
       "execution_remote": "origin",
       "execution_worktree": "wt-auth-v2-nfc-app-001-freeze",
       "state_write_authority": "COORDINATOR_ONLY",
