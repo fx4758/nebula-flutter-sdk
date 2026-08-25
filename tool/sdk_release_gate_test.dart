@@ -6,6 +6,7 @@ import 'package:test/test.dart';
 import 'sdk_release_gate.dart' as gate;
 
 const commit = '0123456789abcdef0123456789abcdef01234567';
+const rc1Commit = '64df49af6ff7554da94d5fa2ebaef27bdba35465';
 
 Map<String, dynamic> policy() => <String, dynamic>{
       'schema_version': 2,
@@ -188,8 +189,43 @@ void main() {
     final pack =
         File('docs/multi_agent/${story['task_pack']}').readAsStringSync();
     expect(
-      gate.validateReleaseStoryAuthority(resolved.id!, story, pack),
+      gate.validateReleaseStoryAuthority(
+        resolved.id!,
+        story,
+        pack,
+        headCommit: rc1Commit,
+        tagCommit: rc1Commit,
+      ),
       isEmpty,
+    );
+  });
+
+  test('historical release metadata commit drift fails closed', () {
+    final board =
+        (jsonDecode(File(gate.taskBoardPath).readAsStringSync()) as Map)
+            .cast<String, dynamic>();
+    final resolved = gate.resolveReleaseStoryAuthority(
+      board,
+      version: '0.1.0-rc1',
+      tag: 'v0.1.0-rc1',
+    );
+    expect(resolved.findings, isEmpty);
+    final story = Map<String, dynamic>.from(resolved.story!);
+    story['release_tag_commit'] = commit;
+    final pack =
+        File('docs/multi_agent/${story['task_pack']}').readAsStringSync();
+
+    final findings = gate.validateReleaseStoryAuthority(
+      resolved.id!,
+      story,
+      pack,
+      headCommit: rc1Commit,
+      tagCommit: rc1Commit,
+    );
+
+    expect(
+      findings.any((e) => e.contains('historical release tag commit drift')),
+      isTrue,
     );
   });
 
@@ -205,6 +241,8 @@ void main() {
         id,
         story,
         packFor(id, story['execution_branch'] as String),
+        headCommit: commit,
+        tagCommit: commit,
       ),
       isEmpty,
     );
@@ -223,6 +261,8 @@ void main() {
       id,
       story,
       packFor(id, story['execution_branch'] as String),
+      headCommit: commit,
+      tagCommit: commit,
     );
     expect(
         findings.any((e) => e.contains('packaging authority revoked')), isTrue);
@@ -244,6 +284,8 @@ void main() {
       id,
       story,
       packFor(id, 'sdk-release/drifted'),
+      headCommit: commit,
+      tagCommit: commit,
     );
     expect(findings.any((e) => e.contains('Platform API mode')), isTrue);
     expect(findings.any((e) => e.contains('SDK public API mode')), isTrue);

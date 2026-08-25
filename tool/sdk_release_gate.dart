@@ -138,8 +138,10 @@ ReleaseStoryResolution resolveReleaseStoryAuthority(
 List<String> validateReleaseStoryAuthority(
   String id,
   Map<String, dynamic> story,
-  String taskPackText,
-) {
+  String taskPackText, {
+  required String headCommit,
+  required String tagCommit,
+}) {
   final findings = <String>[];
   final status = story['status']?.toString();
   final historical =
@@ -185,6 +187,10 @@ List<String> validateReleaseStoryAuthority(
     final releaseCommit = story['release_tag_commit']?.toString() ?? '';
     if (!_fullCommit.hasMatch(releaseCommit)) {
       findings.add('$id historical release tag commit missing');
+    } else if (releaseCommit != tagCommit || releaseCommit != headCommit) {
+      findings.add(
+        '$id historical release tag commit drift from current tag/HEAD',
+      );
     }
     if ((story['release_gate']?.toString() ?? '').isEmpty) {
       findings.add('$id historical release gate evidence missing');
@@ -303,6 +309,12 @@ void main(List<String> args) {
   final board =
       (jsonDecode(boardFile.readAsStringSync()) as Map).cast<String, dynamic>();
   final pubspec = readPubspec(File('${root.path}/pubspec.yaml'));
+  if (git(root, ['status', '--porcelain', '--untracked-files=all'])
+      .isNotEmpty) {
+    fail('working tree must be clean');
+  }
+  final head = git(root, ['rev-parse', 'HEAD']);
+  final tagCommit = git(root, ['rev-parse', 'refs/tags/$tag^{commit}']);
 
   final resolution = resolveReleaseStoryAuthority(
     board,
@@ -319,15 +331,11 @@ void main(List<String> args) {
     id,
     story,
     taskPackFile.readAsStringSync(),
+    headCommit: head,
+    tagCommit: tagCommit,
   );
   if (authority.isNotEmpty) fail(authority.join('; '));
 
-  if (git(root, ['status', '--porcelain', '--untracked-files=all'])
-      .isNotEmpty) {
-    fail('working tree must be clean');
-  }
-  final head = git(root, ['rev-parse', 'HEAD']);
-  final tagCommit = git(root, ['rev-parse', 'refs/tags/$tag^{commit}']);
   final findings = validateReleaseMetadata(
     ReleaseMetadata(
       channel: channel,
