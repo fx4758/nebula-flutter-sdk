@@ -26,6 +26,7 @@ src/foundation/errors.dart
 src/foundation/logging.dart
 src/foundation/options.dart
 src/foundation/request_id.dart
+src/foundation/request_proof.dart
 src/nebula.dart
 src/transport.dart
 src/transport/cancellation_token.dart
@@ -34,4 +35,5 @@ src/storage/storage_namespace.dart
 src/storage/secure_storage.dart
 src/storage/cache_storage.dart
 src/testing/fake_transport.dart
+src/testing/recording_proof_signer.dart
 src/transport/proof_headers.dart
