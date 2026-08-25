@@ -353,7 +353,8 @@ void _duplicateTaskId(File status) {
 }
 
 void _writeSource(Directory root, String name, String contents) {
-  File('${root.path}/lib/src/$name').writeAsStringSync('$contents\n');
+  File('${root.path}/lib/src/foundation/$name')
+      .writeAsStringSync('$contents\n');
 }
 
 /// 在已导出源文件顶部插入 [prefix]，使其后的既有声明成为“可被吞掉”的目标。

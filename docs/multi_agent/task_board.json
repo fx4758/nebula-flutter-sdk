@@ -2314,7 +2314,7 @@
       "closure_note": "Neutral request-proof ownership is canonical under foundation/testing; auth/proof is compatibility re-export only; production old auth/proof dependency edges are zero; API remains 131 with semantic equality; public exports 39/40; deterministic multi-App isolation regression is canonical. Layer/Product governance guards are separately registered under NEBULA-SDK-BOUNDARY-GOV-001."
     },
     "NEBULA-SDK-BOUNDARY-GOV-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "SDK Governance / Quality Agent",
       "agent": "A",
       "reviewer": "SDK Architecture Review Agent",
@@ -2334,10 +2334,10 @@
       "frozen_contract": "contracts/SDK_INTERNAL_BOUNDARY_HARDENING.md",
       "production_repair_authority": "PR #118 exact 8304da4c8de25b38d37e29ce5f79f8be3fb54540 / Formal #360 SUCCESS / Review #476 APPROVED official=true / merge 58076edccc18131001ff532b833965b90af56d62 / post-merge #361 SUCCESS",
       "registration_baseline": "nebula-flutter-sdk main@58076edccc18131001ff532b833965b90af56d62",
-      "implementation_authorized": true,
+      "implementation_authorized": false,
       "sdk_production_mutation_authorized": false,
       "sdk_public_surface_mutation_authorized": false,
-      "governance_guard_mutation_authorized": true,
+      "governance_guard_mutation_authorized": false,
       "backend_mutation_authorized": false,
       "app_mutation_authorized": false,
       "authorized_write_set": [
@@ -2365,8 +2365,8 @@
       ],
       "required_behavior": "Add blocking Layer Graph and Product-Erasure guards using one reviewed boundary policy registry; add deterministic negative probes; bind both guards into governance.dart and PR/push governance workflow. Preserve the clean production tree and all public/product contracts.",
       "expected_public_state": "API surface 131 unchanged; public exports 39/40 unchanged; runtime dependencies {} unchanged",
-      "execution_gate": "OPEN_IMPLEMENTATION",
-      "unblock_rule": "Implementation starts only after this Coordinator registration is independently reviewed and canonical. Deliver frozen exact to Formal + independent SDK Architecture review; no self-review, merge, product exception, Task Board or product/backend mutation.",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "unblock_rule": "Story closed. Layer Graph and Product-Erasure guards are canonical and directly bound into PR/push governance CI; release inherits them through governance.dart. Future SDK boundary policy/guard/workflow mutation requires a new separately registered Story and independent review.",
       "registration_scope_amendment": {
         "reason": "The existing governance regression positive fixture creates lib/src/safe_examples.dart. The architecture-frozen fail-closed layer classifier correctly rejects unclassified root production files, so governance.dart integration would make the old positive fixture fail unless the fixture is placed under an already classified module.",
         "authorized_path": "tool/governance_test.dart",
@@ -2398,7 +2398,28 @@
         "failed_formal": "governance UI #368 FAILURE",
         "root_cause": "Implementation candidate changed .github/workflows/governance.yml, which is listed in cross_repo_governance.coordinator_owned_paths. coordinator_state_guard correctly rejected the implementation PR.",
         "corrective": "Do not weaken coordinator_state_guard and do not label implementation PR as coordinator-publication. Split the Coordinator-owned workflow binding into serial phase 2."
-      }
+      },
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "phase1_delivery_commit": "4acc589d3a066654e1d2e79d1cb54c9039102971",
+      "phase1_delivery_pr": "#121",
+      "phase1_formal_ci": "governance UI #377 SUCCESS on exact 4acc589d3a066654e1d2e79d1cb54c9039102971",
+      "phase1_formal_review": "#489 APPROVED / reviewer-agent / official=true / exact 4acc589d3a066654e1d2e79d1cb54c9039102971",
+      "phase1_merge_commit": "6162e57dae4bc86ce6662b5007969130954b10d1",
+      "phase1_post_merge_governance": "governance UI #380 SUCCESS on main exact 6162e57dae4bc86ce6662b5007969130954b10d1",
+      "phase2_delivery_commit": "f40b37ee35748ce7a9162cad71cb871ed8137f6b",
+      "phase2_delivery_pr": "#125",
+      "phase2_formal_ci": "governance UI #382 SUCCESS on exact f40b37ee35748ce7a9162cad71cb871ed8137f6b",
+      "phase2_formal_review": "#491 APPROVED / reviewer-agent / official=true / exact f40b37ee35748ce7a9162cad71cb871ed8137f6b",
+      "phase2_merge_commit": "9539be8d9ae585d11cea59b054d379e2f5a16fb1",
+      "phase2_post_merge_governance": "governance UI #384 SUCCESS on main exact 9539be8d9ae585d11cea59b054d379e2f5a16fb1",
+      "delivery_commit": "f40b37ee35748ce7a9162cad71cb871ed8137f6b",
+      "delivery_pr": "#125",
+      "formal_ci": "governance UI #382 SUCCESS on exact f40b37ee35748ce7a9162cad71cb871ed8137f6b",
+      "formal_review": "#491 APPROVED / reviewer-agent / official=true / exact f40b37ee35748ce7a9162cad71cb871ed8137f6b",
+      "delivery_merge_commit": "9539be8d9ae585d11cea59b054d379e2f5a16fb1",
+      "post_merge_governance": "governance UI #384 SUCCESS on main exact 9539be8d9ae585d11cea59b054d379e2f5a16fb1",
+      "closure_note": "SDK boundary hardening governance is canonical. Layer Graph Guard blocks invalid base/capability/testing edges and unclassified modules; Product-Erasure Guard blocks executable consumer/product leakage, Flutter/UI coupling, unreviewed origins/package imports and runtime dependency drift while ignoring documentation comments. Phase 1 added the reviewed guards/policy/negative regressions with zero lib/API/product mutation. Phase 2, as a separate Coordinator-owned publication, bound both guards, both negative regressions and the strict binding regression directly into PR/push governance CI. Release inherits the same guards through governance.dart. API remains 131, public exports 39/40, runtime dependencies {}, and NFC Writer/Nearvia product domains remain App-owned."
     },
     "AUTH-V2-NEARVIA-OAUTH-001": {
       "status": "READY",

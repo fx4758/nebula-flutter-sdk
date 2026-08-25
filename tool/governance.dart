@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'api_surface.dart' as api_surface;
+import 'product_erasure_guard.dart' as product_erasure;
+import 'sdk_layer_graph_guard.dart' as layer_graph;
 import 'secret_scan.dart' as secret_scan;
 
 final class Finding {
@@ -36,6 +38,7 @@ void main() {
   _checkSecrets(root, policy, findings);
   _checkPolicyExamples(policy, findings);
   _checkSources(root, policy, findings);
+  _checkSdkBoundaries(root, findings);
   _checkExceptions(root, policy, findings);
 
   if (findings.isEmpty) {
@@ -264,6 +267,17 @@ void _checkSources(
         );
       }
     }
+  }
+}
+
+void _checkSdkBoundaries(Directory root, List<Finding> findings) {
+  for (final layer_graph.LayerGraphFinding finding
+      in layer_graph.checkSdkLayerGraph(root)) {
+    findings.add(Finding(finding.ruleId, finding.message));
+  }
+  for (final product_erasure.ProductErasureFinding finding
+      in product_erasure.checkProductErasure(root)) {
+    findings.add(Finding(finding.ruleId, finding.message));
   }
 }
 
