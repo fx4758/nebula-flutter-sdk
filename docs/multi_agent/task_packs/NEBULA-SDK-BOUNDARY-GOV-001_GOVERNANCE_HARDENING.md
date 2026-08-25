@@ -12,7 +12,7 @@ Platform API mode：`NONE`
 SDK public API mode：`READ_ONLY`
 Product adapter rule：`ADAPTER_FIRST`
 
-Status: **READY / GOVERNANCE IMPLEMENTATION**
+Status: **DONE / REVIEW PASS**
 
 ## Upstream authority
 
@@ -74,3 +74,23 @@ Implementation phase: Task Source/Cross Repo/Platform guards; exact implementati
 ## Exit
 
 Implementation Agent delivers frozen guard-code exact to Formal + independent SDK Architecture review without touching Coordinator-owned workflow. After implementation merge/post-merge SUCCESS, Coordinator opens a workflow-only CI-binding publication. Story closes only after both the implementation PR and the Coordinator binding PR have exact Formal SUCCESS, official reviewer-agent APPROVED and post-merge governance SUCCESS.
+
+## Closure evidence
+
+Phase 1 guard implementation:
+
+- PR `#121`, exact `4acc589d3a066654e1d2e79d1cb54c9039102971`.
+- Formal `#377` SUCCESS.
+- Review `#489` APPROVED / `reviewer-agent` / `official=true`.
+- merge `6162e57dae4bc86ce6662b5007969130954b10d1`.
+- post-merge governance `#380` SUCCESS.
+
+Phase 2 Coordinator-owned CI binding:
+
+- PR `#125`, exact `f40b37ee35748ce7a9162cad71cb871ed8137f6b`.
+- Formal `#382` SUCCESS with the direct boundary guard/binding commands present in the candidate workflow.
+- Review `#491` APPROVED / `reviewer-agent` / `official=true`.
+- merge `9539be8d9ae585d11cea59b054d379e2f5a16fb1`.
+- post-merge governance `#384` SUCCESS.
+
+Canonical closure invariants: API `131`; public exports `39/40`; runtime dependencies `{}`; production/product/Backend mutation `0`; Layer Graph and Product-Erasure guards are blocking on PR/push, while release inherits them through `tool/governance.dart`. This Story authorizes no further mutation after closure.
