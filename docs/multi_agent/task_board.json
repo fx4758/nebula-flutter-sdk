@@ -2167,7 +2167,25 @@
       "review_verdict": "PASS",
       "delivery_commit": "3db9e0a43670d627eace39c8b661c4af93990cff",
       "formal_review": "#486 APPROVED / reviewer-agent / official=true / stale=false / exact 3db9e0a43670d627eace39c8b661c4af93990cff; prior #471/#474/#478/#481/#485 REQUEST_CHANGES are stale.",
-      "closure_note": "Nearvia Consumer Auth UI is canonical: existing Consumer Login/Password/Verify/Register surfaces are bound to NearviaAuthPort; EMAIL login/register/reset are real; Apple/Google remain fail-closed until provider deployment config exists; PHONE/SMS and Push remain absent. WATCH remains the anonymous launch/runtime authority with a scoped account entry. Keyboard/reduced-height and production legal-document gating regressions pass. Nearvia PR #9 exact 3db9e0a43670d627eace39c8b661c4af93990cff merged to canonical main as 01966a86c44a7075b3b5b4b1961dc5bf8b39a410."
+      "closure_note": "Nearvia Consumer Auth UI is canonical: existing Consumer Login/Password/Verify/Register surfaces are bound to NearviaAuthPort; EMAIL login/register/reset are real; Apple/Google remain fail-closed until provider deployment config exists; PHONE/SMS and Push remain absent. WATCH remains the anonymous launch/runtime authority with a scoped account entry. Keyboard/reduced-height and production legal-document gating regressions pass. Nearvia PR #9 exact 3db9e0a43670d627eace39c8b661c4af93990cff merged to canonical main as 01966a86c44a7075b3b5b4b1961dc5bf8b39a410.",
+      "formal_ci": "Nearvia repository has no Forgejo Formal status context for this Story; governed mac-mini-ci exact-snapshot verification recorded on PR #9 for exact 3db9e0a43670d627eace39c8b661c4af93990cff.",
+      "delivery_evidence": {
+        "execution_pr": "root/Nearvia#9",
+        "accepted_candidate": "3db9e0a43670d627eace39c8b661c4af93990cff",
+        "canonical_merge": "01966a86c44a7075b3b5b4b1961dc5bf8b39a410",
+        "source_tar_sha256": "4ecd6057e25e591512f3ca2fb016dd835015edf1ee817d1fbab9359f3cdb3e22",
+        "sdk_pin": "v0.1.0-rc2@ac96fb5f428cc37293bc5a63e23c90fe40ff8af2",
+        "flutter_analyze": "0 issues",
+        "focused_auth_ui_watch_legal_tests": "13/13 PASS",
+        "full_flutter_tests": "23/23 PASS",
+        "android_debug_build": "PASS",
+        "ios_debug_no_codesign_build": "PASS",
+        "launch_surface_regression": "WATCH remains anonymous launch surface; account entry reaches ConsumerLoginPage through production ConsumerRouter",
+        "keyboard_regression": "390x640 viewport + 280px bottom inset + focused Email; no overflow; consent remains scroll-reachable",
+        "legal_router_regression": "missing/incomplete deployment documents fail closed; valid Terms+Privacy text/version enables production-route consent and renders configured legal text",
+        "authority_publication": "Nearvia PR #10 / Review #479 APPROVED / merge 8ed076fd663a8561adf2d795d99eb742ac6095cf",
+        "scope_guard": "no lib/src native vendor Backend SDK mutation; no whole historical Consumer branch ancestry; PHONE/SMS and Push absent"
+      }
     },
     "NEBULA-SDK-BOUNDARY-ARCH-001": {
       "status": "DONE",
