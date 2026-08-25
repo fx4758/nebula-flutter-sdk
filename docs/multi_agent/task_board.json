@@ -2163,6 +2163,40 @@
       "required_behavior": "Extract only the accepted Consumer R10 account/shell UI from reference snapshot 5ada110 onto current Nearvia main runtime; reuse ConsumerLoginPage/ConsumerPasswordLoginPage/ConsumerRegisterPage and existing forgot/reset affordances; bind them to NearviaAuthPort. EMAIL/password primary, typed email register/reset, Apple/Google only through existing fail-closed acquisition seam, PHONE/SMS absent, anonymous LAN first-value path preserved.",
       "execution_gate": "OPEN_IMPLEMENTATION",
       "unblock_rule": "Implementation must not merge/cherry-pick the historical Consumer branch wholesale. Deliver an exact current-main-based UI extraction/binding candidate, prove no unrelated WATCH/Cry/NFC/Routerless/vendor/native mutation, run mac-mini-ci analyze/tests/builds as required, then obtain official exact-head independent App review before merge."
+    },
+    "NEBULA-SDK-BOUNDARY-ARCH-001": {
+      "status": "READY",
+      "owner": "SDK Boundary Architecture Agent",
+      "agent": "A",
+      "reviewer": "SDK Architecture Review Agent",
+      "task_pack": "task_packs/NEBULA-SDK-BOUNDARY-ARCH-001_INTERNAL_BOUNDARY_FREEZE.md",
+      "depends_on": [
+        "NEBULA-SDK-RELEASE-002"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "architecture/NEBULA-SDK-BOUNDARY-ARCH-001-freeze",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-nebula-sdk-boundary-arch-001",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": true,
+      "architecture_only": true,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "registration_baseline": "nebula-flutter-sdk main@115cc1ef0f36ead0ac11800016197826b659b5c4",
+      "triggering_evidence": "Fresh multi-App architecture audit found product/App boundaries healthy but a P1 internal layering debt: shared request-proof abstractions physically live in auth/proof.dart, producing transport/config/analytics/error_reporting -> auth import edges.",
+      "authorized_write_set": [
+        "docs/multi_agent/contracts/SDK_INTERNAL_BOUNDARY_HARDENING.md"
+      ],
+      "required_behavior": "Freeze a zero-public-semantics-delta internal boundary repair: move shared proof Port ownership to a foundation/security-neutral seam; define a blocking SDK Layer Graph Guard; define a Product-Erasure Guard for production lib/**; define deterministic Multi-App Isolation regression coverage. Preserve Adapter-first consumers and do not mutate production/API snapshot in this Story.",
+      "execution_gate": "OPEN_ARCHITECTURE_FREEZE_ONLY",
+      "unblock_rule": "Architecture owner must deliver the single docs-only freeze artifact, pass guards, push a frozen exact PR head, then stop. Formal Coordinator must confirm terminal on that exact. Only exact-head independent APPROVED review plus canonical Coordinator closure may register a separate implementation Story authorizing lib/**/guard/test mutation."
     }
   },
   "non_executable_roadmaps": [
