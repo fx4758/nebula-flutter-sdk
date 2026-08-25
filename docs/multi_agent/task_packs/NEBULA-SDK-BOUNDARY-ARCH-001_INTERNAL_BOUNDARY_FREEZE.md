@@ -1,5 +1,11 @@
 # NEBULA-SDK-BOUNDARY-ARCH-001 — SDK Internal Boundary Hardening Freeze
 
+ID：NEBULA-SDK-BOUNDARY-ARCH-001
+Execution repo：`.`
+Execution branch：`architecture/NEBULA-SDK-BOUNDARY-ARCH-001-freeze`
+Platform API mode：`READ_ONLY`
+SDK public API mode：`READ_ONLY`
+
 - ID: `NEBULA-SDK-BOUNDARY-ARCH-001`
 - Owner: SDK Boundary Architecture Agent
 - Reviewer: SDK Architecture Review Agent
