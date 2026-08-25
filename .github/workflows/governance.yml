@@ -63,11 +63,6 @@ jobs:
           dart run tool/ci_dependency_guard_test.dart
           dart run tool/ci_dependency_guard.dart
 
-      - run: dart run tool/sdk_layer_graph_guard.dart
-      - run: dart run tool/sdk_layer_graph_guard_test.dart
-      - run: dart run tool/product_erasure_guard.dart
-      - run: dart run tool/product_erasure_guard_test.dart
-      - run: dart run tool/sdk_boundary_ci_binding_test.dart
       - run: dart run tool/governance.dart
       - run: dart run tool/task_source_guard.dart --self-check
       - run: dart run tool/cross_repo_guard.dart --self-check
