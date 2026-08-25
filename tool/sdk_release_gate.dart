@@ -167,6 +167,9 @@ List<String> validateReleaseStoryAuthority(
   }
 
   if (prePublication) {
+    if (story['execution_gate'] != 'OPEN') {
+      findings.add('$id execution gate must remain OPEN before release');
+    }
     if (story['implementation_authorized'] != true) {
       findings.add('$id implementation authority revoked');
     }

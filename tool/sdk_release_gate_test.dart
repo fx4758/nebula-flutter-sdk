@@ -31,6 +31,7 @@ Map<String, dynamic> releaseStory(
       'implementation_authorized': true,
       'release_packaging_authorized': true,
       'tag_publication_authorized': true,
+      'execution_gate': 'OPEN',
       'execution_repo': '.',
       'execution_branch': branch ?? 'sdk-release/$id',
       'task_pack': 'task_packs/$id.md',
@@ -268,6 +269,31 @@ void main() {
         ),
         isEmpty,
         reason: '$status must remain valid before tag publication',
+      );
+    }
+  });
+
+  test('pre-publication release Story rejects closed execution gate', () {
+    const id = 'RELEASE-B';
+    for (final gateState in const ['CLOSED_REVIEW_FAIL', 'REJECTED']) {
+      final story = releaseStory(
+        id,
+        version: '0.1.0-rc2',
+        tag: 'v0.1.0-rc2',
+      );
+      story['status'] = 'REVIEW';
+      story['execution_gate'] = gateState;
+      final findings = gate.validateReleaseStoryAuthority(
+        id,
+        story,
+        packFor(id, story['execution_branch'] as String),
+        headCommit: commit,
+        tagCommit: commit,
+      );
+      expect(
+        findings.any((e) => e.contains('execution gate must remain OPEN')),
+        isTrue,
+        reason: '$gateState must revoke pre-publication release authority',
       );
     }
   });
