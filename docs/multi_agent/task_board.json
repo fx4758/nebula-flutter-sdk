@@ -1853,6 +1853,43 @@
       "provider_integration_authorized": false,
       "execution_gate": "OPEN",
       "unblock_rule": "Package only the current canonical SDK as immutable v0.1.0-rc2. No lib/**, API snapshot, Platform API, Backend, consumer App, provider credential/acquisition, or provider migration mutation. Independent exact review + Coordinator fast-forward publication + tag-triggered release gate are mandatory before App repin."
+    },
+    "AUTH-V2-CN-PROVIDER-ARCH-001": {
+      "status": "READY",
+      "owner": "Auth CN Provider Architecture Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/AUTH-V2-CN-PROVIDER-ARCH-001_WECHAT_QQ_MIGRATION_REVIEW.md",
+      "depends_on": [
+        "AUTH-V2-SDK-002"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "auth/v2-cn-provider-arch-001-freeze",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-auth-v2-cn-provider-arch-001",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": false,
+      "platform_contract_change_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "provider_credential_material_authorized": false,
+      "execution_gate": "OPEN_ARCHITECTURE_REVIEW_ONLY",
+      "triggering_consumer": "NFC Writer legacy native Android has real WeChat OpenSDK + QQ Tencent SDK login; current Flutter AuthService lists WECHAT/QQ but returns mock identities/tokens.",
+      "current_platform_gap": "Canonical Mobile Auth V2 accepts only APPLE/GOOGLE OAuth; Backend verifier/config/handler and SDK NebulaOAuthProvider are Apple/Google-only.",
+      "required_output": "reports/ACR-MOBILE-AUTH-V2-CN-PROVIDER-001.md plus contracts/MOBILE_AUTH_V2_CN_PROVIDER_MIGRATION_CANDIDATE.md only; no production/public/provider mutation.",
+      "second_consumer_gate": "No CONTRACT_CHANGE implementation chain until a second distinct canonical consumer with the same provider-login semantics is mechanically evidenced; local/unmerged drafts are insufficient.",
+      "security_gate": "Legacy client-side WeChat secret/token exchange is forbidden; client-supplied openid/unionid/profile is never authoritative; provider secrets remain server-side.",
+      "compatibility_gate": "Existing NFC Writer WeChat/QQ users must not be silently orphaned or duplicated; legacy identity migration/alias semantics must be frozen before cutover.",
+      "unblock_rule": "Architecture may recommend APPROVE_FOR_CONTRACT_CHANGE only if proof shapes, identity migration, security/privacy/abuse controls, compatibility/rollback and canonical second-consumer evidence are all closed; otherwise close deferred/blocked with no production authorization.",
+      "backend_repo": "../flypost_backend",
+      "backend_baseline_commit": "d9ad6c3c0e9186e574081e22d88450d93542fd29"
     }
   },
   "non_executable_roadmaps": [
