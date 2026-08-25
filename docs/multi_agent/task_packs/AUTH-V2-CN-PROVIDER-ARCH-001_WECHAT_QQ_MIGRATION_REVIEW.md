@@ -1,9 +1,19 @@
 # AUTH-V2-CN-PROVIDER-ARCH-001 — WeChat / QQ Legacy Auth Migration Review
 
-- Story: `AUTH-V2-CN-PROVIDER-ARCH-001`
-- Mode: Architecture/ACR only; Platform API `READ_ONLY`; SDK public API `READ_ONLY`.
-- Upstream: `AUTH-V2-SDK-002 = DONE / CLOSED_REVIEW_PASS`.
-- Trigger: NFC Writer legacy has real WeChat + QQ login; current Flutter login entries are mock.
+- ID：AUTH-V2-CN-PROVIDER-ARCH-001
+- Owner：Auth CN Provider Architecture Agent
+- Agent：A
+- Reviewer：Architecture Review Agent
+- Execution repo：`.`
+- Execution branch：`auth/v2-cn-provider-arch-001-freeze`
+- Execution remote：`hub`
+- Execution worktree：`wt-auth-v2-cn-provider-arch-001`
+- Platform API mode：`READ_ONLY`
+- SDK public API mode：`READ_ONLY`
+- Product adapter rule：`ADAPTER_FIRST`
+- Required upstream：`AUTH-V2-SDK-002 = DONE / CLOSED_REVIEW_PASS`.
+- Backend authority：FlyPostAPI `Dev@d9ad6c3c0e9186e574081e22d88450d93542fd29`.
+- Trigger：NFC Writer legacy has real WeChat + QQ login; current Flutter login entries are mock.
 
 ## Goal
 
