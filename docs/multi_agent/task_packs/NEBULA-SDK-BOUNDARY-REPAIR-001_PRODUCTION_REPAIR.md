@@ -47,8 +47,9 @@ Only these production/public paths may change:
 10. `lib/src/nebula.dart` — switch proof import to neutral owner only.
 11. `lib/nebula_sdk.dart` — direct exports of the authoritative runtime/testing declaration owners while preserving package public names.
 12. `governance/api_surface.snapshot` — source-path ownership migration only.
+13. `governance/public_api.txt` — export-path allowlist synchronization only: preserve `src/auth/proof.dart` and add exactly `src/foundation/request_proof.dart` + `src/testing/recording_proof_signer.dart` so the frozen direct barrel exports pass governance.
 
-No other `lib/**`, governance or package file is authorized. `pubspec.yaml`, `pubspec.lock`, `governance/public_api.txt`, Platform Backend and consumer Apps must remain unchanged.
+No other `lib/**`, governance or package file is authorized. `pubspec.yaml`, `pubspec.lock`, Platform Backend and consumer Apps must remain unchanged.
 
 ## Authorized focused tests
 
@@ -151,7 +152,8 @@ Before delivery:
 - proof canonical fixture/headers behavior unchanged;
 - API surface total exactly `131` with 4 path removals + 4 path additions and symbol-name/kind equality;
 - deterministic multi-App isolation test PASS;
-- `pubspec.yaml`, `pubspec.lock`, `governance/public_api.txt` byte-identical to base;
+- `pubspec.yaml` and `pubspec.lock` byte-identical to base;
+- `governance/public_api.txt` changes exactly from 37 to 39 allowed export paths by adding only `src/foundation/request_proof.dart` and `src/testing/recording_proof_signer.dart`; existing `src/auth/proof.dart` compatibility export remains allowlisted; total export budget stays <= 40;
 - `dart format --output=none --set-exit-if-changed .`;
 - `dart analyze`;
 - full `dart test`;
