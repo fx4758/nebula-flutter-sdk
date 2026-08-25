@@ -1902,6 +1902,44 @@
       "migration_candidate": "contracts/MOBILE_AUTH_V2_CN_PROVIDER_MIGRATION_CANDIDATE.md",
       "blocked_on": "SECOND_DISTINCT_CANONICAL_CONSUMER + CURRENT_OFFICIAL_QQ_PROOF_REPLAY_EXPIRY_EVIDENCE + LEGACY_IDENTITY_COLLISION_AUDIT + WECHAT_LEGACY_SECRET_ROTATION",
       "closure_note": "WeChat/QQ migration architecture is independently reviewed and canonical as a deferred candidate. Direction is accepted, but Platform CONTRACT_CHANGE and Backend/SDK/NFC Writer production mutation remain unauthorized. Reopen only after a second distinct canonical consumer, current official QQ proof/replay/expiry evidence, a fail-closed legacy identity collision audit, and WeChat legacy secret rotation/custody readiness are all mechanically closed."
+    },
+    "NEBULA-SDK-RELEASE-GATE-002": {
+      "status": "READY",
+      "owner": "SDK Governance Agent",
+      "agent": "C",
+      "reviewer": "Governance Review Agent",
+      "task_pack": "task_packs/NEBULA-SDK-RELEASE-GATE-002_DYNAMIC_STORY_BINDING.md",
+      "depends_on": [
+        "S1-F03-001",
+        "S1-F03-002",
+        "NEBULA-SDK-RELEASE-001"
+      ],
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "sdk-governance/NEBULA-SDK-RELEASE-GATE-002",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-nebula-sdk-release-gate-002",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": true,
+      "platform_contract_change_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_integration_authorized": false,
+      "authorized_write_set": [
+        "governance/sdk_release_policy.json",
+        "tool/sdk_release_gate.dart",
+        "tool/sdk_release_gate_test.dart",
+        ".github/workflows/release.yml"
+      ],
+      "execution_gate": "OPEN",
+      "triggering_evidence": "NEBULA-SDK-RELEASE-002 PR #97 exact 5184ca05470c121d9a284cd2e641f154e40550cf received official Review #401 REQUEST_CHANGES because tag-triggered release authority remains hard-bound to historical S1-F03-001 instead of the current immutable Release Story.",
+      "required_behavior": "Release gate must resolve exactly one current Release Story from tag/version metadata, validate that Story expected_tag/expected_version and executable/release authority at the tagged exact head, and fail closed on zero/multiple/revoked/drifted authority. No release Story ID or branch may remain hard-coded.",
+      "unblock_rule": "Implementation must independently review and canonical-close before NEBULA-SDK-RELEASE-002 may rebuild a new RC2 exact candidate. Existing PR #97 remains unmergeable/superseded until then."
     }
   },
   "non_executable_roadmaps": [
