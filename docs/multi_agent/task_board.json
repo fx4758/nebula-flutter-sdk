@@ -2399,6 +2399,46 @@
         "root_cause": "Implementation candidate changed .github/workflows/governance.yml, which is listed in cross_repo_governance.coordinator_owned_paths. coordinator_state_guard correctly rejected the implementation PR.",
         "corrective": "Do not weaken coordinator_state_guard and do not label implementation PR as coordinator-publication. Split the Coordinator-owned workflow binding into serial phase 2."
       }
+    },
+    "AUTH-V2-NEARVIA-OAUTH-001": {
+      "status": "READY",
+      "owner": "Nearvia OAuth Provider Integration Agent",
+      "agent": "A",
+      "reviewer": "App Architecture Review Agent",
+      "depends_on": [
+        "AUTH-V2-NEARVIA-APP-001",
+        "AUTH-V2-NEARVIA-UI-001"
+      ],
+      "task_pack": "task_packs/AUTH-V2-NEARVIA-OAUTH-001_PROVIDER_ACQUISITION.md",
+      "execution_repo": "../Nearvia",
+      "execution_branch": "auth/v2-nearvia-oauth-001",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-auth-v2-nearvia-oauth-001",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": false,
+      "app_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "provider_authorization_acquisition_authorized": false,
+      "provider_deployment_configuration_authorized": false,
+      "provider_credential_material_authorized": false,
+      "push_mutation_authorized": false,
+      "phone_sms_nearvia_authorized": false,
+      "whole_consumer_branch_merge_authorized": false,
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "consumer_runtime_authority": "../Nearvia origin/main@01966a86c44a7075b3b5b4b1961dc5bf8b39a410",
+      "consumer_target_sdk": "v0.1.0-rc2@ac96fb5f428cc37293bc5a63e23c90fe40ff8af2",
+      "authorized_write_set": [
+        "docs/evidence/AUTH-V2-NEARVIA-OAUTH-001/**"
+      ],
+      "required_behavior": "Collect and independently review sanitized Nearvia-specific Apple/Google provider-registration prerequisites. No provider acquisition production code until a separate Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
+      "execution_gate": "OPEN_PREREQUISITE_EVIDENCE_ONLY",
+      "external_provider_registration_ready": false,
+      "unblock_rule": "Before OPEN_IMPLEMENTATION, provide sanitized Nearvia Apple/Google bundle/application IDs, public client identifiers, callback/redirect contract, signing fingerprint requirements, Backend per-App provider readiness and secret-custody confirmation. Coordinator must then publish a separately reviewed unlock; no App/provider code or secret material is authorized by this registration."
     }
   },
   "non_executable_roadmaps": [
