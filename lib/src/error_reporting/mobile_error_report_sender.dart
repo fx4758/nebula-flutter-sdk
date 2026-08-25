@@ -2,9 +2,9 @@ library;
 
 import 'dart:convert';
 
-import '../foundation/request_proof.dart';
 import '../foundation/errors.dart';
 import '../foundation/options.dart';
+import '../foundation/request_proof.dart';
 import '../transport.dart';
 import '../transport/proof_headers.dart';
 import 'report.dart';

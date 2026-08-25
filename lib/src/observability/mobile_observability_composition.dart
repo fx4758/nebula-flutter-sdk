@@ -4,12 +4,12 @@ import '../analytics/analytics_client.dart';
 import '../analytics/consent.dart';
 import '../analytics/mobile_analytics_sender.dart';
 import '../analytics/nebula_analytics.dart';
-import '../foundation/request_proof.dart';
 import '../capabilities.dart';
 import '../error_reporting/cache_error_report_store.dart';
 import '../error_reporting/client.dart';
 import '../error_reporting/mobile_error_report_sender.dart';
 import '../foundation/options.dart';
+import '../foundation/request_proof.dart';
 import '../storage/cache_storage.dart';
 import '../transport.dart';
 
