@@ -146,9 +146,12 @@ List<String> validateReleaseStoryAuthority(
   final status = story['status']?.toString();
   final historical =
       status == 'DONE' && story['execution_gate'] == 'CLOSED_RELEASE_PASS';
-  final active = {'READY', 'IN_PROGRESS'}.contains(status);
-  if (!active && !historical) {
-    findings.add('$id release Story is neither active nor a closed release');
+  final prePublication =
+      {'READY', 'IN_PROGRESS', 'DELIVERED', 'REVIEW'}.contains(status);
+  if (!prePublication && !historical) {
+    findings.add(
+      '$id release Story is neither pre-publication nor a closed release',
+    );
   }
   if (story['platform_api_mode'] != 'NONE') {
     findings.add('$id Platform API mode must remain NONE');
@@ -163,7 +166,7 @@ List<String> validateReleaseStoryAuthority(
     findings.add('$id implementation agent must not edit Task Board');
   }
 
-  if (active) {
+  if (prePublication) {
     if (story['implementation_authorized'] != true) {
       findings.add('$id implementation authority revoked');
     }

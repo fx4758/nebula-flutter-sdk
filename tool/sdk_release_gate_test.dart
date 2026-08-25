@@ -248,6 +248,30 @@ void main() {
     );
   });
 
+  test('authorized DELIVERED and REVIEW release Stories remain pre-publication',
+      () {
+    const id = 'RELEASE-B';
+    for (final status in const ['DELIVERED', 'REVIEW']) {
+      final story = releaseStory(
+        id,
+        version: '0.1.0-rc2',
+        tag: 'v0.1.0-rc2',
+      );
+      story['status'] = status;
+      expect(
+        gate.validateReleaseStoryAuthority(
+          id,
+          story,
+          packFor(id, story['execution_branch'] as String),
+          headCommit: commit,
+          tagCommit: commit,
+        ),
+        isEmpty,
+        reason: '$status must remain valid before tag publication',
+      );
+    }
+  });
+
   test('revoked release authority fails closed', () {
     const id = 'RELEASE-B';
     final story = releaseStory(
@@ -280,6 +304,8 @@ void main() {
     );
     story['platform_api_mode'] = 'READ_ONLY';
     story['sdk_public_api_mode'] = 'CONTRACT_CHANGE';
+    story['state_write_authority'] = 'IMPLEMENTATION_AGENT';
+    story['agent_may_edit_task_board'] = true;
     final findings = gate.validateReleaseStoryAuthority(
       id,
       story,
@@ -289,6 +315,11 @@ void main() {
     );
     expect(findings.any((e) => e.contains('Platform API mode')), isTrue);
     expect(findings.any((e) => e.contains('SDK public API mode')), isTrue);
+    expect(findings.any((e) => e.contains('state write authority')), isTrue);
+    expect(
+      findings.any((e) => e.contains('implementation agent must not edit')),
+      isTrue,
+    );
     expect(
         findings.any((e) => e.contains('execution branch disagrees')), isTrue);
   });
