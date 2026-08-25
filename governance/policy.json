@@ -39,7 +39,13 @@
     "tool/cross_repo_guard_test.dart",
     "tool/coordinator_state_guard.dart",
     "tool/coordinator_state_guard_test.dart",
-    "docs/multi_agent/05_TASK_PACK_TEMPLATE.md"
+    "docs/multi_agent/05_TASK_PACK_TEMPLATE.md",
+    "governance/sdk_boundary_policy.json",
+    "tool/sdk_layer_graph_guard.dart",
+    "tool/sdk_layer_graph_guard_test.dart",
+    "tool/product_erasure_guard.dart",
+    "tool/product_erasure_guard_test.dart",
+    "tool/sdk_boundary_ci_binding_test.dart"
   ],
   "allowed_task_states": [
     "READY",
