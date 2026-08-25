@@ -37,6 +37,7 @@ Only these paths may change:
 7. `tool/sdk_boundary_ci_binding_test.dart`
 8. `tool/governance.dart`
 9. `.github/workflows/governance.yml`
+10. `tool/governance_test.dart` — fixture placement compatibility only: move temporary source probes under a classified module so the new layer guard can run inside the existing governance regression harness.
 
 No `lib/**`, `test/**`, API snapshot, public export allowlist, pubspec/lock, release workflow, Backend or consumer App mutation is authorized.
 
@@ -56,7 +57,7 @@ Comments/evidence that merely name NFC Writer or Nearvia must not fail. Negative
 
 ## Governance / CI binding
 
-`tool/governance.dart` invokes both guards so release CI inherits them. `.github/workflows/governance.yml` additionally runs both guards, both negative tests and `sdk_boundary_ci_binding_test.dart` directly on PR/push. Binding test asserts those commands exist and no self-approve/update mode is used.
+`tool/governance.dart` invokes both guards so release CI inherits them. `.github/workflows/governance.yml` additionally runs both guards, both negative tests and `sdk_boundary_ci_binding_test.dart` directly on PR/push. Binding test asserts those commands exist and no self-approve/update mode is used. Existing `tool/governance_test.dart` may only change fixture placement from unclassified `lib/src/<probe>.dart` to a classified temporary module path such as `lib/src/foundation/<probe>.dart`; rule expectations/coverage must remain otherwise unchanged.
 
 ## Invariants
 
