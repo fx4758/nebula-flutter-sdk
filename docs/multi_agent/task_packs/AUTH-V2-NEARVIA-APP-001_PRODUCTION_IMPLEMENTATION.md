@@ -1,14 +1,14 @@
 # AUTH-V2-NEARVIA-APP-001 — Nearvia Nebula Auth V2 Production Integration
 
-- ID: `AUTH-V2-NEARVIA-APP-001`
+- ID：AUTH-V2-NEARVIA-APP-001
 - Owner: Nearvia Auth V2 Implementation Agent
 - Reviewer: App Review Agent
-- Execution repo: `../Nearvia`
-- Execution branch: `auth/v2-nearvia-app-001-implementation`
+- Execution repo：`../Nearvia`
+- Execution branch：`auth/v2-nearvia-app-001-implementation`
 - Execution remote: `origin`
 - Execution worktree: `wt-auth-v2-nearvia-app-001`
-- Platform API mode: `READ_ONLY`
-- SDK public API mode: `READ_ONLY`
+- Platform API mode：`READ_ONLY`
+- SDK public API mode：`READ_ONLY`
 - Product adapter rule: `ADAPTER_FIRST`
 - State write authority: Coordinator only
 
