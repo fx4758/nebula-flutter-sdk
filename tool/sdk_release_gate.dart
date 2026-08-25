@@ -3,10 +3,12 @@ import 'dart:io';
 
 const releasePolicyPath = 'governance/sdk_release_policy.json';
 const taskBoardPath = 'docs/multi_agent/task_board.json';
+const _tagAuthoritySentinel = 'AFTER_REVIEW_FAST_FORWARD_POSTMERGE_PASS';
 
 final _fullCommit = RegExp(r'^[0-9a-f]{40}$');
 final _stableSemVer = RegExp(r'^\d+\.\d+\.\d+$');
 final _preSemVer = RegExp(r'^\d+\.\d+\.\d+-([0-9A-Za-z][0-9A-Za-z.-]*)$');
+final _packBranch = RegExp(r'Execution branch：`([^`]+)`');
 
 Never fail(String message) {
   stderr.writeln('SDK-RELEASE-GATE: FAIL — $message');
@@ -32,26 +34,36 @@ final class ReleaseMetadata {
   final String tagCommit;
 }
 
+final class ReleaseStoryResolution {
+  const ReleaseStoryResolution({this.id, this.story, required this.findings});
+  final String? id;
+  final Map<String, dynamic>? story;
+  final List<String> findings;
+}
+
 List<String> validateReleaseMetadata(
   ReleaseMetadata value,
   Map<String, dynamic> policy,
 ) {
   final findings = <String>[];
-  if (policy['schema_version'] != 1)
+  if (policy['schema_version'] != 2) {
     return ['unsupported release policy schema'];
+  }
   final prefix = policy['tag_prefix']?.toString() ?? '';
   final expectedTag = '$prefix${value.version}';
   if (prefix.isEmpty) findings.add('tag_prefix missing');
-  if (value.tag != expectedTag)
+  if (value.tag != expectedTag) {
     findings.add('tag ${value.tag} must equal $expectedTag');
+  }
   if (!_fullCommit.hasMatch(value.approvedCommit)) {
     findings.add('approved commit must be a 40-char lowercase SHA');
   }
   if (value.approvedCommit != value.headCommit) {
     findings.add('HEAD must equal the approved commit');
   }
-  if (value.tagCommit != value.headCommit)
+  if (value.tagCommit != value.headCommit) {
     findings.add('tag must resolve to HEAD');
+  }
 
   if (value.channel == 'beta') {
     final match = _preSemVer.firstMatch(value.version);
@@ -86,17 +98,53 @@ List<String> validateReleaseMetadata(
   return findings;
 }
 
-List<String> validateStoryAuthority(
-  Map<String, dynamic> board,
-  Map<String, dynamic> policy,
+ReleaseStoryResolution resolveReleaseStoryAuthority(
+  Map<String, dynamic> board, {
+  required String version,
+  required String tag,
+}) {
+  final stories = board['story_tracking'];
+  if (stories is! Map<String, dynamic>) {
+    return const ReleaseStoryResolution(
+        findings: ['task board story_tracking missing']);
+  }
+  final matches = <MapEntry<String, Map<String, dynamic>>>[];
+  for (final entry in stories.entries) {
+    final raw = entry.value;
+    if (raw is! Map) continue;
+    final story = raw.cast<String, dynamic>();
+    if (story['expected_version'] == version && story['expected_tag'] == tag) {
+      matches.add(MapEntry(entry.key, story));
+    }
+  }
+  if (matches.isEmpty) {
+    return ReleaseStoryResolution(
+      findings: ['no release Story matches version=$version tag=$tag'],
+    );
+  }
+  if (matches.length != 1) {
+    return ReleaseStoryResolution(
+      findings: [
+        'multiple release Stories match version=$version tag=$tag: ${matches.map((e) => e.key).join(', ')}'
+      ],
+    );
+  }
+  return ReleaseStoryResolution(
+    id: matches.single.key,
+    story: matches.single.value,
+    findings: const [],
+  );
+}
+
+List<String> validateReleaseStoryAuthority(
+  String id,
+  Map<String, dynamic> story,
+  String taskPackText,
 ) {
   final findings = <String>[];
-  final id = policy['release_workflow_story']?.toString() ?? '';
-  final stories = board['story_tracking'];
-  if (stories is! Map<String, dynamic> || !stories.containsKey(id)) {
-    return ['release workflow story missing: $id'];
+  if (!{'READY', 'IN_PROGRESS'}.contains(story['status'])) {
+    findings.add('$id release Story must be executable');
   }
-  final story = (stories[id] as Map).cast<String, dynamic>();
   if (story['platform_api_mode'] != 'NONE') {
     findings.add('$id Platform API mode must remain NONE');
   }
@@ -109,8 +157,28 @@ List<String> validateStoryAuthority(
   if (story['agent_may_edit_task_board'] != false) {
     findings.add('$id implementation agent must not edit Task Board');
   }
-  if (story['execution_branch'] != 's1/f03-001-release') {
-    findings.add('$id execution branch drift');
+  if (story['implementation_authorized'] != true) {
+    findings.add('$id implementation authority revoked');
+  }
+  if (story['release_packaging_authorized'] != true) {
+    findings.add('$id release packaging authority revoked');
+  }
+  if (story['tag_publication_authorized'] != _tagAuthoritySentinel) {
+    findings.add('$id tag publication authority missing or revoked');
+  }
+  if (story['execution_repo'] != '.') {
+    findings.add('$id execution repo must remain .');
+  }
+  final branch = story['execution_branch']?.toString() ?? '';
+  if (branch.isEmpty) findings.add('$id execution branch missing');
+  final taskPack = story['task_pack']?.toString() ?? '';
+  if (taskPack.isEmpty) findings.add('$id task pack missing');
+  if (!taskPackText.contains('ID：$id')) {
+    findings.add('$id task pack identity drift');
+  }
+  final packBranch = _packBranch.firstMatch(taskPackText)?.group(1);
+  if (packBranch != branch) {
+    findings.add('$id execution branch disagrees with task pack');
   }
   return findings;
 }
@@ -127,13 +195,14 @@ Map<String, String> readPubspec(File file) {
       publishTo = line.substring('publish_to:'.length).trim();
       final quoted = publishTo.length >= 2 &&
           ((publishTo.startsWith("'") && publishTo.endsWith("'")) ||
-              (publishTo.startsWith('"') && publishTo.endsWith('"')));
+              (publishTo.startsWith('\"') && publishTo.endsWith('\"')));
       if (quoted) publishTo = publishTo.substring(1, publishTo.length - 1);
     }
   }
   if (version == null || version.isEmpty) fail('pubspec version missing');
-  if (publishTo == null || publishTo.isEmpty)
+  if (publishTo == null || publishTo.isEmpty) {
     fail('pubspec publish_to missing');
+  }
   return {'version': version, 'publish_to': publishTo};
 }
 
@@ -147,7 +216,7 @@ String git(Directory root, List<String> args) {
 
 void selfCheck() {
   final policy = <String, dynamic>{
-    'schema_version': 1,
+    'schema_version': 2,
     'tag_prefix': 'v',
     'channels': <String, dynamic>{
       'beta': <String, dynamic>{'prerelease_prefix': 'rc'},
@@ -157,9 +226,9 @@ void selfCheck() {
   final valid = validateReleaseMetadata(
     const ReleaseMetadata(
       channel: 'beta',
-      version: '0.1.0-rc1',
+      version: '0.1.0-rc2',
       publishTo: 'none',
-      tag: 'v0.1.0-rc1',
+      tag: 'v0.1.0-rc2',
       approvedCommit: commit,
       headCommit: commit,
       tagCommit: commit,
@@ -190,8 +259,9 @@ void main(List<String> args) {
 
   String required(String name) {
     final index = args.indexOf(name);
-    if (index < 0 || index + 1 >= args.length)
+    if (index < 0 || index + 1 >= args.length) {
       fail('missing required argument $name');
+    }
     return args[index + 1];
   }
 
@@ -207,16 +277,32 @@ void main(List<String> args) {
       .cast<String, dynamic>();
   final board =
       (jsonDecode(boardFile.readAsStringSync()) as Map).cast<String, dynamic>();
+  final pubspec = readPubspec(File('${root.path}/pubspec.yaml'));
 
-  final authority = validateStoryAuthority(board, policy);
+  final resolution = resolveReleaseStoryAuthority(
+    board,
+    version: pubspec['version']!,
+    tag: tag,
+  );
+  if (resolution.findings.isNotEmpty) fail(resolution.findings.join('; '));
+  final id = resolution.id!;
+  final story = resolution.story!;
+  final taskPack = story['task_pack']?.toString() ?? '';
+  final taskPackFile = File('${root.path}/docs/multi_agent/$taskPack');
+  if (!taskPackFile.existsSync()) fail('$id task pack missing: $taskPack');
+  final authority = validateReleaseStoryAuthority(
+    id,
+    story,
+    taskPackFile.readAsStringSync(),
+  );
   if (authority.isNotEmpty) fail(authority.join('; '));
+
   if (git(root, ['status', '--porcelain', '--untracked-files=all'])
       .isNotEmpty) {
     fail('working tree must be clean');
   }
   final head = git(root, ['rev-parse', 'HEAD']);
   final tagCommit = git(root, ['rev-parse', 'refs/tags/$tag^{commit}']);
-  final pubspec = readPubspec(File('${root.path}/pubspec.yaml'));
   final findings = validateReleaseMetadata(
     ReleaseMetadata(
       channel: channel,
@@ -242,6 +328,6 @@ void main(List<String> args) {
     fail('API surface snapshot gate failed');
   }
   stdout.writeln(
-    'SDK-RELEASE-GATE PASS: channel=$channel version=${pubspec['version']} tag=$tag commit=$head',
+    'SDK-RELEASE-GATE PASS: story=$id channel=$channel version=${pubspec['version']} tag=$tag commit=$head',
   );
 }

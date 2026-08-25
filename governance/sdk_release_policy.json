@@ -1,6 +1,5 @@
 {
-  "schema_version": 1,
-  "release_workflow_story": "S1-F03-001",
+  "schema_version": 2,
   "tag_prefix": "v",
   "channels": {
     "dev": {"distribution": "path", "publish_to": "none", "rule": "developer-only; never a release artifact"},

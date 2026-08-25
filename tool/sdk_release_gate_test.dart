@@ -8,20 +8,50 @@ import 'sdk_release_gate.dart' as gate;
 const commit = '0123456789abcdef0123456789abcdef01234567';
 
 Map<String, dynamic> policy() => <String, dynamic>{
-      'schema_version': 1,
-      'release_workflow_story': 'S1-F03-001',
+      'schema_version': 2,
       'tag_prefix': 'v',
       'channels': <String, dynamic>{
         'beta': <String, dynamic>{'prerelease_prefix': 'rc'},
       },
     };
 
+Map<String, dynamic> releaseStory(
+  String id, {
+  required String version,
+  required String tag,
+  String? branch,
+}) =>
+    <String, dynamic>{
+      'status': 'READY',
+      'platform_api_mode': 'NONE',
+      'sdk_public_api_mode': 'READ_ONLY',
+      'state_write_authority': 'COORDINATOR_ONLY',
+      'agent_may_edit_task_board': false,
+      'implementation_authorized': true,
+      'release_packaging_authorized': true,
+      'tag_publication_authorized': 'AFTER_REVIEW_FAST_FORWARD_POSTMERGE_PASS',
+      'execution_repo': '.',
+      'execution_branch': branch ?? 'sdk-release/$id',
+      'task_pack': 'task_packs/$id.md',
+      'expected_version': version,
+      'expected_tag': tag,
+    };
+
+String packFor(String id, String branch) => '''
+# $id
+- ID：$id
+- Execution branch：`$branch`
+''';
+
 void main() {
-  test('policy freezes dev beta production distribution modes', () {
+  test('policy freezes distribution modes without a hard-coded release Story',
+      () {
     final value =
         (jsonDecode(File(gate.releasePolicyPath).readAsStringSync()) as Map)
             .cast<String, dynamic>();
     final channels = (value['channels'] as Map).cast<String, dynamic>();
+    expect(value['schema_version'], 2);
+    expect(value.containsKey('release_workflow_story'), isFalse);
     expect((channels['dev'] as Map)['distribution'], 'path');
     expect((channels['beta'] as Map)['distribution'], 'git_tag');
     expect((channels['production'] as Map)['distribution'], 'registry');
@@ -31,9 +61,9 @@ void main() {
     final findings = gate.validateReleaseMetadata(
       const gate.ReleaseMetadata(
         channel: 'beta',
-        version: '0.1.0-rc1',
+        version: '0.1.0-rc2',
         publishTo: 'none',
-        tag: 'v0.1.0-rc1',
+        tag: 'v0.1.0-rc2',
         approvedCommit: commit,
         headCommit: commit,
         tagCommit: commit,
@@ -78,9 +108,9 @@ void main() {
     final rejected = gate.validateReleaseMetadata(
       const gate.ReleaseMetadata(
         channel: 'production',
-        version: '0.1.0-rc1',
+        version: '0.1.0-rc2',
         publishTo: 'none',
-        tag: 'v0.1.0-rc1',
+        tag: 'v0.1.0-rc2',
         approvedCommit: commit,
         headCommit: commit,
         tagCommit: commit,
@@ -91,39 +121,127 @@ void main() {
     expect(rejected.any((e) => e.contains('explicit registry')), isTrue);
   });
 
-  test('release workflow is tag-only and executes release gates', () {
+  test('resolver binds version and tag to exactly one release Story', () {
+    final board = <String, dynamic>{
+      'story_tracking': <String, dynamic>{
+        'RELEASE-A': releaseStory(
+          'RELEASE-A',
+          version: '0.1.0-rc1',
+          tag: 'v0.1.0-rc1',
+        ),
+        'RELEASE-B': releaseStory(
+          'RELEASE-B',
+          version: '0.1.0-rc2',
+          tag: 'v0.1.0-rc2',
+        ),
+      },
+    };
+    final resolved = gate.resolveReleaseStoryAuthority(
+      board,
+      version: '0.1.0-rc2',
+      tag: 'v0.1.0-rc2',
+    );
+    expect(resolved.findings, isEmpty);
+    expect(resolved.id, 'RELEASE-B');
+  });
+
+  test('resolver rejects missing and duplicate release authority', () {
+    final one = releaseStory(
+      'RELEASE-A',
+      version: '0.1.0-rc2',
+      tag: 'v0.1.0-rc2',
+    );
+    final missing = gate.resolveReleaseStoryAuthority(
+      <String, dynamic>{
+        'story_tracking': <String, dynamic>{'RELEASE-A': one}
+      },
+      version: '0.1.0-rc3',
+      tag: 'v0.1.0-rc3',
+    );
+    expect(missing.findings.single, contains('no release Story'));
+
+    final duplicate = gate.resolveReleaseStoryAuthority(
+      <String, dynamic>{
+        'story_tracking': <String, dynamic>{
+          'RELEASE-A': one,
+          'RELEASE-B': Map<String, dynamic>.from(one),
+        },
+      },
+      version: '0.1.0-rc2',
+      tag: 'v0.1.0-rc2',
+    );
+    expect(duplicate.findings.single, contains('multiple release Stories'));
+  });
+
+  test('authorized release Story accepts its own task-pack branch', () {
+    const id = 'RELEASE-B';
+    final story = releaseStory(
+      id,
+      version: '0.1.0-rc2',
+      tag: 'v0.1.0-rc2',
+    );
+    expect(
+      gate.validateReleaseStoryAuthority(
+        id,
+        story,
+        packFor(id, story['execution_branch'] as String),
+      ),
+      isEmpty,
+    );
+  });
+
+  test('revoked release authority fails closed', () {
+    const id = 'RELEASE-B';
+    final story = releaseStory(
+      id,
+      version: '0.1.0-rc2',
+      tag: 'v0.1.0-rc2',
+    );
+    story['release_packaging_authorized'] = false;
+    story['tag_publication_authorized'] = false;
+    final findings = gate.validateReleaseStoryAuthority(
+      id,
+      story,
+      packFor(id, story['execution_branch'] as String),
+    );
+    expect(
+        findings.any((e) => e.contains('packaging authority revoked')), isTrue);
+    expect(
+        findings.any((e) => e.contains('tag publication authority')), isTrue);
+  });
+
+  test('branch, Platform and API authority drift remain blocking', () {
+    const id = 'RELEASE-B';
+    final story = releaseStory(
+      id,
+      version: '0.1.0-rc2',
+      tag: 'v0.1.0-rc2',
+      branch: 'sdk-release/reviewed',
+    );
+    story['platform_api_mode'] = 'READ_ONLY';
+    story['sdk_public_api_mode'] = 'CONTRACT_CHANGE';
+    final findings = gate.validateReleaseStoryAuthority(
+      id,
+      story,
+      packFor(id, 'sdk-release/drifted'),
+    );
+    expect(findings.any((e) => e.contains('Platform API mode')), isTrue);
+    expect(findings.any((e) => e.contains('SDK public API mode')), isTrue);
+    expect(
+        findings.any((e) => e.contains('execution branch disagrees')), isTrue);
+  });
+
+  test('release workflow remains tag-only and executes the single release gate',
+      () {
     final workflow = File('.github/workflows/release.yml').readAsStringSync();
-    expect(workflow, contains("tags:"));
+    expect(workflow, contains('tags:'));
     expect(workflow, contains("- 'v*'"));
     expect(workflow, contains('runs-on: nebula-sdk'));
     expect(workflow, contains('tool/sdk_release_gate.dart'));
     expect(workflow, contains('tool/api_surface.dart'));
     expect(workflow, contains('tool/ci_dependency_guard.dart'));
+    expect(workflow, isNot(contains('release_workflow_story')));
     expect(workflow, isNot(contains('dart pub publish')));
     expect(workflow, isNot(contains('pub publish')));
-  });
-
-  test('story authority remains read-only and Coordinator-owned', () {
-    final board = <String, dynamic>{
-      'story_tracking': <String, dynamic>{
-        'S1-F03-001': <String, dynamic>{
-          'platform_api_mode': 'NONE',
-          'sdk_public_api_mode': 'READ_ONLY',
-          'state_write_authority': 'COORDINATOR_ONLY',
-          'agent_may_edit_task_board': false,
-          'execution_branch': 's1/f03-001-release',
-        },
-      },
-    };
-    expect(gate.validateStoryAuthority(board, policy()), isEmpty);
-    final story = (board['story_tracking']
-        as Map<String, dynamic>)['S1-F03-001'] as Map<String, dynamic>;
-    story['sdk_public_api_mode'] = 'CONTRACT_CHANGE';
-    expect(
-      gate.validateStoryAuthority(board, policy()).any(
-            (e) => e.contains('SDK public API mode must remain READ_ONLY'),
-          ),
-      isTrue,
-    );
   });
 }
