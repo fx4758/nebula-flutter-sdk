@@ -2349,6 +2349,32 @@
         "authorized_path": "tool/governance_test.dart",
         "authorized_change": "Fixture placement only: change helper-generated temporary probe sources from lib/src/<name> to lib/src/foundation/<name> (or equivalent already-classified temporary path). Preserve all existing rule expectations and regression semantics.",
         "forbidden": "No production lib/** exception, no filename bypass in the new guard, no weakening of ARCH-LAYER-UNCLASSIFIED, no other governance_test behavior change."
+      },
+      "implementation_authorized_write_set": [
+        "governance/sdk_boundary_policy.json",
+        "governance/policy.json",
+        "tool/sdk_layer_graph_guard.dart",
+        "tool/sdk_layer_graph_guard_test.dart",
+        "tool/product_erasure_guard.dart",
+        "tool/product_erasure_guard_test.dart",
+        "tool/sdk_boundary_ci_binding_test.dart",
+        "tool/governance.dart",
+        "tool/governance_test.dart"
+      ],
+      "coordinator_post_implementation_write_set": [
+        ".github/workflows/governance.yml"
+      ],
+      "coordinator_owned_ci_binding_required": true,
+      "ci_binding_sequence": {
+        "phase_1": "Implementation Agent adds policy/guards/negative tests/governance.dart/strict binding-test source and governance fixture compatibility. It MUST NOT change .github/workflows/governance.yml because Coordinator State Guard protects it.",
+        "phase_2": "After phase-1 merge + post-merge success, Coordinator publishes a workflow-only PR adding direct runs of both guards, both negative tests and sdk_boundary_ci_binding_test.dart. This PR uses coordinator-publication and must receive its own Formal + independent review + post-merge success.",
+        "closure": "NEBULA-SDK-BOUNDARY-GOV-001 remains open until both phases are canonical."
+      },
+      "formal_failure_corrective": {
+        "failed_candidate": "bad12fc436492df24422c121a43566f479284868",
+        "failed_formal": "governance UI #368 FAILURE",
+        "root_cause": "Implementation candidate changed .github/workflows/governance.yml, which is listed in cross_repo_governance.coordinator_owned_paths. coordinator_state_guard correctly rejected the implementation PR.",
+        "corrective": "Do not weaken coordinator_state_guard and do not label implementation PR as coordinator-publication. Split the Coordinator-owned workflow binding into serial phase 2."
       }
     }
   },
