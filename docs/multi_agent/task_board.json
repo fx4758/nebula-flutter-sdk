@@ -2326,7 +2326,8 @@
         "tool/product_erasure_guard_test.dart",
         "tool/sdk_boundary_ci_binding_test.dart",
         "tool/governance.dart",
-        ".github/workflows/governance.yml"
+        ".github/workflows/governance.yml",
+        "tool/governance_test.dart"
       ],
       "required_unchanged_paths": [
         "lib/**",
@@ -2342,7 +2343,13 @@
       "required_behavior": "Add blocking Layer Graph and Product-Erasure guards using one reviewed boundary policy registry; add deterministic negative probes; bind both guards into governance.dart and PR/push governance workflow. Preserve the clean production tree and all public/product contracts.",
       "expected_public_state": "API surface 131 unchanged; public exports 39/40 unchanged; runtime dependencies {} unchanged",
       "execution_gate": "OPEN_IMPLEMENTATION",
-      "unblock_rule": "Implementation starts only after this Coordinator registration is independently reviewed and canonical. Deliver frozen exact to Formal + independent SDK Architecture review; no self-review, merge, product exception, Task Board or product/backend mutation."
+      "unblock_rule": "Implementation starts only after this Coordinator registration is independently reviewed and canonical. Deliver frozen exact to Formal + independent SDK Architecture review; no self-review, merge, product exception, Task Board or product/backend mutation.",
+      "registration_scope_amendment": {
+        "reason": "The existing governance regression positive fixture creates lib/src/safe_examples.dart. The architecture-frozen fail-closed layer classifier correctly rejects unclassified root production files, so governance.dart integration would make the old positive fixture fail unless the fixture is placed under an already classified module.",
+        "authorized_path": "tool/governance_test.dart",
+        "authorized_change": "Fixture placement only: change helper-generated temporary probe sources from lib/src/<name> to lib/src/foundation/<name> (or equivalent already-classified temporary path). Preserve all existing rule expectations and regression semantics.",
+        "forbidden": "No production lib/** exception, no filename bypass in the new guard, no weakening of ARCH-LAYER-UNCLASSIFIED, no other governance_test behavior change."
+      }
     }
   },
   "non_executable_roadmaps": [
