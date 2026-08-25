@@ -36,10 +36,9 @@ Only these paths may change:
 6. `tool/product_erasure_guard_test.dart`
 7. `tool/sdk_boundary_ci_binding_test.dart`
 8. `tool/governance.dart`
-9. `.github/workflows/governance.yml`
-10. `tool/governance_test.dart` — fixture placement compatibility only: move temporary source probes under a classified module so the new layer guard can run inside the existing governance regression harness.
+9. `tool/governance_test.dart` — fixture placement compatibility only: move temporary source probes under a classified module so the new layer guard can run inside the existing governance regression harness.
 
-No `lib/**`, `test/**`, API snapshot, public export allowlist, pubspec/lock, release workflow, Backend or consumer App mutation is authorized.
+Implementation Agent must not change `.github/workflows/governance.yml`; it is Coordinator-owned protected state. After the guard implementation is canonical and post-merge green, Coordinator performs a separate CI-binding publication changing only `.github/workflows/governance.yml`. No `lib/**`, `test/**`, API snapshot, public export allowlist, pubspec/lock, release workflow, Backend or consumer App mutation is authorized.
 
 ## Layer Graph Guard
 
@@ -57,7 +56,7 @@ Comments/evidence that merely name NFC Writer or Nearvia must not fail. Negative
 
 ## Governance / CI binding
 
-`tool/governance.dart` invokes both guards so release CI inherits them. `.github/workflows/governance.yml` additionally runs both guards, both negative tests and `sdk_boundary_ci_binding_test.dart` directly on PR/push. Binding test asserts those commands exist and no self-approve/update mode is used. Existing `tool/governance_test.dart` may only change fixture placement from unclassified `lib/src/<probe>.dart` to a classified temporary module path such as `lib/src/foundation/<probe>.dart`; rule expectations/coverage must remain otherwise unchanged.
+`tool/governance.dart` invokes both guards so existing PR/push/release governance immediately executes baseline boundary checks once the implementation lands. The implementation also adds a strict `sdk_boundary_ci_binding_test.dart`, but the current implementation PR must not mutate the Coordinator-owned workflow and therefore must not execute this strict binding test in Formal yet. After implementation merge/post-merge, Coordinator publishes a workflow-only binding PR that adds direct execution of both guards, both negative tests and `sdk_boundary_ci_binding_test.dart`; that Coordinator PR is not complete unless the strict binding test passes. Binding test asserts those commands exist and no self-approve/update mode is used. Existing `tool/governance_test.dart` may only change fixture placement from unclassified `lib/src/<probe>.dart` to a classified temporary module path such as `lib/src/foundation/<probe>.dart`; rule expectations/coverage must remain otherwise unchanged.
 
 ## Invariants
 
@@ -70,8 +69,8 @@ Comments/evidence that merely name NFC Writer or Nearvia must not fail. Negative
 
 ## Verification
 
-Task Source/Cross Repo/Platform guards; exact write-set; diff-check; both guards and negative tests; binding test; governance + governance regression; API 131; exports 39; dependencies `{}`; format; analyze; full test; secret scan; smoke all PASS.
+Implementation phase: Task Source/Cross Repo/Platform guards; exact implementation write-set; diff-check; both guards and negative tests on mac-mini; governance + governance regression; API 131; exports 39; dependencies `{}`; format; analyze; full test; secret scan; smoke PASS. The strict CI binding test source is reviewed/analyzed but is expected to become runnable only in the subsequent Coordinator workflow-only publication. Coordinator binding phase: `.github/workflows/governance.yml` only; Formal must directly execute both guards, both negative tests and `sdk_boundary_ci_binding_test.dart` and pass.
 
 ## Exit
 
-Deliver frozen exact to Formal + independent SDK Architecture review. No self-review/merge/Task Board mutation. Coordinator closes only after exact Formal SUCCESS, official reviewer-agent APPROVED and post-merge governance SUCCESS.
+Implementation Agent delivers frozen guard-code exact to Formal + independent SDK Architecture review without touching Coordinator-owned workflow. After implementation merge/post-merge SUCCESS, Coordinator opens a workflow-only CI-binding publication. Story closes only after both the implementation PR and the Coordinator binding PR have exact Formal SUCCESS, official reviewer-agent APPROVED and post-merge governance SUCCESS.
