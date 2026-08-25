@@ -2421,6 +2421,45 @@
       "post_merge_governance": "governance UI #384 SUCCESS on main exact 9539be8d9ae585d11cea59b054d379e2f5a16fb1",
       "closure_note": "SDK boundary hardening governance is canonical. Layer Graph Guard blocks invalid base/capability/testing edges and unclassified modules; Product-Erasure Guard blocks executable consumer/product leakage, Flutter/UI coupling, unreviewed origins/package imports and runtime dependency drift while ignoring documentation comments. Phase 1 added the reviewed guards/policy/negative regressions with zero lib/API/product mutation. Phase 2, as a separate Coordinator-owned publication, bound both guards, both negative regressions and the strict binding regression directly into PR/push governance CI. Release inherits the same guards through governance.dart. API remains 131, public exports 39/40, runtime dependencies {}, and NFC Writer/Nearvia product domains remain App-owned."
     }
+    ,
+    "AUTH-V2-SDK-PHONE-CODE-001": {
+      "status": "READY",
+      "owner": "SDK Auth V2 Architect Agent",
+      "agent": "A",
+      "reviewer": "Architecture Review Agent",
+      "task_pack": "task_packs/AUTH-V2-SDK-PHONE-CODE-001_PUBLIC_SURFACE_AMENDMENT.md",
+      "depends_on": [
+        "AUTH-V2-SDK-002"
+      ],
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "execution_repo": ".",
+      "execution_branch": "auth/v2-sdk-phone-code-001-public-surface-amendment",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-auth-v2-sdk-phone-code-001",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "architecture_contract": "contracts/MOBILE_AUTH_V2.md",
+      "frozen_public_surface": "contracts/MOBILE_AUTH_V2_SDK_PUBLIC_SURFACE.md",
+      "backend_authority": "root/FlyPostAPI Dev@d9ad6c3c0e9186e574081e22d88450d93542fd29",
+      "registration_baseline": "root/nebula-flutter-sdk main@04898509fa9ea85a5c5453c3be1477fb485ce0ab",
+      "trigger_evidence": "NFC Writer PR #211 independent Review #467 REQUEST_CHANGES on exact e2fc93136df7fca101f867199d44ae1a8fe2c0e2: PHONE form has no SMS-code acquisition path; Backend canonical exposes /api/v1/mobile/auth/code/send while RC2 SDK exposes no typed operation",
+      "implementation_authorized": true,
+      "architecture_only": true,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "provider_credential_material_authorized": false,
+      "authorized_write_set": [
+        "docs/multi_agent/contracts/MOBILE_AUTH_V2_SDK_PUBLIC_SURFACE.md"
+      ],
+      "required_behavior": "Freeze the missing typed PHONE SMS-code acquisition member on existing NebulaAuth and SessionEndpoints ownership for /api/v1/mobile/auth/code/send; preserve PHONE login wire/session behavior; no new top-level API symbol; no consumer hand-authored endpoint workaround.",
+      "expected_api_surface": "131 unchanged; member-level sendPhoneCode + phoneCodeSend only",
+      "execution_gate": "OPEN_ARCHITECTURE_CORRECTIVE_ONLY",
+      "unblock_rule": "Exact docs-only amendment must receive Formal SUCCESS and official independent exact-head APPROVED review, then canonical closure before any SDK implementation/release or consumer repin is authorized."
+    }
   },
   "non_executable_roadmaps": [
     "docs/STATUS.md",
