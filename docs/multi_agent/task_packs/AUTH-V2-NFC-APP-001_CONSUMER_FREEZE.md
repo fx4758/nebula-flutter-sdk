@@ -5,7 +5,7 @@
 - Agent: B
 - Reviewer: App Architecture Review Agent
 - Execution repo：`../flutter NFC Writer`
-- Execution branch：`auth/v2-nfc-app-001-freeze`
+- Execution branch：`ai/AUTH-V2-NFC-APP-001-freeze`
 - Execution remote：`origin`
 - Execution worktree：`wt-auth-v2-nfc-app-001-freeze`
 - Platform API mode：`READ_ONLY`
