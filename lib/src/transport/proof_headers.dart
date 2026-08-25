@@ -17,7 +17,7 @@ library;
 import 'dart:convert';
 import 'dart:math';
 
-import '../auth/proof.dart';
+import '../foundation/request_proof.dart';
 import '../foundation/sha256.dart';
 import '../transport.dart';
 

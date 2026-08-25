@@ -2,7 +2,7 @@ library;
 
 import 'dart:convert';
 
-import '../auth/proof.dart';
+import '../foundation/request_proof.dart';
 import '../foundation/errors.dart';
 import '../foundation/options.dart';
 import '../transport.dart';

@@ -4,7 +4,7 @@ import '../analytics/analytics_client.dart';
 import '../analytics/consent.dart';
 import '../analytics/mobile_analytics_sender.dart';
 import '../analytics/nebula_analytics.dart';
-import '../auth/proof.dart';
+import '../foundation/request_proof.dart';
 import '../capabilities.dart';
 import '../error_reporting/cache_error_report_store.dart';
 import '../error_reporting/client.dart';

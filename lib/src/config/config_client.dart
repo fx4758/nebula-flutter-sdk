@@ -23,7 +23,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import '../auth/proof.dart';
+import '../foundation/request_proof.dart';
 import '../foundation/error_classification.dart';
 import '../foundation/errors.dart';
 import '../foundation/logging.dart';

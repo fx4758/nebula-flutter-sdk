@@ -11,7 +11,7 @@ import '../transport.dart';
 import '../transport/cancellation_token.dart';
 import 'auth_proof.dart';
 import 'login_request.dart';
-import 'proof.dart';
+import '../foundation/request_proof.dart';
 import 'session.dart';
 import 'session_endpoints.dart';
 import 'session_errors.dart';

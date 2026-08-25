@@ -30,10 +30,6 @@ src/auth/login_request.dart class NebulaLoginRequest
 src/auth/login_request.dart enum NebulaEmailCodePurpose
 src/auth/login_request.dart enum NebulaLoginProvider
 src/auth/login_request.dart enum NebulaOAuthProvider
-src/auth/proof.dart class ProofCanonicalInput
-src/auth/proof.dart class RecordingProofSigner
-src/auth/proof.dart class RequestProofSigner
-src/auth/proof.dart const nebulaProofVersion
 src/auth/session.dart class NebulaSession
 src/auth/session.dart class NebulaSessionEvent
 src/auth/session.dart class SecurityAlert
@@ -111,6 +107,9 @@ src/foundation/logging.dart function redact
 src/foundation/options.dart class NebulaOptions
 src/foundation/options.dart enum NebulaEnvironment
 src/foundation/request_id.dart class NebulaRequestId
+src/foundation/request_proof.dart class ProofCanonicalInput
+src/foundation/request_proof.dart class RequestProofSigner
+src/foundation/request_proof.dart const nebulaProofVersion
 src/nebula.dart class Nebula
 src/nebula.dart class NebulaMobileObservability
 src/storage/cache_storage.dart class CacheStorage
@@ -120,6 +119,7 @@ src/storage/secure_storage.dart class SecureStorage
 src/storage/storage_namespace.dart class StorageNamespace
 src/testing/fake_transport.dart class FakeTransport
 src/testing/fake_transport.dart typedef FakeTransportHandler
+src/testing/recording_proof_signer.dart class RecordingProofSigner
 src/transport.dart class NebulaRequest
 src/transport.dart class NebulaResponse
 src/transport.dart class NebulaTransport
