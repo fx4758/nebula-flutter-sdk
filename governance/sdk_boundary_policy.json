@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "layer_graph": {
+    "base_modules": [
+      "foundation",
+      "transport",
+      "storage"
+    ],
+    "capability_modules": [
+      "auth",
+      "config",
+      "analytics",
+      "error_reporting",
+      "asset",
+      "notification",
+      "payment",
+      "ai"
+    ],
+    "composition_modules": [
+      "observability"
+    ],
+    "testing_modules": [
+      "testing"
+    ],
+    "root_files": [
+      "nebula.dart",
+      "capabilities.dart",
+      "transport.dart"
+    ]
+  },
+  "product_erasure": {
+    "consumer_tokens": [
+      "NFC Writer",
+      "NFCWriter",
+      "Nearvia",
+      "Ethereal NFC",
+      "Pomodoro",
+      "BabyRoom",
+      "CryDetection"
+    ],
+    "consumer_package_ids": [
+      "com.shawn.nfcwriter"
+    ],
+    "consumer_origins": [],
+    "allowed_runtime_dependencies": [],
+    "allowed_package_imports": [],
+    "ui_navigation_identifiers": [
+      "Widget",
+      "BuildContext",
+      "Navigator",
+      "GoRouter",
+      "showDialog"
+    ],
+    "allowed_http_origins": []
+  }
+}
