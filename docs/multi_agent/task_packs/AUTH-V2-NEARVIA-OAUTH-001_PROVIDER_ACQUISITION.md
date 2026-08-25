@@ -1,6 +1,7 @@
 # AUTH-V2-NEARVIA-OAUTH-001 — Nearvia Apple/Google Provider Acquisition Preflight
 
 - ID：AUTH-V2-NEARVIA-OAUTH-001
+- Review task identity: `AUTH-V2-NEARVIA-OAUTH-001` (this candidate is a follow-up registration, not an implementation or re-closure of `AUTH-V2-NEARVIA-UI-001`)
 - Owner: Nearvia OAuth Provider Integration Agent
 - Reviewer: App Architecture Review Agent
 - Execution repo：`../Nearvia`
