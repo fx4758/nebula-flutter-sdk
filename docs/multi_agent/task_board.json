@@ -1855,7 +1855,7 @@
       "unblock_rule": "Package only the current canonical SDK as immutable v0.1.0-rc2. No lib/**, API snapshot, Platform API, Backend, consumer App, provider credential/acquisition, or provider migration mutation. Independent exact review + Coordinator fast-forward publication + tag-triggered release gate are mandatory before App repin."
     },
     "AUTH-V2-CN-PROVIDER-ARCH-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Auth CN Provider Architecture Agent",
       "agent": "A",
       "reviewer": "Architecture Review Agent",
@@ -1880,7 +1880,7 @@
       "app_mutation_authorized": false,
       "provider_integration_authorized": false,
       "provider_credential_material_authorized": false,
-      "execution_gate": "OPEN_ARCHITECTURE_REVIEW_ONLY",
+      "execution_gate": "CLOSED_DEFERRED_SECOND_CONSUMER",
       "triggering_consumer": "NFC Writer legacy native Android has real WeChat OpenSDK + QQ Tencent SDK login; current Flutter AuthService lists WECHAT/QQ but returns mock identities/tokens.",
       "current_platform_gap": "Canonical Mobile Auth V2 accepts only APPLE/GOOGLE OAuth; Backend verifier/config/handler and SDK NebulaOAuthProvider are Apple/Google-only.",
       "required_output": "reports/ACR-MOBILE-AUTH-V2-CN-PROVIDER-001.md plus contracts/MOBILE_AUTH_V2_CN_PROVIDER_MIGRATION_CANDIDATE.md only; no production/public/provider mutation.",
@@ -1889,7 +1889,19 @@
       "compatibility_gate": "Existing NFC Writer WeChat/QQ users must not be silently orphaned or duplicated; legacy identity migration/alias semantics must be frozen before cutover.",
       "unblock_rule": "Architecture may recommend APPROVE_FOR_CONTRACT_CHANGE only if proof shapes, identity migration, security/privacy/abuse controls, compatibility/rollback and canonical second-consumer evidence are all closed; otherwise close deferred/blocked with no production authorization.",
       "backend_repo": "../flypost_backend",
-      "backend_baseline_commit": "d9ad6c3c0e9186e574081e22d88450d93542fd29"
+      "backend_baseline_commit": "d9ad6c3c0e9186e574081e22d88450d93542fd29",
+      "review_state": "PASS",
+      "review_verdict": "DEFERRED_SECOND_CONSUMER_INSUFFICIENT",
+      "delivery_commit": "6b0fb58eff0947ee15d69dd4e6c836a85f663084",
+      "delivery_pr": "#99",
+      "formal_ci": "governance UI #304 SUCCESS / exact candidate 6b0fb58eff0947ee15d69dd4e6c836a85f663084",
+      "formal_review": "#403 APPROVED / reviewer-agent / official=true / stale=false / exact candidate 6b0fb58eff0947ee15d69dd4e6c836a85f663084",
+      "delivery_merge_commit": "aa600c0a34a699b41f596842df4cc5b607ca4faf",
+      "post_merge_governance": "UI #305 SUCCESS",
+      "acr_report": "reports/ACR-MOBILE-AUTH-V2-CN-PROVIDER-001.md",
+      "migration_candidate": "contracts/MOBILE_AUTH_V2_CN_PROVIDER_MIGRATION_CANDIDATE.md",
+      "blocked_on": "SECOND_DISTINCT_CANONICAL_CONSUMER + CURRENT_OFFICIAL_QQ_PROOF_REPLAY_EXPIRY_EVIDENCE + LEGACY_IDENTITY_COLLISION_AUDIT + WECHAT_LEGACY_SECRET_ROTATION",
+      "closure_note": "WeChat/QQ migration architecture is independently reviewed and canonical as a deferred candidate. Direction is accepted, but Platform CONTRACT_CHANGE and Backend/SDK/NFC Writer production mutation remain unauthorized. Reopen only after a second distinct canonical consumer, current official QQ proof/replay/expiry evidence, a fail-closed legacy identity collision audit, and WeChat legacy secret rotation/custody readiness are all mechanically closed."
     }
   },
   "non_executable_roadmaps": [
