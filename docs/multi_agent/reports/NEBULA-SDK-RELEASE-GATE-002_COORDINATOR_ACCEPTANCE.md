@@ -23,6 +23,6 @@ Coordinator now sets `NEBULA-SDK-RELEASE-002.tag_publication_authorized=true` fo
 
 This authority does not validate or revive PR #97 / exact `5184ca05470c121d9a284cd2e641f154e40550cf`. That candidate predates the canonical release-gate corrective and is superseded.
 
-RC2 must be rebuilt from canonical SDK `main@5d59c6ecf3535a3391d8dbd2bb897e69bb1cb1fe`, retain API surface 131 with no `lib/**` or snapshot mutation, then pass fresh Formal and official exact-head independent release review before Coordinator may publish the immutable tag.
+RC2 must resolve a fresh canonical `hub/main` baseline at packaging start, require the reviewed gate implementation and RC2 authority publication commits to be ancestors, record that resolved exact in the Delivery note, retain API surface 131 with no `lib/**` or snapshot mutation, then pass fresh Formal and official exact-head independent release review before Coordinator may publish the immutable tag. If canonical main moves after baseline resolution, the candidate must be rebuilt.
 
 No Backend, consumer App, provider acquisition, WeChat/QQ, or SDK public-surface mutation is authorized here.

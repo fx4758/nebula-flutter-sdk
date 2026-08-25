@@ -1847,14 +1847,19 @@
       ],
       "expected_version": "0.1.0-rc2",
       "expected_tag": "v0.1.0-rc2",
-      "expected_api_surface": "131 -> 131; packaging changes only; no public symbol change relative to canonical main 5d59c6ecf3535a3391d8dbd2bb897e69bb1cb1fe",
-      "release_baseline": "root/nebula-flutter-sdk main@5d59c6ecf3535a3391d8dbd2bb897e69bb1cb1fe; API surface 131; AUTH-V2-SDK-002 DONE / CLOSED_REVIEW_PASS; NEBULA-SDK-RELEASE-GATE-002 DONE / CLOSED_REVIEW_PASS",
+      "expected_api_surface": "131 -> 131; packaging changes only; no public symbol change relative to the resolved fresh canonical execution baseline.",
+      "release_baseline": "Resolve at packaging start from fresh hub/main. The resolved exact must contain release-gate implementation 84852208681e73a1fbe62100fde6d1d85b8a1de9 and RC2 authority publication dbacd7fa60065e2fe2a868532695ef344833bf16 as ancestors, must have API surface 131, and must be recorded verbatim in the Delivery note. If hub/main moves after resolution, STOP and rebuild from the new fresh canonical baseline.",
       "backend_mutation_authorized": false,
       "app_mutation_authorized": false,
       "provider_integration_authorized": false,
       "execution_gate": "OPEN",
       "unblock_rule": "Package only the current canonical SDK as immutable v0.1.0-rc2. No lib/**, API snapshot, Platform API, Backend, consumer App, provider credential/acquisition, or provider migration mutation. Independent exact review + Coordinator fast-forward publication + tag-triggered release gate are mandatory before App repin.",
-      "authority_publication_note": "Coordinator authorizes immutable v0.1.0-rc2 tag publication only after a newly rebuilt exact RC2 candidate from canonical main@5d59c6ecf3535a3391d8dbd2bb897e69bb1cb1fe passes Formal and official exact-head independent release review. Existing PR #97 / exact 5184ca05470c121d9a284cd2e641f154e40550cf is superseded and must not be merged or tagged."
+      "authority_publication_note": "Coordinator authorizes immutable v0.1.0-rc2 tag publication only for a newly rebuilt candidate whose Delivery records the fresh canonical hub/main exact resolved at packaging start and whose baseline contains the reviewed release-gate implementation and RC2 authority publication ancestors. Existing PR #104 / exact 4fface1d0885e24752b460cccf6274b12bda1c59 is superseded after Review #426 and must not be merged or tagged.",
+      "baseline_resolution_rule": "FRESH_CANONICAL_AT_PACKAGING_START_WITH_REQUIRED_ANCESTORS",
+      "required_baseline_ancestors": [
+        "84852208681e73a1fbe62100fde6d1d85b8a1de9",
+        "dbacd7fa60065e2fe2a868532695ef344833bf16"
+      ]
     },
     "AUTH-V2-CN-PROVIDER-ARCH-001": {
       "status": "DONE",
