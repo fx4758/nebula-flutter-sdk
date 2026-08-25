@@ -2463,7 +2463,7 @@
       "unblock_rule": "Before OPEN_IMPLEMENTATION, AUTH-V2-NEARVIA-IDENTITY-001 must be DONE with canonical production App identity/signing freeze, then provide sanitized Nearvia Apple/Google public client identifiers, callback/redirect contract, production signing fingerprints, Backend per-App provider readiness and secret-custody confirmation. Coordinator must publish a separately reviewed unlock; no App/provider code or secret material is authorized."
     },
     "AUTH-V2-NEARVIA-IDENTITY-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Nearvia App Identity Architecture Agent",
       "agent": "A",
       "reviewer": "App Architecture Review Agent",
@@ -2497,8 +2497,29 @@
         "docs/evidence/AUTH-V2-NEARVIA-IDENTITY-001/**"
       ],
       "required_behavior": "Freeze one canonical Nearvia production Android applicationId, iOS bundle identifier, release-signing custody/fingerprint contract and Apple capability ownership before any provider registration or App identity mutation. Current *.poc.* identities and debug signing must not be promoted to production.",
-      "execution_gate": "OPEN_ARCHITECTURE_FREEZE_ONLY",
-      "unblock_rule": "Deliver a docs-only exact freeze on fresh Nearvia main, independently review it, and merge it before any identity implementation or Apple/Google provider registration can consume final identifiers. No native/App/provider/backend mutation or secret material is authorized."
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "unblock_rule": "Deliver a docs-only exact freeze on fresh Nearvia main, independently review it, and merge it before any identity implementation or Apple/Google provider registration can consume final identifiers. No native/App/provider/backend mutation or secret material is authorized.",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "2834844c93ed5ecab5ac9df041c0f8933728814c",
+      "formal_ci": "Nearvia repository has no Forgejo Formal status context for this docs-only freeze; exact candidate scope/diff checks were recorded on PR #12.",
+      "delivery_evidence": {
+        "execution_pr": "root/Nearvia#12",
+        "accepted_candidate": "2834844c93ed5ecab5ac9df041c0f8933728814c",
+        "canonical_merge": "54d4d5ea63d763e0a63fe81ff9b4851ac54962d4",
+        "freeze_base": "d5c0c84ad139c4d39a5b3b06155186524e43ec14",
+        "scope": "docs-only: docs/AUTH_V2_PRODUCTION_APP_IDENTITY.md + docs/evidence/AUTH-V2-NEARVIA-IDENTITY-001/**",
+        "frozen_android_application_id": "com.nearvia.app",
+        "frozen_ios_bundle_id": "com.nearvia.app",
+        "frozen_broadcast_bundle_id": "com.nearvia.app.BroadcastUpload",
+        "frozen_app_group": "group.com.nearvia.app",
+        "apple_team_target": "PFTP7P5DXT",
+        "signing_contract": "dedicated Nearvia release identity; never debug or NFC Writer; production Google OAuth uses final Play app-signing fingerprint",
+        "runtime_mutation": 0,
+        "secret_material": 0
+      },
+      "formal_review": "#506 APPROVED / reviewer-agent / official=true / stale=false / exact 2834844c93ed5ecab5ac9df041c0f8933728814c",
+      "closure_note": "Nearvia production App identity/signing architecture is canonical. One public consumer App is frozen at com.nearvia.app for Android and iOS; WATCH/ASSIST remain capabilities. Broadcast extension is com.nearvia.app.BroadcastUpload, App Group group.com.nearvia.app, Apple Team target PFTP7P5DXT. Production Android signing must be dedicated Nearvia identity and Google production binding must use final Play app-signing fingerprint. This freeze authorizes no App/native/provider/backend mutation; implementation and provider registration remain separate Stories."
     }
   },
   "non_executable_roadmaps": [
