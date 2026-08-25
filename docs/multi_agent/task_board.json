@@ -2428,7 +2428,8 @@
       "reviewer": "App Architecture Review Agent",
       "depends_on": [
         "AUTH-V2-NEARVIA-APP-001",
-        "AUTH-V2-NEARVIA-UI-001"
+        "AUTH-V2-NEARVIA-UI-001",
+        "AUTH-V2-NEARVIA-IDENTITY-001"
       ],
       "task_pack": "task_packs/AUTH-V2-NEARVIA-OAUTH-001_PROVIDER_ACQUISITION.md",
       "execution_repo": "../Nearvia",
@@ -2459,7 +2460,45 @@
       "required_behavior": "Collect and independently review sanitized Nearvia-specific Apple/Google provider-registration prerequisites. No provider acquisition production code until a separate Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
       "execution_gate": "OPEN_PREREQUISITE_EVIDENCE_ONLY",
       "external_provider_registration_ready": false,
-      "unblock_rule": "Before OPEN_IMPLEMENTATION, provide sanitized Nearvia Apple/Google bundle/application IDs, public client identifiers, callback/redirect contract, signing fingerprint requirements, Backend per-App provider readiness and secret-custody confirmation. Coordinator must then publish a separately reviewed unlock; no App/provider code or secret material is authorized by this registration."
+      "unblock_rule": "Before OPEN_IMPLEMENTATION, AUTH-V2-NEARVIA-IDENTITY-001 must be DONE with canonical production App identity/signing freeze, then provide sanitized Nearvia Apple/Google public client identifiers, callback/redirect contract, production signing fingerprints, Backend per-App provider readiness and secret-custody confirmation. Coordinator must publish a separately reviewed unlock; no App/provider code or secret material is authorized."
+    },
+    "AUTH-V2-NEARVIA-IDENTITY-001": {
+      "status": "READY",
+      "owner": "Nearvia App Identity Architecture Agent",
+      "agent": "A",
+      "reviewer": "App Architecture Review Agent",
+      "depends_on": [
+        "AUTH-V2-NEARVIA-APP-001",
+        "AUTH-V2-NEARVIA-UI-001"
+      ],
+      "task_pack": "task_packs/AUTH-V2-NEARVIA-IDENTITY-001_APP_IDENTITY_FREEZE.md",
+      "execution_repo": "../Nearvia",
+      "execution_branch": "auth/v2-nearvia-identity-001-freeze",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-auth-v2-nearvia-identity-001-freeze",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": false,
+      "app_mutation_authorized": false,
+      "backend_mutation_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "provider_authorization_acquisition_authorized": false,
+      "provider_deployment_configuration_authorized": false,
+      "provider_credential_material_authorized": false,
+      "push_mutation_authorized": false,
+      "phone_sms_nearvia_authorized": false,
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "consumer_runtime_authority": "../Nearvia origin/main@d5c0c84ad139c4d39a5b3b06155186524e43ec14",
+      "authorized_write_set": [
+        "docs/AUTH_V2_PRODUCTION_APP_IDENTITY.md",
+        "docs/evidence/AUTH-V2-NEARVIA-IDENTITY-001/**"
+      ],
+      "required_behavior": "Freeze one canonical Nearvia production Android applicationId, iOS bundle identifier, release-signing custody/fingerprint contract and Apple capability ownership before any provider registration or App identity mutation. Current *.poc.* identities and debug signing must not be promoted to production.",
+      "execution_gate": "OPEN_ARCHITECTURE_FREEZE_ONLY",
+      "unblock_rule": "Deliver a docs-only exact freeze on fresh Nearvia main, independently review it, and merge it before any identity implementation or Apple/Google provider registration can consume final identifiers. No native/App/provider/backend mutation or secret material is authorized."
     }
   },
   "non_executable_roadmaps": [
