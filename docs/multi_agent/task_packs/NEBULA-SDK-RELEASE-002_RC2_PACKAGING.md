@@ -10,8 +10,8 @@
 - Execution worktree：`wt-nebula-sdk-release-002-rc2`
 - Platform API mode：`NONE`
 - SDK public API mode：`READ_ONLY`
-- Required upstream: `S1-F03-001 = DONE`, `S1-F03-002 = DONE`, `NEBULA-SDK-RELEASE-001 = DONE / CLOSED_RELEASE_PASS`, `AUTH-V2-SDK-002 = DONE / CLOSED_REVIEW_PASS`.
-- Execution baseline: `main@3b7066fae16c78e528104f78f64df51b99fb90a6`.
+- Required upstream: `S1-F03-001 = DONE`, `S1-F03-002 = DONE`, `NEBULA-SDK-RELEASE-001 = DONE / CLOSED_RELEASE_PASS`, `AUTH-V2-SDK-002 = DONE / CLOSED_REVIEW_PASS`, `NEBULA-SDK-RELEASE-GATE-002 = DONE / CLOSED_REVIEW_PASS`.
+- Execution baseline: `main@5d59c6ecf3535a3391d8dbd2bb897e69bb1cb1fe`.
 - State write authority: Coordinator only.
 
 ## Goal
