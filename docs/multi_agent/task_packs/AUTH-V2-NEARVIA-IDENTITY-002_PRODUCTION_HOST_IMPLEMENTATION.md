@@ -15,13 +15,13 @@
 ## Upstream authority
 - AUTH-V2-NEARVIA-IDENTITY-001 is DONE / CLOSED_REVIEW_PASS.
 - Corrected frozen public identity: Android/iOS `com.lcloudy.nearvia`.
-- Current Nearvia host base: `origin/main@54d4d5ea63d763e0a63fe81ff9b4851ac54962d4`.
+- Current corrective Nearvia host base: `origin/main@9e5d0882164a4fb98bcf00d66dbdeefec0f71c67`.
 - Consumer/Auth currently lives in `poc/watch_capability/app`; it is the production-host candidate for this Story.
 - `poc/assist_capability/app` remains a technical PoC and must keep its PoC identity here.
 
 ## Android production host
 - `namespace` and `applicationId` become `com.lcloudy.nearvia`.
-- Move Watch Kotlin production/test package declarations and paths to `com.lcloudy.nearvia`. If correcting an already-migrated wrong host, move from `com.nearvia.app` to `com.lcloudy.nearvia`.
+- Move the already-migrated wrong Watch Kotlin production/test package declarations and paths from `com.nearvia.app` to `com.lcloudy.nearvia`.
 - Launcher label becomes `Nearvia`.
 - Release must no longer use debug signing.
 - Release signing material stays outside Git; release tasks without required external signing inputs must fail closed instead of falling back to debug or silently producing the production release path.
@@ -60,7 +60,7 @@
 
 ## Verification
 - scope guard including renames/untracked files;
-- zero remaining old Watch Android Java/Kotlin package references after migration;
+- zero remaining wrong `com.nearvia.app` and old PoC Watch Android Java/Kotlin package references after migration;
 - Android host-security unit test PASS;
 - Android debug build PASS;
 - negative release-signing test proves missing external signing inputs fail closed;
