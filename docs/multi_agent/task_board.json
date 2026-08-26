@@ -2525,7 +2525,7 @@
       }
     },
     "AUTH-V2-NEARVIA-IDENTITY-002": {
-      "status": "BLOCKED",
+      "status": "READY",
       "owner": "Nearvia App Platform Coding Agent",
       "agent": "A",
       "reviewer": "App Review Agent",
@@ -2539,8 +2539,8 @@
       "execution_worktree": "wt-auth-v2-nearvia-identity-002",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": false,
-      "app_mutation_authorized": false,
+      "implementation_authorized": true,
+      "app_mutation_authorized": true,
       "backend_mutation_authorized": false,
       "sdk_production_mutation_authorized": false,
       "sdk_public_surface_mutation_authorized": false,
@@ -2566,8 +2566,8 @@
         "poc/watch_capability/app/android/app/src/test/kotlin/com/lcloudy/nearvia/**"
       ],
       "required_behavior": "Correct the already-merged wrong Host identity from com.nearvia.app to the canonical com.lcloudy.nearvia on Nearvia main 9e5d0882164a4fb98bcf00d66dbdeefec0f71c67. Preserve fail-closed external Android release signing and ASSIST isolation. Android namespace/applicationId and Kotlin package/path become com.lcloudy.nearvia; iOS Runner bundle becomes com.lcloudy.nearvia, RunnerTests com.lcloudy.nearvia.RunnerTests, production Apple Team V4U9V436CM. No provider/backend/sdk/push/SMS mutation.",
-      "execution_gate": "BLOCKED_GOVERNANCE_REVALIDATION",
-      "unblock_rule": "Blocked because Nebula PR #134 merged with only non-official Review #537 before merge; official Review #543 occurred after merge against an invalid empty range. A fresh Coordinator publication from current canonical main must restate the corrected com.lcloudy.nearvia implementation authority, pass Formal, receive official=true/stale=false exact-head APPROVED, then merge before Identity-002 App mutation can resume."
+      "execution_gate": "OPEN_IMPLEMENTATION",
+      "unblock_rule": "Coordinator unlock after corrected Identity-001 architecture closure and relock PR #135 exact a1269ff533dd9bd232ffc03ec2aea38d309a4cd5 / Review #545 APPROVED official=true stale=false / merge 8ecb6979a0c8691bca2bcedaf249c5fc61c2bcde / post-merge governance SUCCESS. Deliver exact current-main corrective Host candidate: migrate com.nearvia.app to com.lcloudy.nearvia, preserve fail-closed release signing and ASSIST isolation, run mac-mini-ci analyze/tests/Android+iOS/no-signing gates, then official exact-head App review before merge."
     }
   },
   "non_executable_roadmaps": [
