@@ -2453,7 +2453,7 @@
       "platform_api_mode": "READ_ONLY",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "consumer_runtime_authority": "../Nearvia origin/main@9e5d0882164a4fb98bcf00d66dbdeefec0f71c67",
+      "consumer_runtime_authority": "../Nearvia origin/main@0f24a041c873d1c8d536e904469ee19507a81de9",
       "consumer_target_sdk": "v0.1.0-rc2@ac96fb5f428cc37293bc5a63e23c90fe40ff8af2",
       "authorized_write_set": [
         "docs/evidence/AUTH-V2-NEARVIA-OAUTH-001/**"
@@ -2461,7 +2461,7 @@
       "required_behavior": "Collect and independently review sanitized Nearvia-specific Apple/Google provider-registration prerequisites. No provider acquisition production code until a separate Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
       "execution_gate": "OPEN_PREREQUISITE_EVIDENCE_ONLY",
       "external_provider_registration_ready": false,
-      "unblock_rule": "Before OPEN_IMPLEMENTATION, corrected Identity-001 must remain DONE and Identity-002 must complete a fresh officially reviewed governance unlock plus corrected Host implementation/closure. Then provide sanitized Apple/Google public client identifiers, callback/redirect contract, production signing fingerprints, Backend per-App provider readiness and secret-custody confirmation. No provider code or secret material is authorized."
+      "unblock_rule": "Identity-001 and Identity-002 are now closed with reviewed canonical com.lcloudy.nearvia / Apple Team V4U9V436CM Host identity. Before OPEN_IMPLEMENTATION, still provide independently reviewed sanitized Apple Sign in with Apple capability/client/callback evidence, Google Android+iOS public client registrations plus production signing fingerprints, Nearvia Backend per-App Apple/Google readiness, public environment/base URL/callback contract, and secret-custody confirmation. No provider code or secret material is authorized yet."
     },
     "AUTH-V2-NEARVIA-IDENTITY-001": {
       "status": "DONE",
@@ -2502,7 +2502,7 @@
       "unblock_rule": "Deliver docs-only corrective on fresh Nearvia main, citing historical production identity evidence, independently review exact head, merge, then Coordinator may reopen Identity-002 corrective implementation. No App/native/provider/backend/sdk mutation is authorized in this architecture corrective.",
       "review_state": "PASS",
       "review_verdict": "PASS",
-      "closure_note": "Corrective architecture remains accepted from Nearvia PR #15 / Review #532 / merge 9e5d088.... Canonical production identity is com.lcloudy.nearvia with Apple Team V4U9V436CM. The later Nebula publication PR #134 merged without an official=true exact-head approval, so only its Identity-002 implementation unlock is invalidated pending corrective publication; this does not invalidate the independently reviewed architecture corrective.",
+      "closure_note": "Corrective architecture remains accepted from Nearvia PR #15 / Review #532 / merge 9e5d088.... Canonical production identity is com.lcloudy.nearvia with Apple Team V4U9V436CM. The governance defect around PR #134 was later corrected by relock PR #135 / Review #545 and officially reviewed unlock PR #137 / Review #549; it does not invalidate the independently reviewed Identity-001 architecture corrective.",
       "delivery_commit": "0432d94a778f70ee2973fb0a6306a70f50862915",
       "formal_ci": "Nearvia Formal SUCCESS on exact 0432d94a778f70ee2973fb0a6306a70f50862915; descendant main 9e5d0882164a4fb98bcf00d66dbdeefec0f71c67 Formal SUCCESS.",
       "formal_review": "#532 APPROVED / reviewer-agent / official=true / stale=false / exact 0432d94a778f70ee2973fb0a6306a70f50862915",
@@ -2525,7 +2525,7 @@
       }
     },
     "AUTH-V2-NEARVIA-IDENTITY-002": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Nearvia App Platform Coding Agent",
       "agent": "A",
       "reviewer": "App Review Agent",
@@ -2539,8 +2539,8 @@
       "execution_worktree": "wt-auth-v2-nearvia-identity-002",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": true,
-      "app_mutation_authorized": true,
+      "implementation_authorized": false,
+      "app_mutation_authorized": false,
       "backend_mutation_authorized": false,
       "sdk_production_mutation_authorized": false,
       "sdk_public_surface_mutation_authorized": false,
@@ -2552,7 +2552,7 @@
       "platform_api_mode": "READ_ONLY",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "consumer_runtime_authority": "../Nearvia origin/main@9e5d0882164a4fb98bcf00d66dbdeefec0f71c67",
+      "consumer_runtime_authority": "../Nearvia origin/main@0f24a041c873d1c8d536e904469ee19507a81de9",
       "authorized_write_set": [
         "poc/watch_capability/app/android/app/build.gradle.kts",
         "poc/watch_capability/app/android/app/src/main/AndroidManifest.xml",
@@ -2565,9 +2565,30 @@
         "poc/watch_capability/app/android/app/src/main/kotlin/com/lcloudy/nearvia/**",
         "poc/watch_capability/app/android/app/src/test/kotlin/com/lcloudy/nearvia/**"
       ],
-      "required_behavior": "Correct the already-merged wrong Host identity from com.nearvia.app to the canonical com.lcloudy.nearvia on Nearvia main 9e5d0882164a4fb98bcf00d66dbdeefec0f71c67. Preserve fail-closed external Android release signing and ASSIST isolation. Android namespace/applicationId and Kotlin package/path become com.lcloudy.nearvia; iOS Runner bundle becomes com.lcloudy.nearvia, RunnerTests com.lcloudy.nearvia.RunnerTests, production Apple Team V4U9V436CM. No provider/backend/sdk/push/SMS mutation.",
-      "execution_gate": "OPEN_IMPLEMENTATION",
-      "unblock_rule": "Coordinator unlock after corrected Identity-001 architecture closure and relock PR #135 exact a1269ff533dd9bd232ffc03ec2aea38d309a4cd5 / Review #545 APPROVED official=true stale=false / merge 8ecb6979a0c8691bca2bcedaf249c5fc61c2bcde / post-merge governance SUCCESS. Deliver exact current-main corrective Host candidate: migrate com.nearvia.app to com.lcloudy.nearvia, preserve fail-closed release signing and ASSIST isolation, run mac-mini-ci analyze/tests/Android+iOS/no-signing gates, then official exact-head App review before merge."
+      "required_behavior": "Corrected Nearvia production Host identity is delivered and canonical: Android namespace/applicationId and Kotlin package/path are com.lcloudy.nearvia; iOS Runner is com.lcloudy.nearvia, RunnerTests com.lcloudy.nearvia.RunnerTests, Apple Team V4U9V436CM. Fail-closed external Android release signing is preserved; ASSIST, provider, Backend, SDK, Push and SMS remain unchanged/out of scope.",
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "unblock_rule": "Closed. Any future production identity mutation requires a new explicitly authorized Story. OAuth may use this identity closure only as prerequisite evidence; provider registration/acquisition remains separately gated by AUTH-V2-NEARVIA-OAUTH-001.",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "5230eb661a9ecd5c7e0de6f2d9bd25e9bcafb403",
+      "formal_ci": "Nearvia Formal SUCCESS on final exact 5230eb661a9ecd5c7e0de6f2d9bd25e9bcafb403; descendant main 0f24a041c873d1c8d536e904469ee19507a81de9 Formal SUCCESS.",
+      "formal_review": "#550 APPROVED / reviewer-agent / official=true / stale=false / exact 5230eb661a9ecd5c7e0de6f2d9bd25e9bcafb403",
+      "delivery_evidence": {
+        "execution_pr": "root/Nearvia#18",
+        "production_source_commit": "9a8e19375c18da613da8a8491bfaeaaaa52e8b2e",
+        "accepted_candidate": "5230eb661a9ecd5c7e0de6f2d9bd25e9bcafb403",
+        "canonical_merge": "0f24a041c873d1c8d536e904469ee19507a81de9",
+        "android_application_id": "com.lcloudy.nearvia",
+        "android_namespace": "com.lcloudy.nearvia",
+        "ios_bundle_id": "com.lcloudy.nearvia",
+        "ios_runner_tests": "com.lcloudy.nearvia.RunnerTests",
+        "apple_team": "V4U9V436CM",
+        "release_signing": "fail-closed external Nearvia release inputs; no debug fallback",
+        "formal_source_gate": "production source 9a8e19375c18da613da8a8491bfaeaaaa52e8b2e validated by trusted base-owned Nearvia Formal on mac-mini-ci; final docs-only successor 5230eb661a9ecd5c7e0de6f2d9bd25e9bcafb403 also has exact Formal SUCCESS",
+        "assist_mutation": 0,
+        "provider_backend_sdk_push_sms_mutation": 0
+      },
+      "closure_note": "Nearvia corrective Host identity is canonical on main 0f24a041.... PR #18 final exact 5230eb6... passed Nearvia Formal, Review #550 APPROVED official=true/stale=false, merged as 0f24a041..., and descendant Formal succeeded. Production identity is com.lcloudy.nearvia with Apple Team V4U9V436CM; fail-closed release signing is preserved. Provider registration/acquisition remains unapproved."
     }
   },
   "non_executable_roadmaps": [
