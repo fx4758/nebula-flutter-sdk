@@ -2502,24 +2502,23 @@
       "review_state": "PASS",
       "review_verdict": "PASS",
       "delivery_commit": "2834844c93ed5ecab5ac9df041c0f8933728814c",
-      "formal_ci": "Nearvia repository has no Forgejo Formal status context for this docs-only freeze; exact candidate scope/diff checks were recorded on PR #12.",
+      "formal_ci": "Nearvia repository has no Forgejo Formal status context for this docs-only Story; exact-head independent review is authoritative.",
       "delivery_evidence": {
         "execution_pr": "root/Nearvia#12",
         "accepted_candidate": "2834844c93ed5ecab5ac9df041c0f8933728814c",
         "canonical_merge": "54d4d5ea63d763e0a63fe81ff9b4851ac54962d4",
-        "freeze_base": "d5c0c84ad139c4d39a5b3b06155186524e43ec14",
-        "scope": "docs-only: docs/AUTH_V2_PRODUCTION_APP_IDENTITY.md + docs/evidence/AUTH-V2-NEARVIA-IDENTITY-001/**",
-        "frozen_android_application_id": "com.nearvia.app",
-        "frozen_ios_bundle_id": "com.nearvia.app",
-        "frozen_broadcast_bundle_id": "com.nearvia.app.BroadcastUpload",
-        "frozen_app_group": "group.com.nearvia.app",
-        "apple_team_target": "PFTP7P5DXT",
-        "signing_contract": "dedicated Nearvia release identity; never debug or NFC Writer; production Google OAuth uses final Play app-signing fingerprint",
-        "runtime_mutation": 0,
-        "secret_material": 0
+        "android_application_id": "com.nearvia.app",
+        "android_namespace": "com.nearvia.app",
+        "ios_bundle_id": "com.nearvia.app",
+        "ios_broadcast_extension": "com.nearvia.app.BroadcastUpload",
+        "ios_app_group": "group.com.nearvia.app",
+        "apple_team": "PFTP7P5DXT",
+        "android_signing_contract": "dedicated Nearvia release identity; never debug or NFC Writer; production Google OAuth binds Play app-signing fingerprint",
+        "public_app_count": 1,
+        "watch_assist_identity": "one public Nearvia App; WATCH and ASSIST are capabilities, not separate store identities"
       },
       "formal_review": "#506 APPROVED / reviewer-agent / official=true / stale=false / exact 2834844c93ed5ecab5ac9df041c0f8933728814c",
-      "closure_note": "Nearvia production App identity/signing architecture is canonical. One public consumer App is frozen at com.nearvia.app for Android and iOS; WATCH/ASSIST remain capabilities. Broadcast extension is com.nearvia.app.BroadcastUpload, App Group group.com.nearvia.app, Apple Team target PFTP7P5DXT. Production Android signing must be dedicated Nearvia identity and Google production binding must use final Play app-signing fingerprint. This freeze authorizes no App/native/provider/backend mutation; implementation and provider registration remain separate Stories."
+      "closure_note": "Nearvia production App identity/signing architecture is canonical. Public product count is one. Android/iOS root is com.nearvia.app; Broadcast extension is com.nearvia.app.BroadcastUpload; App Group is group.com.nearvia.app; Apple Team target is PFTP7P5DXT. Current PoC IDs/debug signing must not be promoted. This closure authorizes no native/App/provider mutation; identity implementation and provider registration remain separate downstream work."
     }
   },
   "non_executable_roadmaps": [
