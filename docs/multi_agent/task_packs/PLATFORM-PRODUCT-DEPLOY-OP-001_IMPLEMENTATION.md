@@ -10,7 +10,7 @@
 - Product adapter rule: `ADAPTER_FIRST`
 
 ## Gate
-BLOCKED until `PLATFORM-PRODUCT-DEPLOY-ARCH-001 = DONE / CLOSED_REVIEW_PASS` and its contract is canonical.
+`OPEN_IMPLEMENTATION` after `PLATFORM-PRODUCT-DEPLOY-ARCH-001 = DONE / CLOSED_REVIEW_PASS`. Contract authority: `docs/multi_agent/contracts/PRODUCT_DEPLOYMENT_OPERATOR_V1.md`. Backend authority: `root/FlyPostAPI Dev@d9ad6c3c0e9186e574081e22d88450d93542fd29`.
 
 ## Authorized implementation surface
 Expected narrow write set:

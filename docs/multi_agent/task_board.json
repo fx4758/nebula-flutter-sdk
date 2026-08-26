@@ -2635,7 +2635,7 @@
       "unblock_rule": "Blocked until PLATFORM-PRODUCT-DEPLOY-OP-001 is DONE/CLOSED_REVIEW_PASS. Then Coordinator must separately reopen staging Product App registration through the reviewed generic operator; direct SQL/admin-password reset remains forbidden."
     },
     "PLATFORM-PRODUCT-DEPLOY-ARCH-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Platform Deployment Architecture Agent",
       "agent": "A",
       "reviewer": "Platform Architecture Review Agent",
@@ -2647,8 +2647,8 @@
       "execution_worktree": "wt-platform-product-deploy-arch-001",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": true,
-      "architecture_mutation_authorized": true,
+      "implementation_authorized": false,
+      "architecture_mutation_authorized": false,
       "backend_mutation_authorized": false,
       "sdk_mutation_authorized": false,
       "app_mutation_authorized": false,
@@ -2659,11 +2659,18 @@
         "docs/multi_agent/contracts/PRODUCT_DEPLOYMENT_OPERATOR_V1.md"
       ],
       "required_behavior": "Freeze a generic local-only audited Product App deployment operator contract. No network endpoint, no consumer-specific defaults, no direct SQL, no admin impersonation. Freeze actor/audit/idempotency/fail-closed/security semantics before Coding.",
-      "execution_gate": "OPEN_ARCHITECTURE_FREEZE",
-      "unblock_rule": "Deliver docs-only PRODUCT_DEPLOYMENT_OPERATOR_V1.md, pass governance/Formal and independent Architecture Review, merge, then Coordinator may separately open PLATFORM-PRODUCT-DEPLOY-OP-001 implementation."
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "unblock_rule": "Closed. PLATFORM-PRODUCT-DEPLOY-OP-001 may implement only PRODUCT_DEPLOYMENT_OPERATOR_V1 under its separately published OPEN_IMPLEMENTATION authority.",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "941ccc3b1d700d570d820ee5e58342d25224dd98",
+      "formal_ci": "Nebula governance SUCCESS on exact 941ccc3b1d700d570d820ee5e58342d25224dd98; descendant main 6d0666fc51fcb6bebf4b3e71ed10f539d308eed2 governance SUCCESS.",
+      "formal_review": "#565 APPROVED / reviewer-agent / official=true / stale=false / exact 941ccc3b1d700d570d820ee5e58342d25224dd98",
+      "delivery_merge_commit": "6d0666fc51fcb6bebf4b3e71ed10f539d308eed2",
+      "closure_note": "PRODUCT_DEPLOYMENT_OPERATOR_V1 is canonical. Local-only/no-network generic productctl architecture, SYSTEM_DEPLOYMENT_OPERATOR audit actor, local:productctl source, MySQL-coordinated Snowflake worker lease, unscoped app_key idempotency including soft-deleted rows, and fail-closed conflict semantics are independently reviewed. Any implementation change outside the frozen contract requires a new architecture Story."
     },
     "PLATFORM-PRODUCT-DEPLOY-OP-001": {
-      "status": "BLOCKED",
+      "status": "READY",
       "owner": "Backend Platform Coding Agent",
       "agent": "A",
       "reviewer": "Backend Review Agent",
@@ -2677,8 +2684,8 @@
       "execution_worktree": "wt-platform-product-deploy-op-001",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": false,
-      "backend_mutation_authorized": false,
+      "implementation_authorized": true,
+      "backend_mutation_authorized": true,
       "db_schema_mutation_authorized": false,
       "provider_credential_material_authorized": false,
       "sdk_mutation_authorized": false,
@@ -2694,8 +2701,9 @@
         "docs/evidence/PLATFORM-PRODUCT-DEPLOY-OP-001/**"
       ],
       "required_behavior": "Implement only the independently reviewed generic PRODUCT_DEPLOYMENT_OPERATOR_V1 contract. No Nearvia/NFC Writer hard-code, no new HTTP endpoint, schema, provider, credential, SDK or App mutation.",
-      "execution_gate": "BLOCKED_ARCHITECTURE_FREEZE",
-      "unblock_rule": "Blocked until PLATFORM-PRODUCT-DEPLOY-ARCH-001 is DONE/CLOSED_REVIEW_PASS. Coordinator must then separately publish OPEN_IMPLEMENTATION and backend_mutation_authorized=true before Coding dispatch."
+      "execution_gate": "OPEN_IMPLEMENTATION",
+      "unblock_rule": "OPEN_IMPLEMENTATION. Coding may modify only the authorized narrow Backend write set and must implement PRODUCT_DEPLOYMENT_OPERATOR_V1 exactly. Deliver one exact candidate to Formal/full go test and independent Backend review; no staging mutation until merged/post-merge quality and Coordinator authorization.",
+      "contract_authority": "contracts/PRODUCT_DEPLOYMENT_OPERATOR_V1.md"
     }
   },
   "non_executable_roadmaps": [
