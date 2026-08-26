@@ -42,6 +42,8 @@
 - `poc/watch_capability/app/android/app/src/main/AndroidManifest.xml`
 - `poc/watch_capability/app/android/app/src/main/kotlin/com/nearvia/**`
 - `poc/watch_capability/app/android/app/src/test/kotlin/com/nearvia/**`
+- `poc/watch_capability/app/android/app/src/main/kotlin/com/lcloudy/nearvia/**`
+- `poc/watch_capability/app/android/app/src/test/kotlin/com/lcloudy/nearvia/**`
 - `poc/watch_capability/app/ios/Runner.xcodeproj/project.pbxproj`
 - `poc/watch_capability/app/ios/Runner/Info.plist`
 - `poc/watch_capability/app/test/platform/nebula/nearvia_nebula_boundary_guard_test.dart`
