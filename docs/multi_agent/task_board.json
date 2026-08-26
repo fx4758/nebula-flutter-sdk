@@ -2429,7 +2429,8 @@
       "depends_on": [
         "AUTH-V2-NEARVIA-APP-001",
         "AUTH-V2-NEARVIA-UI-001",
-        "AUTH-V2-NEARVIA-IDENTITY-001"
+        "AUTH-V2-NEARVIA-IDENTITY-001",
+        "AUTH-V2-NEARVIA-IDENTITY-002"
       ],
       "task_pack": "task_packs/AUTH-V2-NEARVIA-OAUTH-001_PROVIDER_ACQUISITION.md",
       "execution_repo": "../Nearvia",
@@ -2460,7 +2461,7 @@
       "required_behavior": "Collect and independently review sanitized Nearvia-specific Apple/Google provider-registration prerequisites. No provider acquisition production code until a separate Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
       "execution_gate": "OPEN_PREREQUISITE_EVIDENCE_ONLY",
       "external_provider_registration_ready": false,
-      "unblock_rule": "Before OPEN_IMPLEMENTATION, AUTH-V2-NEARVIA-IDENTITY-001 must be DONE with canonical production App identity/signing freeze, then provide sanitized Nearvia Apple/Google public client identifiers, callback/redirect contract, production signing fingerprints, Backend per-App provider readiness and secret-custody confirmation. Coordinator must publish a separately reviewed unlock; no App/provider code or secret material is authorized."
+      "unblock_rule": "Before OPEN_IMPLEMENTATION, AUTH-V2-NEARVIA-IDENTITY-001 and AUTH-V2-NEARVIA-IDENTITY-002 must be DONE, then provide sanitized Nearvia Apple/Google public client identifiers, callback/redirect contract, production signing fingerprints, Backend per-App provider readiness and secret-custody confirmation. Coordinator must publish a separately reviewed OAuth unlock; no provider code or secret material is authorized."
     },
     "AUTH-V2-NEARVIA-IDENTITY-001": {
       "status": "DONE",
@@ -2520,6 +2521,49 @@
       },
       "formal_review": "#506 APPROVED / reviewer-agent / official=true / stale=false / exact 2834844c93ed5ecab5ac9df041c0f8933728814c",
       "closure_note": "Nearvia production App identity/signing architecture is canonical. One public consumer App is frozen at com.nearvia.app for Android and iOS; WATCH/ASSIST remain capabilities. Broadcast extension is com.nearvia.app.BroadcastUpload, App Group group.com.nearvia.app, Apple Team target PFTP7P5DXT. Production Android signing must be dedicated Nearvia identity and Google production binding must use final Play app-signing fingerprint. This freeze authorizes no App/native/provider/backend mutation; implementation and provider registration remain separate Stories."
+    },
+    "AUTH-V2-NEARVIA-IDENTITY-002": {
+      "status": "READY",
+      "owner": "Nearvia App Platform Coding Agent",
+      "agent": "A",
+      "reviewer": "App Review Agent",
+      "depends_on": [
+        "AUTH-V2-NEARVIA-IDENTITY-001"
+      ],
+      "task_pack": "task_packs/AUTH-V2-NEARVIA-IDENTITY-002_PRODUCTION_HOST_IMPLEMENTATION.md",
+      "execution_repo": "../Nearvia",
+      "execution_branch": "auth/v2-nearvia-identity-002",
+      "execution_remote": "origin",
+      "execution_worktree": "wt-auth-v2-nearvia-identity-002",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": true,
+      "app_mutation_authorized": true,
+      "backend_mutation_authorized": false,
+      "sdk_production_mutation_authorized": false,
+      "sdk_public_surface_mutation_authorized": false,
+      "provider_authorization_acquisition_authorized": false,
+      "provider_deployment_configuration_authorized": false,
+      "provider_credential_material_authorized": false,
+      "push_mutation_authorized": false,
+      "phone_sms_nearvia_authorized": false,
+      "platform_api_mode": "READ_ONLY",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "consumer_runtime_authority": "../Nearvia origin/main@54d4d5ea63d763e0a63fe81ff9b4851ac54962d4",
+      "authorized_write_set": [
+        "poc/watch_capability/app/android/app/build.gradle.kts",
+        "poc/watch_capability/app/android/app/src/main/AndroidManifest.xml",
+        "poc/watch_capability/app/android/app/src/main/kotlin/com/nearvia/**",
+        "poc/watch_capability/app/android/app/src/test/kotlin/com/nearvia/**",
+        "poc/watch_capability/app/ios/Runner.xcodeproj/project.pbxproj",
+        "poc/watch_capability/app/ios/Runner/Info.plist",
+        "poc/watch_capability/app/test/platform/nebula/nearvia_nebula_boundary_guard_test.dart",
+        "docs/evidence/AUTH-V2-NEARVIA-IDENTITY-002/**"
+      ],
+      "required_behavior": "Implement frozen com.nearvia.app identity in the current Watch Consumer/Auth production host only, rename Android Kotlin package paths, remove PoC launcher names, preserve Apple Team PFTP7P5DXT, and make Android production release signing fail closed unless external Nearvia signing inputs exist. ASSIST remains a separate PoC and read-only.",
+      "execution_gate": "OPEN_IMPLEMENTATION",
+      "unblock_rule": "Deliver exact current-main-based host identity candidate with ASSIST byte-identical, no provider/backend/sdk mutation, mac-mini-ci analyze/tests/Android+iOS builds, explicit no-signing release failure proof, then obtain official exact-head App review."
     }
   },
   "non_executable_roadmaps": [
