@@ -20,18 +20,16 @@ This is docs-only architecture work. It does not authorize Gradle/Xcode/native m
 ## Required upstream
 - AUTH-V2-NEARVIA-APP-001 = DONE
 - AUTH-V2-NEARVIA-UI-001 = DONE
-- AUTH-V2-NEARVIA-OAUTH-001 preflight registration canonical
-- Nearvia PR #11 / Review #502 evidence merged as `d5c0c84ad139c4d39a5b3b06155186524e43ec14`
+- Current corrective runtime authority: Nearvia `origin/main@df6c7f62a9ee1af2884f326b132429eea9f5ee4c`, where the erroneous `com.nearvia.app` Identity-002 host implementation is already merged.
 
 ## Current reviewed evidence
-- Android is still `com.nearvia.poc.watch_capability_poc`.
-- Android release still uses debug signing.
-- iOS is still `com.nearvia.poc.watchCapabilityPoc`.
-- No canonical tracked Sign in with Apple entitlement exists.
-- No production Nearvia App identity is frozen.
-- FlyPostAPI has no Nearvia per-App OAuth binding in checked-in environment templates.
+- Current Nearvia main incorrectly uses Android namespace/applicationId `com.nearvia.app` and iOS Runner bundle `com.nearvia.app`; this is the regression being corrected.
+- Historical production freeze `3b9f8c8` and later reference `5ada110` consistently use `com.lcloudy.nearvia`.
+- Historical production Apple application identifier is `V4U9V436CM.com.lcloudy.nearvia`.
+- Historical reserved Broadcast extension is `com.lcloudy.nearvia.broadcast`; App Group is `group.com.lcloudy.nearvia`.
+- Identity-002 also added fail-closed external Android release signing; that safety behavior must be preserved by the later implementation corrective.
 
-No current `*.poc.*` identity may be promoted as production by assumption.
+No `com.nearvia.app` value may survive the corrected architecture freeze.
 
 ## Freeze decisions required
 1. Android production `applicationId` and namespace are fixed at `com.lcloudy.nearvia` by historical production freeze `3b9f8c8`.

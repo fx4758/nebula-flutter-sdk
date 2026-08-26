@@ -2492,12 +2492,12 @@
       "platform_api_mode": "READ_ONLY",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "consumer_runtime_authority": "../Nearvia origin/main@d5c0c84ad139c4d39a5b3b06155186524e43ec14",
+      "consumer_runtime_authority": "../Nearvia origin/main@df6c7f62a9ee1af2884f326b132429eea9f5ee4c",
       "authorized_write_set": [
         "docs/AUTH_V2_PRODUCTION_APP_IDENTITY.md",
         "docs/evidence/AUTH-V2-NEARVIA-IDENTITY-001/**"
       ],
-      "required_behavior": "Correct the Nearvia production identity freeze to the already-established shipping identity com.lcloudy.nearvia. Historical production freeze 3b9f8c8 and reference branch 5ada110 are evidence: Android applicationId/namespace and iOS bundle are com.lcloudy.nearvia; iOS application identifier uses Apple Team V4U9V436CM; RunnerTests is com.lcloudy.nearvia.RunnerTests; reserved Broadcast extension is com.lcloudy.nearvia.broadcast; App Group is group.com.lcloudy.nearvia. The erroneous com.nearvia.app/PFTP7P5DXT freeze must be superseded.",
+      "required_behavior": "Correct fresh Nearvia main df6c7f62a9ee1af2884f326b132429eea9f5ee4c, where the erroneous com.nearvia.app host implementation is already merged, back to the pre-existing shipping identity com.lcloudy.nearvia. Historical production freeze 3b9f8c8 and reference branch 5ada110 are evidence: Android applicationId/namespace and iOS bundle are com.lcloudy.nearvia; iOS application identifier uses Apple Team V4U9V436CM; RunnerTests is com.lcloudy.nearvia.RunnerTests; reserved Broadcast extension is com.lcloudy.nearvia.broadcast; App Group is group.com.lcloudy.nearvia. This architecture corrective is docs-only and must not mutate the already-wrong host until independently approved and canonical.",
       "execution_gate": "OPEN_ARCHITECTURE_CORRECTIVE",
       "unblock_rule": "Deliver docs-only corrective on fresh Nearvia main, citing historical production identity evidence, independently review exact head, merge, then Coordinator may reopen Identity-002 corrective implementation. No App/native/provider/backend/sdk mutation is authorized in this architecture corrective.",
       "review_state": "REQUEST_REVIEW",
