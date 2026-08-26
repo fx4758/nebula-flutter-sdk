@@ -14,34 +14,36 @@
 
 ## Upstream authority
 - AUTH-V2-NEARVIA-IDENTITY-001 is DONE / CLOSED_REVIEW_PASS.
-- Frozen public identity: Android/iOS `com.nearvia.app`.
+- Corrected frozen public identity: Android/iOS `com.lcloudy.nearvia`.
 - Current Nearvia host base: `origin/main@54d4d5ea63d763e0a63fe81ff9b4851ac54962d4`.
 - Consumer/Auth currently lives in `poc/watch_capability/app`; it is the production-host candidate for this Story.
 - `poc/assist_capability/app` remains a technical PoC and must keep its PoC identity here.
 
 ## Android production host
-- `namespace` and `applicationId` become `com.nearvia.app`.
-- Move Watch Kotlin production/test package declarations and paths from `com.nearvia.poc.watch_capability_poc` to `com.nearvia.app`.
+- `namespace` and `applicationId` become `com.lcloudy.nearvia`.
+- Move Watch Kotlin production/test package declarations and paths to `com.lcloudy.nearvia`. If correcting an already-migrated wrong host, move from `com.nearvia.app` to `com.lcloudy.nearvia`.
 - Launcher label becomes `Nearvia`.
 - Release must no longer use debug signing.
 - Release signing material stays outside Git; release tasks without required external signing inputs must fail closed instead of falling back to debug or silently producing the production release path.
 
 ## iOS production host
-- Runner bundle ID becomes `com.nearvia.app` for all build configurations.
-- RunnerTests becomes `com.nearvia.app.RunnerTests`.
+- Runner bundle ID becomes `com.lcloudy.nearvia` for all build configurations.
+- RunnerTests becomes `com.lcloudy.nearvia.RunnerTests`.
 - Native display/bundle name becomes `Nearvia`.
-- Apple Team remains `PFTP7P5DXT`.
+- Apple Team for the production identity is `V4U9V436CM`.
 - Do not add Sign in with Apple entitlement, provider client IDs or provider secrets in this Story.
 
 ## ASSIST PoC isolation
 - `poc/assist_capability/app/**` is read-only.
-- Frozen future `com.nearvia.app.BroadcastUpload` and `group.com.nearvia.app` are reserved for later ASSIST capability integration into the one production host; do not turn the separate ASSIST PoC into a second `com.nearvia.app` binary here.
+- Frozen future `com.lcloudy.nearvia.broadcast` and `group.com.lcloudy.nearvia` are reserved for later ASSIST capability integration into the one production host; do not turn the separate ASSIST PoC into a second `com.nearvia.app` binary here.
 
 ## Authorized write set
 - `poc/watch_capability/app/android/app/build.gradle.kts`
 - `poc/watch_capability/app/android/app/src/main/AndroidManifest.xml`
 - `poc/watch_capability/app/android/app/src/main/kotlin/com/nearvia/**`
 - `poc/watch_capability/app/android/app/src/test/kotlin/com/nearvia/**`
+- `poc/watch_capability/app/android/app/src/main/kotlin/com/lcloudy/nearvia/**`
+- `poc/watch_capability/app/android/app/src/test/kotlin/com/lcloudy/nearvia/**`
 - `poc/watch_capability/app/ios/Runner.xcodeproj/project.pbxproj`
 - `poc/watch_capability/app/ios/Runner/Info.plist`
 - `poc/watch_capability/app/test/platform/nebula/nearvia_nebula_boundary_guard_test.dart`
@@ -53,7 +55,7 @@
 - Apple/Google provider configuration;
 - Backend or Nebula SDK mutation;
 - Push/SMS mutation;
-- changing the frozen ID away from `com.nearvia.app`;
+- changing the corrected frozen ID away from `com.lcloudy.nearvia`;
 - any credential/private key/keystore material in Git.
 
 ## Verification
@@ -62,7 +64,7 @@
 - Android host-security unit test PASS;
 - Android debug build PASS;
 - negative release-signing test proves missing external signing inputs fail closed;
-- iOS debug no-codesign build PASS and resolves Runner bundle as `com.nearvia.app`;
+- iOS debug no-codesign build PASS and resolves Runner bundle as `com.lcloudy.nearvia`;
 - Flutter analyze + focused/full tests PASS;
 - ASSIST PoC tree byte-identical to base;
 - exact-head independent App review before merge.
