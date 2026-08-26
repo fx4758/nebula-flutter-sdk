@@ -8,7 +8,7 @@
 - Execution remote: `origin`
 - Execution worktree: `wt-auth-v2-nearvia-be-app-001`
 - Required upstream: `AUTH-V2-BE-001 = DONE`, `AUTH-V2-NEARVIA-IDENTITY-002 = DONE`
-- Platform API mode：`USE_EXISTING_CONTROL_PLANE`
+- Platform API mode：`NONE`
 - SDK public API mode：`READ_ONLY`
 - Product adapter rule: `ADAPTER_FIRST`
 

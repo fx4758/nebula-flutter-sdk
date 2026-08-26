@@ -2616,7 +2616,7 @@
       "provider_credential_material_authorized": false,
       "sdk_mutation_authorized": false,
       "app_mutation_authorized": false,
-      "platform_api_mode": "USE_EXISTING_CONTROL_PLANE",
+      "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
       "backend_runtime_authority": "root/FlyPostAPI Dev@d9ad6c3c0e9186e574081e22d88450d93542fd29",
