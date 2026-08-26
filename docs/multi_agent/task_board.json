@@ -2453,15 +2453,15 @@
       "platform_api_mode": "READ_ONLY",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "consumer_runtime_authority": "../Nearvia origin/main@0f24a041c873d1c8d536e904469ee19507a81de9",
+      "consumer_runtime_authority": "../Nearvia origin/main@c9fa368adf2bc1e243a867370da9a28b24581932",
       "consumer_target_sdk": "v0.1.0-rc2@ac96fb5f428cc37293bc5a63e23c90fe40ff8af2",
       "authorized_write_set": [
         "docs/evidence/AUTH-V2-NEARVIA-OAUTH-001/**"
       ],
-      "required_behavior": "Collect and independently review sanitized Nearvia-specific Apple/Google provider-registration prerequisites. No provider acquisition production code until a separate Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
+      "required_behavior": "Continue prerequisite-evidence collection only for Nearvia Apple/Google OAuth. Accepted Nearvia evidence now proves canonical com.lcloudy.nearvia identity, historical production-package APKs 029/044 are Android Debug signed and therefore invalid as production/Play OAuth fingerprint evidence, and historical signed iOS Runner uses V4U9V436CM.com.lcloudy.nearvia but lacks com.apple.developer.applesignin. No provider acquisition/deployment production code until a separately reviewed Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
       "execution_gate": "OPEN_PREREQUISITE_EVIDENCE_ONLY",
       "external_provider_registration_ready": false,
-      "unblock_rule": "Identity-001 and Identity-002 are now closed with reviewed canonical com.lcloudy.nearvia / Apple Team V4U9V436CM Host identity. Before OPEN_IMPLEMENTATION, still provide independently reviewed sanitized Apple Sign in with Apple capability/client/callback evidence, Google Android+iOS public client registrations plus production signing fingerprints, Nearvia Backend per-App Apple/Google readiness, public environment/base URL/callback contract, and secret-custody confirmation. No provider code or secret material is authorized yet."
+      "unblock_rule": "Accepted prerequisite evidence: Nearvia PR #20 / Review #555 / merge 48dd5bc... plus artifact audit PR #22 exact eff727308b1d1ba0526388df6dc6e02576f3526e / Review #558 APPROVED official=true stale=false / merge c9fa368adf2bc1e243a867370da9a28b24581932 / descendant Formal SUCCESS. Historical APK debug fingerprints MUST NOT be used for production Google OAuth, and historical iOS signed profile does not prove Sign in with Apple capability. Before OPEN_IMPLEMENTATION still require independently reviewed sanitized real production/Play SHA-1+SHA-256, Apple Sign in with Apple capability/public client/callback evidence, Google Android+iOS public client registrations, dedicated Nearvia Backend App ID/AppKey plus prod/test API origins, Backend per-App Apple/Google binding, and external secret-custody confirmation. All provider/implementation flags remain false until then."
     },
     "AUTH-V2-NEARVIA-IDENTITY-001": {
       "status": "DONE",

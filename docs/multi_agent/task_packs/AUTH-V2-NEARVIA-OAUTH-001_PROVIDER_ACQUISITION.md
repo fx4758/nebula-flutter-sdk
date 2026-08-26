@@ -17,7 +17,7 @@
 
 - `AUTH-V2-NEARVIA-APP-001 = DONE / CLOSED_REVIEW_PASS`
 - `AUTH-V2-NEARVIA-UI-001 = DONE / CLOSED_REVIEW_PASS`
-- Nearvia canonical runtime: `origin/main@01966a86c44a7075b3b5b4b1961dc5bf8b39a410`
+- Nearvia canonical runtime: `origin/main@c9fa368adf2bc1e243a867370da9a28b24581932`
 - immutable Nebula SDK: `v0.1.0-rc2@ac96fb5f428cc37293bc5a63e23c90fe40ff8af2`
 
 ## Product scope
