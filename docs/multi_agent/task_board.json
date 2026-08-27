@@ -2772,7 +2772,7 @@
       "delivery_merge_commit": "075998ee561bc08bf5e11c3492c0ef7dfb809754"
     },
     "AUTH-V2-BE-STAGING-DEPLOY-001": {
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "owner": "Backend Release / Deployment Agent",
       "agent": "A",
       "reviewer": "Backend Review Agent",
@@ -2798,20 +2798,26 @@
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "backend_deployed_runtime_authority": "root/FlyPostAPI v0.1.0-rc2@6d2ddd3a6c626b7918b29da6e92e13684bc3ef7a",
-      "backend_candidate_read_authority": "root/FlyPostAPI Dev@bcd93b51aa2b2d479057e2e6b260ee9aab067353",
+      "backend_deployed_runtime_authority": "root/FlyPostAPI v0.1.0-rc3@107671bef95c4969f4333c07c78f7d35bfde7227",
+      "backend_candidate_read_authority": "root/FlyPostAPI Dev@107671bef95c4969f4333c07c78f7d35bfde7227; closure PR #27 exact 85ae77a2a3cdf1a12e45fa6d554964fb8ddd6cc8",
       "staging_runtime": "staging-api / Compose project staging / https://testapi.nfcwriter.top22.top",
       "authorized_write_set": [
         "docs/releases/0.1.0-rc3.md",
         "docs/evidence/AUTH-V2-BE-STAGING-DEPLOY-001/**"
       ],
       "required_behavior": "Freeze a docs-only immutable v0.1.0-rc3 release evidence candidate on exact Backend base bcd93b51..., run exact CI plus disposable migration rehearsal/compatibility gates, create immutable tag only after independent review, build exact image off-host, then deploy only to canonical staging-api under remote governance. Backend production/schema/provider/App/SDK mutation is not inherited; any corrective needs separate authorization.",
-      "execution_gate": "OPEN_RELEASE_AND_STAGING_EXECUTION",
-      "unblock_rule": "OPEN_RELEASE_AND_STAGING_EXECUTION. Release Agent may create only docs/releases/0.1.0-rc3.md and Story evidence on exact release base bcd93b51..., then run contract gates. No production-code corrective, provider config/credential, App/SDK mutation or mutable-Dev deployment is authorized.",
+      "execution_gate": "BLOCKED_ON_VARIANCE_ACCEPTANCE_REVIEW",
+      "unblock_rule": "Runtime RC3 deployment is complete but FlyPostAPI closure Review #630 blocks on a mandatory sequence variance. Closure may resume only after the exact canonical variance-acceptance publication is independently APPROVED and merged; no production/provider/App/SDK mutation is authorized.",
       "contract_authority": "contracts/AUTH_V2_STAGING_DEPLOYMENT_V1.md",
       "release_identity": "v0.1.0-rc3",
       "release_branch": "release/backend-v0.1.0-rc3",
-      "release_base": "bcd93b51aa2b2d479057e2e6b260ee9aab067353"
+      "release_base": "bcd93b51aa2b2d479057e2e6b260ee9aab067353",
+      "governance_sequence_deviation": "RC3 deployment did not rerun staging cmd/migrate status+verify immediately before RC3 startup applied 048/049. Fresh 47-row pre-release audit/rehearsal existed and exact RC3 post-deploy status+verify later passed; this does not retroactively satisfy AUTH_V2_STAGING_DEPLOYMENT_V1 §8.",
+      "variance_decision": "PROPOSED_ONE_TIME_ACCEPTANCE_EFFECTIVE_ONLY_AFTER_EXACT_INDEPENDENT_APPROVAL_AND_CANONICAL_MERGE",
+      "variance_scope": "AUTH-V2-BE-STAGING-DEPLOY-001 RC3 2026-08-27 only; missing immediate pre-start staging CLI status/verify repetition only; future §8 remains unchanged and mandatory.",
+      "variance_remediation": "No rollback/redeploy solely to recreate ordering evidence. Preserve actual history; require exact independent review of this governance disposition; then corrective FlyPostAPI PR #27 must cite the canonical decision and rerun CI/review.",
+      "variance_review_evidence": "reports/AUTH-V2-BE-STAGING-DEPLOY-001_VARIANCE_ACCEPTANCE.md",
+      "closure_pr": "root/FlyPostAPI#27 exact 85ae77a2a3cdf1a12e45fa6d554964fb8ddd6cc8 / Review #630 REQUEST_CHANGES official=true stale=false"
     }
   },
   "non_executable_roadmaps": [
