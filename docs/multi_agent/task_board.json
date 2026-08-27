@@ -2731,7 +2731,7 @@
       "closure_note": "PRODUCT_DEPLOYMENT_OPERATOR_V1 is implemented and independently reviewed in FlyPostAPI. Final diff is limited to cmd/productctl/**, deployment_operator.go/test and Story evidence. It preserves local-only/no-network execution, unscoped app_key idempotency, fail-closed ambiguous/conflict handling, audited create transaction, MySQL-coordinated Snowflake allocation and sanitized output. No schema/router/admin-auth/provider/credential/SDK/App or consumer-specific hard-code was added."
     },
     "AUTH-V2-BE-STAGING-DEPLOY-ARCH-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Backend Deployment Architecture Agent",
       "agent": "A",
       "reviewer": "Platform Architecture Review Agent",
@@ -2745,8 +2745,8 @@
       "execution_worktree": "wt-auth-v2-be-staging-deploy-arch-001",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": true,
-      "architecture_mutation_authorized": true,
+      "implementation_authorized": false,
+      "architecture_mutation_authorized": false,
       "backend_mutation_authorized": false,
       "staging_deployment_authorized": false,
       "db_schema_mutation_authorized": false,
@@ -2762,11 +2762,17 @@
         "docs/multi_agent/contracts/AUTH_V2_STAGING_DEPLOYMENT_V1.md"
       ],
       "required_behavior": "Freeze a fail-closed shared-staging deployment contract before any new Backend release/deploy. Direct mutable-Dev deployment is forbidden. Contract must cover immutable RC identity, migration rehearsal, current-client compatibility smoke, exact artifact provenance, canonical single staging runtime, rollout/rollback semantics and remote governance.",
-      "execution_gate": "OPEN_ARCHITECTURE_FREEZE",
-      "unblock_rule": "Deliver docs-only AUTH_V2_STAGING_DEPLOYMENT_V1.md, pass Formal and independent Architecture Review, merge/post-merge governance; only then Coordinator may separately unlock AUTH-V2-BE-STAGING-DEPLOY-001."
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "unblock_rule": "Closed. AUTH_V2_STAGING_DEPLOYMENT_V1 is canonical. Execution may proceed only under separately reviewed AUTH-V2-BE-STAGING-DEPLOY-001 authority pinned to v0.1.0-rc3 / release base bcd93b51aa2b2d479057e2e6b260ee9aab067353.",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "9ccb6c64984ae64abbf850f474920c17661959d5",
+      "formal_ci": "Nebula PR #149 exact 9ccb6c64984ae64abbf850f474920c17661959d5 governance SUCCESS; descendant main 075998ee561bc08bf5e11c3492c0ef7dfb809754 governance SUCCESS.",
+      "formal_review": "#611 APPROVED / reviewer-agent / official=true / stale=false / exact 9ccb6c64984ae64abbf850f474920c17661959d5",
+      "delivery_merge_commit": "075998ee561bc08bf5e11c3492c0ef7dfb809754"
     },
     "AUTH-V2-BE-STAGING-DEPLOY-001": {
-      "status": "BLOCKED",
+      "status": "READY",
       "owner": "Backend Release / Deployment Agent",
       "agent": "A",
       "reviewer": "Backend Review Agent",
@@ -2781,9 +2787,9 @@
       "execution_worktree": "wt-auth-v2-be-staging-deploy-001",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": false,
+      "implementation_authorized": true,
       "backend_mutation_authorized": false,
-      "staging_deployment_authorized": false,
+      "staging_deployment_authorized": true,
       "db_schema_mutation_authorized": false,
       "provider_deployment_configuration_authorized": false,
       "provider_credential_material_authorized": false,
@@ -2795,10 +2801,17 @@
       "backend_deployed_runtime_authority": "root/FlyPostAPI v0.1.0-rc2@6d2ddd3a6c626b7918b29da6e92e13684bc3ef7a",
       "backend_candidate_read_authority": "root/FlyPostAPI Dev@bcd93b51aa2b2d479057e2e6b260ee9aab067353",
       "staging_runtime": "staging-api / Compose project staging / https://testapi.nfcwriter.top22.top",
-      "authorized_write_set": [],
-      "required_behavior": "After architecture closure and a separate Coordinator unlock, freeze an immutable reviewed Backend release candidate, rehearse migrations and compatibility, build off-host, deploy only to the canonical staging-api service, prove health/compatibility/rollback evidence, and keep provider configuration disabled unless separately authorized.",
-      "execution_gate": "BLOCKED_ARCHITECTURE_FREEZE",
-      "unblock_rule": "Blocked until AUTH-V2-BE-STAGING-DEPLOY-ARCH-001 is DONE/CLOSED_REVIEW_PASS. Coordinator must then separately publish exact release/evidence authority and staging_deployment_authorized=true before any build/deploy mutation."
+      "authorized_write_set": [
+        "docs/releases/0.1.0-rc3.md",
+        "docs/evidence/AUTH-V2-BE-STAGING-DEPLOY-001/**"
+      ],
+      "required_behavior": "Freeze a docs-only immutable v0.1.0-rc3 release evidence candidate on exact Backend base bcd93b51..., run exact CI plus disposable migration rehearsal/compatibility gates, create immutable tag only after independent review, build exact image off-host, then deploy only to canonical staging-api under remote governance. Backend production/schema/provider/App/SDK mutation is not inherited; any corrective needs separate authorization.",
+      "execution_gate": "OPEN_RELEASE_AND_STAGING_EXECUTION",
+      "unblock_rule": "OPEN_RELEASE_AND_STAGING_EXECUTION. Release Agent may create only docs/releases/0.1.0-rc3.md and Story evidence on exact release base bcd93b51..., then run contract gates. No production-code corrective, provider config/credential, App/SDK mutation or mutable-Dev deployment is authorized.",
+      "contract_authority": "contracts/AUTH_V2_STAGING_DEPLOYMENT_V1.md",
+      "release_identity": "v0.1.0-rc3",
+      "release_branch": "release/backend-v0.1.0-rc3",
+      "release_base": "bcd93b51aa2b2d479057e2e6b260ee9aab067353"
     }
   },
   "non_executable_roadmaps": [
