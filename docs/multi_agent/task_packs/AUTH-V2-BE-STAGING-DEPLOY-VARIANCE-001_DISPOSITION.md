@@ -44,5 +44,5 @@ Nothing else may be mutated by this Story. `docs/releases/0.1.0-rc3.md` and exis
 ## Scope boundary
 
 - This is a one-time disposition; future deployments keep the original fail-closed gate.
-- `AUTH-V2-BE-STAGING-DEPLOY-001` is unchanged.
+- This registration publication reconciles `AUTH-V2-BE-STAGING-DEPLOY-001` SSOT facts only: RC3 is already deployed, replay is disabled, and closure is blocked on this variance Story. The variance execution itself may not mutate that deployment Story or perform runtime work.
 - This Story does not copy or restate the PR #153 acceptance publication.

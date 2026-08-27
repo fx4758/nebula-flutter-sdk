@@ -2807,7 +2807,7 @@
       "unblock_rule": "Only the contract incident disposition may be delivered. Exact Formal and independent Architecture Review must approve and merge it before FlyPost closure evidence may cite the disposition. No Backend/runtime/schema/provider/SDK/App mutation is authorized."
     },
     "AUTH-V2-BE-STAGING-DEPLOY-001": {
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "owner": "Backend Release / Deployment Agent",
       "agent": "A",
       "reviewer": "Backend Review Agent",
@@ -2824,7 +2824,7 @@
       "agent_may_edit_task_board": false,
       "implementation_authorized": true,
       "backend_mutation_authorized": false,
-      "staging_deployment_authorized": true,
+      "staging_deployment_authorized": false,
       "db_schema_mutation_authorized": false,
       "provider_deployment_configuration_authorized": false,
       "provider_credential_material_authorized": false,
@@ -2833,20 +2833,21 @@
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "backend_deployed_runtime_authority": "root/FlyPostAPI v0.1.0-rc2@6d2ddd3a6c626b7918b29da6e92e13684bc3ef7a",
-      "backend_candidate_read_authority": "root/FlyPostAPI Dev@bcd93b51aa2b2d479057e2e6b260ee9aab067353",
+      "backend_deployed_runtime_authority": "root/FlyPostAPI v0.1.0-rc3@107671bef95c4969f4333c07c78f7d35bfde7227",
+      "backend_candidate_read_authority": "root/FlyPostAPI Dev@107671bef95c4969f4333c07c78f7d35bfde7227; closure PR #27 exact 85ae77a2a3cdf1a12e45fa6d554964fb8ddd6cc8",
       "staging_runtime": "staging-api / Compose project staging / https://testapi.nfcwriter.top22.top",
       "authorized_write_set": [
         "docs/releases/0.1.0-rc3.md",
         "docs/evidence/AUTH-V2-BE-STAGING-DEPLOY-001/**"
       ],
-      "required_behavior": "Freeze a docs-only immutable v0.1.0-rc3 release evidence candidate on exact Backend base bcd93b51..., run exact CI plus disposable migration rehearsal/compatibility gates, create immutable tag only after independent review, build exact image off-host, then deploy only to canonical staging-api under remote governance. Backend production/schema/provider/App/SDK mutation is not inherited; any corrective needs separate authorization.",
-      "execution_gate": "OPEN_RELEASE_AND_STAGING_EXECUTION",
-      "unblock_rule": "OPEN_RELEASE_AND_STAGING_EXECUTION. Release Agent may create only docs/releases/0.1.0-rc3.md and Story evidence on exact release base bcd93b51..., then run contract gates. No production-code corrective, provider config/credential, App/SDK mutation or mutable-Dev deployment is authorized.",
+      "required_behavior": "RC3 release and shared-staging deployment execution is complete. Preserve the exact deployment evidence and perform no further staging mutation under this Story. Resolve the recorded pre-mutation migrate status/verify sequence deviation only through separately registered AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001; after its canonical disposition, correct FlyPostAPI closure evidence and rerun exact CI/review. Backend production/schema/provider/App/SDK mutation remains unauthorized.",
+      "execution_gate": "BLOCKED_ON_AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001",
+      "unblock_rule": "No deployment replay is authorized. Closure may resume only after AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001 receives exact Formal + independent APPROVED + canonical merge, then FlyPostAPI PR #27 is corrected and independently approved.",
       "contract_authority": "contracts/AUTH_V2_STAGING_DEPLOYMENT_V1.md",
       "release_identity": "v0.1.0-rc3",
       "release_branch": "release/backend-v0.1.0-rc3",
-      "release_base": "bcd93b51aa2b2d479057e2e6b260ee9aab067353"
+      "release_base": "bcd93b51aa2b2d479057e2e6b260ee9aab067353",
+      "governance_sequence_deviation": "RC3 deployment omitted the immediate pre-start staging cmd/migrate status+verify repetition before startup applied 048/049. Post-deploy exact status/verify passed but is not retroactive proof of the omitted pre-mutation gate."
     }
   },
   "non_executable_roadmaps": [
