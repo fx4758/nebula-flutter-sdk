@@ -193,3 +193,85 @@ After this architecture contract is independently accepted and merged, Coordinat
 - leaves all provider configuration/credential/App/SDK flags false.
 
 Any code corrective discovered during release rehearsal requires a separate corrective authorization and a new reviewed exact candidate before RC3 publication.
+
+## 13. RC3 one-time sequence variance disposition — 2026-08-27
+
+Authority: `AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001`.
+
+This section records the Architecture disposition of one already-completed RC3 shared-staging execution. It does **not** rewrite the execution history, does not retroactively claim compliance with §8 step 8, and does not weaken §8 for any later deployment.
+
+### 13.1 Recorded variance
+
+The mandatory sequence in §8 requires, after the deploy lease is acquired and before migration/runtime mutation:
+
+```text
+migrate verify/status
+→ reviewed migration apply
+→ staging-api replacement
+→ post-deploy verification
+```
+
+For RC3, fresh pre-release staging evidence showed 47 successful migrations ending at 047 and disposable RC2→049 rehearsal/compatibility passed. During the governed shared-staging execution, the staging `cmd/migrate status/verify` CLI was **not rerun immediately before RC3 startup**. RC3 startup then applied migrations 048/049. After startup, the exact RC3 migration tool reported no pending migrations and `verify` confirmed all applied checksums.
+
+The omitted immediate pre-mutation CLI repetition is therefore a real sequence noncompliance with §8 step 8. Post-deploy verification proves the resulting state only; it is **not** retroactive evidence that the missing pre-mutation gate occurred.
+
+### 13.2 Mechanically verified resulting state
+
+The one-time disposition is based on the already-recorded deployment evidence, including:
+
+- immutable Backend release `v0.1.0-rc3@107671bef95c4969f4333c07c78f7d35bfde7227`;
+- deployed RC3 image ID `sha256:9c2838c8cf94deb7b1973e717cbc2960e90ccd98f52d14495027d87cec0ad25f`;
+- migration ledger through 049 with zero failed rows;
+- exact RC3 migration tooling reporting no pending migration and all applied checksums valid;
+- expected 048/049 schema constraints present;
+- `/health`, shared-consumer compatibility, Nearvia bootstrap and ES256 Proof V1 runtime-config smokes passing;
+- missing proof / legacy literal proof failing closed with code `12001`;
+- EMAIL disabled / Google unbound failing closed with code `12004`;
+- post-deploy inventory retaining the single canonical Compose project `staging`;
+- post-deploy drift check reporting `ok=true`, `issues=[]`, `warnings=[]`;
+- RC2 service-image compatibility against the post-049 schema proven before deployment; destructive schema rollback is not claimed.
+
+No evidence shows a checksum mismatch, partial migration, second staging runtime, provider-secret activation or runtime drift.
+
+### 13.3 One-time Architecture disposition
+
+If this exact disposition receives Formal SUCCESS, official independent Architecture Review `APPROVED`, canonical merge and post-merge governance SUCCESS, then the RC3 sequence variance is **ACCEPTED FOR CLOSURE WITHOUT REPLAY** under these boundaries:
+
+```text
+RC3 execution-sequence variance                 ACCEPTED FOR THIS CLOSURE ONLY
+Rollback/redeploy solely to recreate ordering   NOT REQUIRED / NOT AUTHORIZED
+Migration replay or direct SQL                  NOT AUTHORIZED
+Schema rollback                                 NOT AUTHORIZED / NOT CLAIMED
+Provider/App/SDK expansion                      NOT AUTHORIZED
+Future §8 step 8                                UNCHANGED / MANDATORY / FAIL-CLOSED
+```
+
+Rationale: replay, rollback or artificial redeployment cannot reconstruct the historical pre-mutation observation that was missed. After the forward-applied state has been mechanically verified and the runtime has remained within the frozen capability/provider boundaries, another mutation solely to manufacture ordering evidence would add operational risk without proving the omitted historical event.
+
+This is a single-incident disposition for `AUTH-V2-BE-STAGING-DEPLOY-001` RC3 on 2026-08-27. It is not a waiver class, exception mechanism or precedent for replacing pre-mutation evidence with post-mutation checks.
+
+### 13.4 Closure requirements
+
+After this exact disposition becomes canonical, `AUTH-V2-BE-STAGING-DEPLOY-001` may continue its closure path only if all of the following remain true:
+
+1. FlyPostAPI closure evidence cites the canonical disposition and still states that the immediate pre-start staging CLI check was omitted;
+2. post-deploy `status/verify` is described only as resulting-state verification, never as proof of the missing pre-mutation event;
+3. existing RC3 release, migration, compatibility, provenance, inventory/drift and lease-release evidence remains internally consistent;
+4. no staging replay, migration replay, direct SQL, provider binding, Backend code, SDK or App mutation is introduced to close this incident;
+5. FlyPostAPI closure exact-head CI and official independent review pass after the evidence correction.
+
+If independent Architecture Review rejects this disposition, the deployment Story remains blocked; rejection does not itself authorize runtime or schema mutation.
+
+### 13.5 Mandatory preventive control
+
+For every future deployment governed by this contract or a descendant contract, §8 step 8 remains a STOP condition. Evidence must capture, from the exact reviewed migration tooling **after the deployment lease is acquired and before any migration runner or application container capable of mutation starts**:
+
+```text
+exact migration tool identity
+migrate status
+migrate verify
+pending migration list
+current migration ledger state
+```
+
+Absence of that pre-mutation evidence must stop the deployment. This RC3 disposition cannot be cited to bypass that requirement.
