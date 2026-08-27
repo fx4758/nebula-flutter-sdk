@@ -2430,7 +2430,8 @@
         "AUTH-V2-NEARVIA-APP-001",
         "AUTH-V2-NEARVIA-UI-001",
         "AUTH-V2-NEARVIA-IDENTITY-001",
-        "AUTH-V2-NEARVIA-IDENTITY-002"
+        "AUTH-V2-NEARVIA-IDENTITY-002",
+        "AUTH-V2-NEARVIA-BE-APP-001"
       ],
       "task_pack": "task_packs/AUTH-V2-NEARVIA-OAUTH-001_PROVIDER_ACQUISITION.md",
       "execution_repo": "../Nearvia",
@@ -2458,12 +2459,17 @@
       "authorized_write_set": [
         "docs/evidence/AUTH-V2-NEARVIA-OAUTH-001/**"
       ],
-      "required_behavior": "Continue prerequisite-evidence collection only for Nearvia Apple/Google OAuth. Accepted Nearvia evidence now proves canonical com.lcloudy.nearvia identity, historical production-package APKs 029/044 are Android Debug signed and therefore invalid as production/Play OAuth fingerprint evidence, and historical signed iOS Runner uses V4U9V436CM.com.lcloudy.nearvia but lacks com.apple.developer.applesignin. No provider acquisition/deployment production code until a separately reviewed Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
+      "required_behavior": "Continue prerequisite-evidence collection only for Nearvia Apple/Google OAuth. Dedicated Nearvia Backend App prerequisite is now satisfied (app_key=nearvia, server-generated app_id=351164732780056576, staging origin https://testapi.nfcwriter.top22.top). Historical production-package APKs 029/044 are Android Debug signed and invalid as production/Play OAuth fingerprint evidence; historical signed iOS Runner lacks com.apple.developer.applesignin. No provider acquisition/deployment production code until a separately reviewed Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
       "execution_gate": "OPEN_PREREQUISITE_EVIDENCE_ONLY",
       "external_provider_registration_ready": false,
-      "unblock_rule": "Accepted prerequisite evidence: Nearvia PR #20 / Review #555 / merge 48dd5bc... plus artifact audit PR #22 exact eff727308b1d1ba0526388df6dc6e02576f3526e / Review #558 APPROVED official=true stale=false / merge c9fa368adf2bc1e243a867370da9a28b24581932 / descendant Formal SUCCESS. Historical APK debug fingerprints MUST NOT be used for production Google OAuth, and historical iOS signed profile does not prove Sign in with Apple capability. Before OPEN_IMPLEMENTATION still require independently reviewed sanitized real production/Play SHA-1+SHA-256, Apple Sign in with Apple capability/public client/callback evidence, Google Android+iOS public client registrations, dedicated Nearvia Backend App ID/AppKey plus prod/test API origins, Backend per-App Apple/Google binding, and external secret-custody confirmation. All provider/implementation flags remain false until then. Internal Backend App registration prerequisite is tracked separately by AUTH-V2-NEARVIA-BE-APP-001; OAuth implementation unlock also requires that Story DONE/CLOSED_REVIEW_PASS.",
+      "unblock_rule": "Backend App registration prerequisite is satisfied by FlyPostAPI PR #24 exact 08df889eb714b271656dbe957c4c7f8df50d08a6 / Review #593 APPROVED official=true stale=false / merge bcd93b51aa2b2d479057e2e6b260ee9aab067353 / descendant Quality SUCCESS, with app_key=nearvia and app_id=351164732780056576. Before OPEN_IMPLEMENTATION still require independently reviewed sanitized real production/Play SHA-1+SHA-256, Apple Sign in with Apple capability/public client/callback evidence, Google Android+iOS public client registrations, Backend per-App Apple/Google binding, production API origin, and external secret-custody confirmation. All provider/implementation flags remain false until then.",
       "backend_app_registration_story": "AUTH-V2-NEARVIA-BE-APP-001",
-      "backend_deployment_operator_story": "PLATFORM-PRODUCT-DEPLOY-OP-001"
+      "backend_deployment_operator_story": "PLATFORM-PRODUCT-DEPLOY-OP-001",
+      "backend_app_registration_state": "DONE / CLOSED_REVIEW_PASS",
+      "backend_app_id": 351164732780056576,
+      "backend_app_key": "nearvia",
+      "backend_staging_api_origin": "https://testapi.nfcwriter.top22.top",
+      "production_api_origin": "UNRESOLVED"
     },
     "AUTH-V2-NEARVIA-IDENTITY-001": {
       "status": "DONE",
@@ -2593,7 +2599,7 @@
       "closure_note": "Nearvia corrective Host identity is canonical on main 0f24a041.... PR #18 final exact 5230eb6... passed Nearvia Formal, Review #550 APPROVED official=true/stale=false, merged as 0f24a041..., and descendant Formal succeeded. Production identity is com.lcloudy.nearvia with Apple Team V4U9V436CM; fail-closed release signing is preserved. Provider registration/acquisition remains unapproved."
     },
     "AUTH-V2-NEARVIA-BE-APP-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Backend Nearvia Deployment Agent",
       "agent": "A",
       "reviewer": "Backend Review Agent",
@@ -2609,10 +2615,10 @@
       "execution_worktree": "wt-auth-v2-nearvia-be-app-001",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": true,
+      "implementation_authorized": false,
       "backend_mutation_authorized": false,
       "db_schema_mutation_authorized": false,
-      "deployment_product_app_registration_authorized": true,
+      "deployment_product_app_registration_authorized": false,
       "app_credential_mutation_authorized": false,
       "provider_deployment_configuration_authorized": false,
       "provider_credential_material_authorized": false,
@@ -2621,18 +2627,26 @@
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "backend_runtime_authority": "root/FlyPostAPI Dev@5dfee7163ed1dbcb691dc65e8752eb18f2b464fb",
+      "backend_runtime_authority": "root/FlyPostAPI Dev@bcd93b51aa2b2d479057e2e6b260ee9aab067353",
       "nearvia_identity_authority": "com.lcloudy.nearvia / Apple Team V4U9V436CM",
       "public_app_key": "nearvia",
-      "numeric_app_id_authority": "SERVER_GENERATED",
+      "numeric_app_id_authority": "SERVER_GENERATED / productctl@5dfee7163ed1dbcb691dc65e8752eb18f2b464fb",
       "staging_api_origin": "https://testapi.nfcwriter.top22.top",
       "production_api_origin": "UNRESOLVED",
       "authorized_write_set": [
         "docs/evidence/AUTH-V2-NEARVIA-BE-APP-001/**"
       ],
       "required_behavior": "Use the existing audited Product App control plane to register exactly one active Nearvia product_app with app_key=nearvia, name=Nearvia, default_region_code=GLOBAL and server-generated numeric App ID. Record sanitized staging evidence only; production API origin remains unresolved. No Backend code/schema/provider/credential/App/SDK mutation.",
-      "execution_gate": "OPEN_STAGING_REGISTRATION",
-      "unblock_rule": "OPEN_STAGING_REGISTRATION. Deployment Agent may use only the reviewed local productctl operator on staging: inspect/dry-run, register exactly app_key=nearvia name=Nearvia default_region_code=GLOBAL status=active, then verify idempotent reread and record sanitized evidence. Backend code/schema/provider/credential/App/SDK mutation, HTTP/admin-session fallback, admin-password reset, direct SQL, NFC Writer identity reuse and production-origin invention remain forbidden."
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "unblock_rule": "Closed. Nearvia staging Product App registration is independently reviewed and canonical: app_key=nearvia, app_id=351164732780056576, name=Nearvia, region=GLOBAL, active. No further Product App mutation is authorized by this closed Story; production API origin, App credentials and provider configuration remain outside this Story.",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "08df889eb714b271656dbe957c4c7f8df50d08a6",
+      "formal_ci": "FlyPostAPI PR #24 exact 08df889eb714b271656dbe957c4c7f8df50d08a6: Migrations / migrate SUCCESS; Quality Baseline backend/go-sdk/dart-sdk SUCCESS. Descendant Dev@bcd93b51aa2b2d479057e2e6b260ee9aab067353 push Quality Baseline backend/go-sdk/dart-sdk SUCCESS.",
+      "formal_review": "#593 APPROVED / reviewer-agent / official=true / stale=false / exact 08df889eb714b271656dbe957c4c7f8df50d08a6",
+      "delivery_merge_commit": "bcd93b51aa2b2d479057e2e6b260ee9aab067353",
+      "numeric_app_id": 351164732780056576,
+      "closure_note": "Nearvia Product App was registered on canonical staging through reviewed local productctl only. Preflight NOT_FOUND, dry-run WOULD_CREATE, one real CREATED, readback EXISTS, and identical rerun EXISTS all converged on app_id 351164732780056576. No HTTP/admin fallback, password reset, direct SQL, duplicate app, App credential, provider secret, schema/runtime code, SDK/App mutation or production-origin invention occurred."
     },
     "PLATFORM-PRODUCT-DEPLOY-ARCH-001": {
       "status": "DONE",
