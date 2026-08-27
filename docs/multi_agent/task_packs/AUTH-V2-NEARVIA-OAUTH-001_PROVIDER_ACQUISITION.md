@@ -17,6 +17,7 @@
 
 - `AUTH-V2-NEARVIA-APP-001 = DONE / CLOSED_REVIEW_PASS`
 - `AUTH-V2-NEARVIA-UI-001 = DONE / CLOSED_REVIEW_PASS`
+- `AUTH-V2-NEARVIA-BE-APP-001 = DONE / CLOSED_REVIEW_PASS` — `app_key=nearvia`, server-generated `app_id=351164732780056576`, staging origin `https://testapi.nfcwriter.top22.top`; production origin remains `UNRESOLVED`.
 - Nearvia canonical runtime: `origin/main@c9fa368adf2bc1e243a867370da9a28b24581932`
 - immutable Nebula SDK: `v0.1.0-rc2@ac96fb5f428cc37293bc5a63e23c90fe40ff8af2`
 
@@ -57,9 +58,9 @@ Google:
 
 Nearvia / Backend public binding:
 
-- Nearvia production/test App identity chosen for Auth V2;
-- public API environment/base URL to be used by the Nearvia deployment;
-- Backend per-App Apple/Google provider config is ready to consume authorization codes for the same identifiers;
+- **Satisfied staging Product App prerequisite:** `app_key=nearvia`, server-generated `app_id=351164732780056576`, staging API origin `https://testapi.nfcwriter.top22.top`, accepted via FlyPostAPI PR #24 / Review #593 / merge `bcd93b51aa2b2d479057e2e6b260ee9aab067353`;
+- production API origin is still `UNRESOLVED`;
+- Backend per-App Apple/Google provider config must still be ready to consume authorization codes for the same identifiers;
 - no NFC Writer AppKey/client identifier is reused or guessed.
 
 ## Evidence-only authorized mutation

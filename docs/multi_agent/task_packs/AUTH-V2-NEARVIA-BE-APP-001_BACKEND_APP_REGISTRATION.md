@@ -25,7 +25,7 @@ app_key              nearvia
 name                 Nearvia
 default_region_code  GLOBAL
 status               1 / active
-numeric app_id       SERVER_GENERATED; never guessed or copied from NFC Writer
+numeric app_id       351164732780056576 / SERVER_GENERATED; never guessed or copied from NFC Writer
 ```
 
 `app_key=nearvia` is public, not a secret. App credentials and provider secrets are outside this Story.
@@ -38,16 +38,18 @@ https://testapi.nfcwriter.top22.top
 This is staging infrastructure only. It is NOT Nearvia product identity or production-origin authority.
 Production API origin remains `UNRESOLVED`; do not invent one.
 
-## Execution gate and authorized execution
-This Story is **OPEN_STAGING_REGISTRATION** under explicit Coordinator authority. `PLATFORM-PRODUCT-DEPLOY-OP-001` is closed by FlyPostAPI PR #23 exact `5ea2538ab0ff10bde7d556269ea3d20a29426f05`, Review #586 `APPROVED / official=true / stale=false`, merge `5dfee7163ed1dbcb691dc65e8752eb18f2b464fb`, with descendant quality SUCCESS.
+## Execution gate and accepted closure
+This Story is **DONE / CLOSED_REVIEW_PASS**. No further Product App mutation is authorized by this closed Story. The generic operator remains canonical from FlyPostAPI PR #23 exact `5ea2538ab0ff10bde7d556269ea3d20a29426f05`, Review #586 `APPROVED / official=true / stale=false`, merge `5dfee7163ed1dbcb691dc65e8752eb18f2b464fb`, with descendant quality SUCCESS.
 
-The Deployment Agent may only through that reviewed local deployment operator:
-1. dry-run/inspect staging and confirm no active `app_key=nearvia` conflict exists;
-2. register exactly one active Product App with explicit `app_key=nearvia`, `name=Nearvia`, `default_region_code=GLOBAL`, `status=active`;
-3. record the server-generated numeric App ID and public AppKey in sanitized evidence;
-4. verify `app_key=nearvia -> same app_id` using the reviewed operator/read path without issuing App credentials;
-5. record staging API origin and keep production origin unresolved;
-6. on re-run, rely on the operator's reviewed idempotency contract and never create a duplicate.
+Nearvia staging registration evidence is accepted from FlyPostAPI PR #24 exact `08df889eb714b271656dbe957c4c7f8df50d08a6`, Review #593 `APPROVED / official=true / stale=false`, merge `bcd93b51aa2b2d479057e2e6b260ee9aab067353`, with descendant Quality Baseline SUCCESS. The reviewed execution converged on server-generated `app_id=351164732780056576`, `app_key=nearvia`, `name=Nearvia`, `default_region_code=GLOBAL`, active status, and idempotent reread/rerun.
+
+Accepted execution proved:
+1. pre-registration `inspect -> NOT_FOUND`;
+2. `register --dry-run -> WOULD_CREATE`;
+3. one real registration `CREATED -> app_id=351164732780056576`;
+4. readback `EXISTS -> same app_id`;
+5. identical register rerun `EXISTS -> same app_id`;
+6. staging API origin remains `https://testapi.nfcwriter.top22.top` and production origin remains unresolved.
 
 There is no HTTP/admin-session fallback. If the reviewed local operator cannot perform the registration safely/auditably, STOP and report the generic platform gap. Do not reset an admin password, call `POST /v1/admin/products`, or direct-insert SQL around the operator.
 
