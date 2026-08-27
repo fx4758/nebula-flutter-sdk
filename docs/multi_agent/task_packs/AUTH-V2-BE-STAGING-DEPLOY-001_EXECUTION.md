@@ -14,15 +14,17 @@
 
 ## Current gate
 
-`OPEN_RELEASE_AND_STAGING_EXECUTION`.
+`BLOCKED_ON_AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001` — **deployment authority has been consumed; no staging replay or further mutation is authorized under this Story.**
 
-Architecture prerequisite is satisfied by PR #149 exact `9ccb6c64984ae64abbf850f474920c17661959d5`, Review #611 `APPROVED / official=true / stale=false`, merge `075998ee561bc08bf5e11c3492c0ef7dfb809754`, descendant governance `SUCCESS`.
+Architecture prerequisite was satisfied by PR #149 exact `9ccb6c64984ae64abbf850f474920c17661959d5`, Review #611 `APPROVED / official=true / stale=false`, merge `075998ee561bc08bf5e11c3492c0ef7dfb809754`, descendant governance `SUCCESS`. The separately reviewed execution unlock was then consumed by the completed immutable RC3 release/staging deployment.
 
-Execution is pinned to immutable release identity `v0.1.0-rc3` with release base `bcd93b51aa2b2d479057e2e6b260ee9aab067353`. Backend production/schema/provider/App/SDK mutation remains unauthorized; any corrective requires a separate Story/publication.
+Current runtime authority is `v0.1.0-rc3@107671bef95c4969f4333c07c78f7d35bfde7227`. A mandatory sequence variance was recorded because the immediate pre-start staging `cmd/migrate status/verify` repetition was omitted before startup applied 048/049. Post-deploy exact verification passed but is not retroactive proof. Closure is now blocked on separately registered `AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001`.
 
-## Execution intent after a separate Coordinator unlock
+Backend production/schema/provider/App/SDK mutation remains unauthorized. **Do not redeploy, replay migrations, perform direct SQL, or mutate staging to manufacture the missing historical evidence.**
 
-Only after the architecture contract is canonical and Coordinator publishes a separate execution unlock may this Story:
+## Historical execution intent — already completed; not reusable authority
+
+The following describes the execution authority that was previously unlocked and has now been consumed. It is retained only as historical scope/evidence and MUST NOT be read as permission for another deployment:
 
 1. freeze an exact immutable Backend release candidate from canonical reviewed history; mutable `Dev` is not a deploy identity;
 2. create release/deployment evidence under the Story-authorized evidence path;
@@ -56,6 +58,8 @@ The release-evidence candidate must be docs-only relative to release base `bcd93
 - production API origin invention;
 - SDK/App mutation.
 
-## Exit
+## Current closure rule
 
-Success closes only shared staging Auth V2 runtime deployment readiness. It does not prove Backend per-App Apple/Google binding or external provider registration readiness.
+This Story remains `IN_PROGRESS` but non-executable for further staging mutation. Closure may resume only after `AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001` receives exact Formal + official independent Architecture Review `APPROVED` + canonical merge, then FlyPostAPI closure evidence is corrected and independently approved.
+
+Do not mark this Story DONE merely because RC3 is healthy. Success ultimately closes only shared staging Auth V2 runtime deployment readiness; it does not prove Backend per-App Apple/Google binding or external provider registration readiness.
