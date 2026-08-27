@@ -48,6 +48,6 @@ docs/multi_agent/contracts/AUTH_V2_STAGING_DEPLOYMENT_V1.md
 
 No Backend/runtime/App/SDK mutation is authorized by this Architecture Story.
 
-## Exit
+## Accepted closure
 
-After docs-only contract Formal SUCCESS + independent Architecture Review APPROVED + merge + post-merge governance SUCCESS, Coordinator may separately open `AUTH-V2-BE-STAGING-DEPLOY-001`. Until then no release build or staging mutation is authorized.
+Architecture is **DONE / CLOSED_REVIEW_PASS**. Contract `AUTH_V2_STAGING_DEPLOYMENT_V1.md` is accepted by PR #149 exact `9ccb6c64984ae64abbf850f474920c17661959d5`, Review #611 `APPROVED / official=true / stale=false`, merge `075998ee561bc08bf5e11c3492c0ef7dfb809754`, descendant governance `SUCCESS`. No architecture mutation remains authorized by this closed Story.

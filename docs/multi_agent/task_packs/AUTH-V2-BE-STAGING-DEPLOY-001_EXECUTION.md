@@ -14,9 +14,11 @@
 
 ## Current gate
 
-`BLOCKED_ARCHITECTURE_FREEZE`.
+`OPEN_RELEASE_AND_STAGING_EXECUTION`.
 
-No Backend code, release publication, image build, migration, staging deploy, provider configuration, credential material, SDK or App mutation is authorized yet.
+Architecture prerequisite is satisfied by PR #149 exact `9ccb6c64984ae64abbf850f474920c17661959d5`, Review #611 `APPROVED / official=true / stale=false`, merge `075998ee561bc08bf5e11c3492c0ef7dfb809754`, descendant governance `SUCCESS`.
+
+Execution is pinned to immutable release identity `v0.1.0-rc3` with release base `bcd93b51aa2b2d479057e2e6b260ee9aab067353`. Backend production/schema/provider/App/SDK mutation remains unauthorized; any corrective requires a separate Story/publication.
 
 ## Execution intent after a separate Coordinator unlock
 
@@ -32,9 +34,14 @@ Only after the architecture contract is canonical and Coordinator publishes a se
 8. record exact image digest, source, migration state, public staging origin and rollback evidence;
 9. keep Apple/Google per-App binding disabled unless another reviewed Story supplies provider identifiers and authority.
 
-## Initial write authority
+## Authorized repository write set
 
-Until a future Coordinator unlock, this Story has no repository write authority. The unlock must explicitly freeze a narrow release/evidence write set. Any production-code corrective requires separate authorization.
+```text
+docs/releases/0.1.0-rc3.md
+docs/evidence/AUTH-V2-BE-STAGING-DEPLOY-001/**
+```
+
+The release-evidence candidate must be docs-only relative to release base `bcd93b51...`. Any production-code/schema/config corrective requires separate authorization.
 
 ## Forbidden
 
