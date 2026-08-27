@@ -2771,6 +2771,41 @@
       "formal_review": "#611 APPROVED / reviewer-agent / official=true / stale=false / exact 9ccb6c64984ae64abbf850f474920c17661959d5",
       "delivery_merge_commit": "075998ee561bc08bf5e11c3492c0ef7dfb809754"
     },
+    "AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001": {
+      "status": "READY",
+      "owner": "Backend Deployment Architecture Agent",
+      "agent": "A",
+      "reviewer": "Platform Architecture Review Agent",
+      "depends_on": [
+        "AUTH-V2-BE-STAGING-DEPLOY-ARCH-001"
+      ],
+      "task_pack": "task_packs/AUTH-V2-BE-STAGING-DEPLOY-VARIANCE-001_DISPOSITION.md",
+      "execution_repo": ".",
+      "execution_branch": "architecture/auth-v2-be-staging-deploy-variance-001",
+      "execution_remote": "hub",
+      "execution_worktree": "wt-auth-v2-be-staging-deploy-variance-001",
+      "state_write_authority": "COORDINATOR_ONLY",
+      "agent_may_edit_task_board": false,
+      "implementation_authorized": true,
+      "architecture_mutation_authorized": true,
+      "backend_mutation_authorized": false,
+      "staging_deployment_authorized": false,
+      "db_schema_mutation_authorized": false,
+      "provider_deployment_configuration_authorized": false,
+      "provider_credential_material_authorized": false,
+      "sdk_mutation_authorized": false,
+      "app_mutation_authorized": false,
+      "platform_api_mode": "NONE",
+      "sdk_public_api_mode": "READ_ONLY",
+      "product_adapter_rule": "ADAPTER_FIRST",
+      "backend_deployed_runtime_authority": "root/FlyPostAPI v0.1.0-rc3@107671bef95c4969f4333c07c78f7d35bfde7227",
+      "authorized_write_set": [
+        "docs/multi_agent/contracts/AUTH_V2_STAGING_DEPLOYMENT_V1.md"
+      ],
+      "required_behavior": "Record a one-time Architecture disposition for the already-occurred RC3 shared-staging sequence variance. Preserve that the mandatory pre-mutation migrate status/verify gate was omitted; post-deploy verification is not retroactive proof. Destructive rollback/replay, direct SQL, artificial redeploy solely to manufacture evidence, and reusable/general waivers are forbidden. Future deployments retain the original fail-closed pre-mutation gate. No Backend/runtime/schema/provider/SDK/App mutation is authorized.",
+      "execution_gate": "OPEN_ARCHITECTURE_INCIDENT_DISPOSITION",
+      "unblock_rule": "Only the contract incident disposition may be delivered. Exact Formal and independent Architecture Review must approve and merge it before FlyPost closure evidence may cite the disposition. No Backend/runtime/schema/provider/SDK/App mutation is authorized."
+    },
     "AUTH-V2-BE-STAGING-DEPLOY-001": {
       "status": "READY",
       "owner": "Backend Release / Deployment Agent",
