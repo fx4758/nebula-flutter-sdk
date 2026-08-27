@@ -2454,22 +2454,26 @@
       "platform_api_mode": "READ_ONLY",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "consumer_runtime_authority": "../Nearvia origin/main@c9fa368adf2bc1e243a867370da9a28b24581932",
+      "consumer_runtime_authority": "../Nearvia origin/main@0b57c604c6e633e6259d98d327cbdc602e6bc18f",
       "consumer_target_sdk": "v0.1.0-rc2@ac96fb5f428cc37293bc5a63e23c90fe40ff8af2",
       "authorized_write_set": [
         "docs/evidence/AUTH-V2-NEARVIA-OAUTH-001/**"
       ],
-      "required_behavior": "Continue prerequisite-evidence collection only for Nearvia Apple/Google OAuth. Dedicated Nearvia Backend App prerequisite is now satisfied (app_key=nearvia, server-generated app_id=351164732780056576, staging origin https://testapi.nfcwriter.top22.top). Historical production-package APKs 029/044 are Android Debug signed and invalid as production/Play OAuth fingerprint evidence; historical signed iOS Runner lacks com.apple.developer.applesignin. No provider acquisition/deployment production code until a separately reviewed Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
+      "required_behavior": "Continue prerequisite-evidence collection only for Nearvia Apple/Google OAuth. Dedicated Backend App prerequisite is satisfied (app_key=nearvia, app_id=351164732780056576), but accepted Nearvia PR #23 evidence proves Backend per-App provider binding is not configured and the shared staging API is still rc2 without an auth section. Historical Android artifacts remain Debug-signed and historical iOS artifacts lack Sign in with Apple entitlement. No provider acquisition/deployment production code until a separately reviewed Coordinator unlock. EMAIL remains primary; PHONE/SMS and Push remain absent.",
       "execution_gate": "OPEN_PREREQUISITE_EVIDENCE_ONLY",
       "external_provider_registration_ready": false,
-      "unblock_rule": "Backend App registration prerequisite is satisfied by FlyPostAPI PR #24 exact 08df889eb714b271656dbe957c4c7f8df50d08a6 / Review #593 APPROVED official=true stale=false / merge bcd93b51aa2b2d479057e2e6b260ee9aab067353 / descendant Quality SUCCESS, with app_key=nearvia and app_id=351164732780056576. Before OPEN_IMPLEMENTATION still require independently reviewed sanitized real production/Play SHA-1+SHA-256, Apple Sign in with Apple capability/public client/callback evidence, Google Android+iOS public client registrations, Backend per-App Apple/Google binding, production API origin, and external secret-custody confirmation. All provider/implementation flags remain false until then.",
+      "unblock_rule": "Accepted Backend App prerequisite: FlyPostAPI PR #24 / Review #593 / merge bcd93b51... with app_key=nearvia and app_id=351164732780056576. Accepted runtime-gap evidence: Nearvia PR #23 exact b2b667a4f5b6df47601199241287faf905d513a9 / Review #597 APPROVED official=true stale=false / merge 0b57c604c6e633e6259d98d327cbdc602e6bc18f / descendant Formal SUCCESS, proving backend_provider_binding_ready=false and staging_auth_v2_runtime_ready=false. Before OPEN_IMPLEMENTATION still require independently reviewed real production/Play SHA-1+SHA-256, Apple Sign in with Apple capability/public client/callback, Google Android+iOS public clients, Backend per-App Apple/Google binding, reviewed Auth V2-capable runtime deployment, production API origin, and external secret-custody confirmation. All provider/implementation flags remain false until then.",
       "backend_app_registration_story": "AUTH-V2-NEARVIA-BE-APP-001",
       "backend_deployment_operator_story": "PLATFORM-PRODUCT-DEPLOY-OP-001",
       "backend_app_registration_state": "DONE / CLOSED_REVIEW_PASS",
       "backend_app_id": 351164732780056576,
       "backend_app_key": "nearvia",
       "backend_staging_api_origin": "https://testapi.nfcwriter.top22.top",
-      "production_api_origin": "UNRESOLVED"
+      "production_api_origin": "UNRESOLVED",
+      "backend_provider_binding_ready": false,
+      "staging_auth_v2_runtime_ready": false,
+      "backend_auth_v2_code_state": "DONE / canonical in FlyPostAPI; deployment/config still not ready",
+      "accepted_backend_runtime_gap_evidence": "Nearvia PR #23 exact b2b667a4f5b6df47601199241287faf905d513a9 / Review #597 APPROVED official=true stale=false / merge 0b57c604c6e633e6259d98d327cbdc602e6bc18f / descendant Formal SUCCESS"
     },
     "AUTH-V2-NEARVIA-IDENTITY-001": {
       "status": "DONE",

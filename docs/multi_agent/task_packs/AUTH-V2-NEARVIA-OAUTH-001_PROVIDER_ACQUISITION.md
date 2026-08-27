@@ -18,7 +18,7 @@
 - `AUTH-V2-NEARVIA-APP-001 = DONE / CLOSED_REVIEW_PASS`
 - `AUTH-V2-NEARVIA-UI-001 = DONE / CLOSED_REVIEW_PASS`
 - `AUTH-V2-NEARVIA-BE-APP-001 = DONE / CLOSED_REVIEW_PASS` — `app_key=nearvia`, server-generated `app_id=351164732780056576`, staging origin `https://testapi.nfcwriter.top22.top`; production origin remains `UNRESOLVED`.
-- Nearvia canonical runtime: `origin/main@c9fa368adf2bc1e243a867370da9a28b24581932`
+- Nearvia canonical runtime: `origin/main@0b57c604c6e633e6259d98d327cbdc602e6bc18f`
 - immutable Nebula SDK: `v0.1.0-rc2@ac96fb5f428cc37293bc5a63e23c90fe40ff8af2`
 
 ## Product scope
@@ -35,6 +35,16 @@ This Story is only for Apple/Google authorization-code acquisition readiness. It
 ## Current gate
 
 `OPEN_PREREQUISITE_EVIDENCE_ONLY`.
+
+## Accepted Backend runtime-gap evidence
+
+Nearvia PR #23 exact `b2b667a4f5b6df47601199241287faf905d513a9`, Review #597 `APPROVED / official=true / stale=false`, merge `0b57c604c6e633e6259d98d327cbdc602e6bc18f`, descendant Formal `SUCCESS` establishes:
+
+- dedicated Nearvia Product App exists as `app_key=nearvia`, `app_id=351164732780056576`;
+- Backend Auth V2 code capability is canonical, but checked-in Dev/test/prod configs still have `auth.email.enabled=false`, `enabled_app_ids=[]`, `auth.oauth.apps=[]`;
+- shared staging API remains `nebula-backend-api:0.1.0-rc2` from source `6d2ddd3a...` and its canonical staging config has no top-level `auth:` section;
+- therefore Backend per-App provider binding and staging Auth V2 runtime readiness are both **not ready** and must not be inferred from Product App registration.
+
 
 Production/provider code mutation is **not authorized yet**. Before Coordinator may change this Story to `OPEN_IMPLEMENTATION`, the execution repository must contain sanitized evidence for all public provider-registration prerequisites below. Secrets must remain outside Git.
 
