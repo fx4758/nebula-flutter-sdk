@@ -2593,7 +2593,7 @@
       "closure_note": "Nearvia corrective Host identity is canonical on main 0f24a041.... PR #18 final exact 5230eb6... passed Nearvia Formal, Review #550 APPROVED official=true/stale=false, merged as 0f24a041..., and descendant Formal succeeded. Production identity is com.lcloudy.nearvia with Apple Team V4U9V436CM; fail-closed release signing is preserved. Provider registration/acquisition remains unapproved."
     },
     "AUTH-V2-NEARVIA-BE-APP-001": {
-      "status": "BLOCKED",
+      "status": "READY",
       "owner": "Backend Nearvia Deployment Agent",
       "agent": "A",
       "reviewer": "Backend Review Agent",
@@ -2609,10 +2609,10 @@
       "execution_worktree": "wt-auth-v2-nearvia-be-app-001",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": false,
+      "implementation_authorized": true,
       "backend_mutation_authorized": false,
       "db_schema_mutation_authorized": false,
-      "deployment_product_app_registration_authorized": false,
+      "deployment_product_app_registration_authorized": true,
       "app_credential_mutation_authorized": false,
       "provider_deployment_configuration_authorized": false,
       "provider_credential_material_authorized": false,
@@ -2621,7 +2621,7 @@
       "platform_api_mode": "NONE",
       "sdk_public_api_mode": "READ_ONLY",
       "product_adapter_rule": "ADAPTER_FIRST",
-      "backend_runtime_authority": "root/FlyPostAPI Dev@d9ad6c3c0e9186e574081e22d88450d93542fd29",
+      "backend_runtime_authority": "root/FlyPostAPI Dev@5dfee7163ed1dbcb691dc65e8752eb18f2b464fb",
       "nearvia_identity_authority": "com.lcloudy.nearvia / Apple Team V4U9V436CM",
       "public_app_key": "nearvia",
       "numeric_app_id_authority": "SERVER_GENERATED",
@@ -2631,8 +2631,8 @@
         "docs/evidence/AUTH-V2-NEARVIA-BE-APP-001/**"
       ],
       "required_behavior": "Use the existing audited Product App control plane to register exactly one active Nearvia product_app with app_key=nearvia, name=Nearvia, default_region_code=GLOBAL and server-generated numeric App ID. Record sanitized staging evidence only; production API origin remains unresolved. No Backend code/schema/provider/credential/App/SDK mutation.",
-      "execution_gate": "BLOCKED_OPERATOR_IMPLEMENTATION",
-      "unblock_rule": "Blocked until PLATFORM-PRODUCT-DEPLOY-OP-001 is DONE/CLOSED_REVIEW_PASS. Then Coordinator must separately reopen staging Product App registration through the reviewed generic operator; direct SQL/admin-password reset remains forbidden."
+      "execution_gate": "OPEN_STAGING_REGISTRATION",
+      "unblock_rule": "OPEN_STAGING_REGISTRATION. Deployment Agent may use only the reviewed local productctl operator on staging: inspect/dry-run, register exactly app_key=nearvia name=Nearvia default_region_code=GLOBAL status=active, then verify idempotent reread and record sanitized evidence. Backend code/schema/provider/credential/App/SDK mutation, HTTP/admin-session fallback, admin-password reset, direct SQL, NFC Writer identity reuse and production-origin invention remain forbidden."
     },
     "PLATFORM-PRODUCT-DEPLOY-ARCH-001": {
       "status": "DONE",
@@ -2670,7 +2670,7 @@
       "closure_note": "PRODUCT_DEPLOYMENT_OPERATOR_V1 is canonical. Local-only/no-network generic productctl architecture, SYSTEM_DEPLOYMENT_OPERATOR audit actor, local:productctl source, MySQL-coordinated Snowflake worker lease, unscoped app_key idempotency including soft-deleted rows, and fail-closed conflict semantics are independently reviewed. Any implementation change outside the frozen contract requires a new architecture Story."
     },
     "PLATFORM-PRODUCT-DEPLOY-OP-001": {
-      "status": "READY",
+      "status": "DONE",
       "owner": "Backend Platform Coding Agent",
       "agent": "A",
       "reviewer": "Backend Review Agent",
@@ -2684,8 +2684,8 @@
       "execution_worktree": "wt-platform-product-deploy-op-001",
       "state_write_authority": "COORDINATOR_ONLY",
       "agent_may_edit_task_board": false,
-      "implementation_authorized": true,
-      "backend_mutation_authorized": true,
+      "implementation_authorized": false,
+      "backend_mutation_authorized": false,
       "db_schema_mutation_authorized": false,
       "provider_credential_material_authorized": false,
       "sdk_mutation_authorized": false,
@@ -2701,9 +2701,16 @@
         "docs/evidence/PLATFORM-PRODUCT-DEPLOY-OP-001/**"
       ],
       "required_behavior": "Implement only the independently reviewed generic PRODUCT_DEPLOYMENT_OPERATOR_V1 contract. No Nearvia/NFC Writer hard-code, no new HTTP endpoint, schema, provider, credential, SDK or App mutation.",
-      "execution_gate": "OPEN_IMPLEMENTATION",
-      "unblock_rule": "OPEN_IMPLEMENTATION. Coding may modify only the authorized narrow Backend write set and must implement PRODUCT_DEPLOYMENT_OPERATOR_V1 exactly. Deliver one exact candidate to Formal/full go test and independent Backend review; no staging mutation until merged/post-merge quality and Coordinator authorization.",
-      "contract_authority": "contracts/PRODUCT_DEPLOYMENT_OPERATOR_V1.md"
+      "execution_gate": "CLOSED_REVIEW_PASS",
+      "unblock_rule": "Closed. Generic PRODUCT_DEPLOYMENT_OPERATOR_V1 implementation is canonical on FlyPostAPI Dev. Consumer-specific staging registration remains separately gated; no further Backend mutation is authorized by this closed Story.",
+      "contract_authority": "contracts/PRODUCT_DEPLOYMENT_OPERATOR_V1.md",
+      "review_state": "PASS",
+      "review_verdict": "PASS",
+      "delivery_commit": "5ea2538ab0ff10bde7d556269ea3d20a29426f05",
+      "formal_ci": "FlyPostAPI PR #23 exact 5ea2538ab0ff10bde7d556269ea3d20a29426f05: Migrations / migrate SUCCESS; Quality Baseline backend/go-sdk/dart-sdk SUCCESS. Descendant Dev@5dfee7163ed1dbcb691dc65e8752eb18f2b464fb push Quality Baseline backend/go-sdk/dart-sdk SUCCESS.",
+      "formal_review": "#586 APPROVED / reviewer-agent / official=true / stale=false / exact 5ea2538ab0ff10bde7d556269ea3d20a29426f05",
+      "delivery_merge_commit": "5dfee7163ed1dbcb691dc65e8752eb18f2b464fb",
+      "closure_note": "PRODUCT_DEPLOYMENT_OPERATOR_V1 is implemented and independently reviewed in FlyPostAPI. Final diff is limited to cmd/productctl/**, deployment_operator.go/test and Story evidence. It preserves local-only/no-network execution, unscoped app_key idempotency, fail-closed ambiguous/conflict handling, audited create transaction, MySQL-coordinated Snowflake allocation and sanitized output. No schema/router/admin-auth/provider/credential/SDK/App or consumer-specific hard-code was added."
     }
   },
   "non_executable_roadmaps": [

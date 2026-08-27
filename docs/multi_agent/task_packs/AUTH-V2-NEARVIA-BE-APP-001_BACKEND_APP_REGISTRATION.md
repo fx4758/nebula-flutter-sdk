@@ -7,13 +7,13 @@
 - Execution branch：`auth/v2-nearvia-be-app-001`
 - Execution remote: `origin`
 - Execution worktree: `wt-auth-v2-nearvia-be-app-001`
-- Required upstream: `AUTH-V2-BE-001 = DONE`, `AUTH-V2-NEARVIA-IDENTITY-002 = DONE`, `PLATFORM-PRODUCT-DEPLOY-OP-001 = DONE / CLOSED_REVIEW_PASS`
+- Required upstream: `AUTH-V2-BE-001 = DONE`, `AUTH-V2-NEARVIA-IDENTITY-002 = DONE`, `PLATFORM-PRODUCT-DEPLOY-OP-001 = DONE / CLOSED_REVIEW_PASS` (satisfied; operator merge `5dfee7163ed1dbcb691dc65e8752eb18f2b464fb`)
 - Platform API mode：`NONE`
 - SDK public API mode：`READ_ONLY`
 - Product adapter rule: `ADAPTER_FIRST`
 
 ## Authority
-Backend canonical at registration: `root/FlyPostAPI Dev@d9ad6c3c0e9186e574081e22d88450d93542fd29`.
+Backend canonical for staging registration: `root/FlyPostAPI Dev@5dfee7163ed1dbcb691dc65e8752eb18f2b464fb`.
 Nearvia product identity authority: `com.lcloudy.nearvia`, Apple Team `V4U9V436CM`.
 Nebula governance authority at registration: `main@8cb207b760741e75deaa0aac2416914066f65ab0`.
 
@@ -39,9 +39,9 @@ This is staging infrastructure only. It is NOT Nearvia product identity or produ
 Production API origin remains `UNRESOLVED`; do not invent one.
 
 ## Execution gate and authorized execution
-This Story is **BLOCKED** until `PLATFORM-PRODUCT-DEPLOY-OP-001 = DONE / CLOSED_REVIEW_PASS`. Completion of that dependency does not itself authorize staging mutation: Coordinator must separately reopen this Story for deployment registration.
+This Story is **OPEN_STAGING_REGISTRATION** under explicit Coordinator authority. `PLATFORM-PRODUCT-DEPLOY-OP-001` is closed by FlyPostAPI PR #23 exact `5ea2538ab0ff10bde7d556269ea3d20a29426f05`, Review #586 `APPROVED / official=true / stale=false`, merge `5dfee7163ed1dbcb691dc65e8752eb18f2b464fb`, with descendant quality SUCCESS.
 
-After that explicit reopen, the Deployment Agent may only through the reviewed local deployment operator:
+The Deployment Agent may only through that reviewed local deployment operator:
 1. dry-run/inspect staging and confirm no active `app_key=nearvia` conflict exists;
 2. register exactly one active Product App with explicit `app_key=nearvia`, `name=Nearvia`, `default_region_code=GLOBAL`, `status=active`;
 3. record the server-generated numeric App ID and public AppKey in sanitized evidence;
