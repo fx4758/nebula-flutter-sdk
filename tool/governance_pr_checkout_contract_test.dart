@@ -6,12 +6,16 @@ Never fail(String message) {
 }
 
 void requireContains(String text, String needle) {
-  if (!text.contains(needle)) fail('missing contract fragment: $needle');
+  if (!text.contains(needle)) {
+    fail('missing contract fragment: $needle');
+  }
 }
 
 void main() {
   final file = File('.github/workflows/governance.yml');
-  if (!file.existsSync()) fail('governance workflow missing');
+  if (!file.existsSync()) {
+    fail('governance workflow missing');
+  }
   final workflow = file.readAsStringSync();
 
   requireContains(workflow, 'PR_NUMBER=');
@@ -20,7 +24,10 @@ void main() {
   requireContains(workflow, 'FETCHED_SHA=');
   requireContains(workflow, r'$FETCHED_SHA');
   requireContains(workflow, r'$HEAD_SHA');
-  requireContains(workflow, "fetch --no-tags origin '+refs/heads/*:refs/remotes/origin/*'");
+  requireContains(
+    workflow,
+    "fetch --no-tags origin '+refs/heads/*:refs/remotes/origin/*'",
+  );
   requireContains(workflow, r'refs/remotes/origin/$HEAD_REF');
 
   if (workflow.contains("print(pr['head']['ref'])")) {
