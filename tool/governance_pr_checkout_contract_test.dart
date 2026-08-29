@@ -22,8 +22,7 @@ void main() {
   requireContains(workflow, 'HEAD_SHA=');
   requireContains(workflow, r'refs/pull/${PR_NUMBER}/head');
   requireContains(workflow, 'FETCHED_SHA=');
-  requireContains(workflow, r'$FETCHED_SHA');
-  requireContains(workflow, r'$HEAD_SHA');
+  requireContains(workflow, r'test "$FETCHED_SHA" = "$HEAD_SHA"');
   requireContains(
     workflow,
     "fetch --no-tags origin '+refs/heads/*:refs/remotes/origin/*'",
