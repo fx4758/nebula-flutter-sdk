@@ -7,7 +7,7 @@ import 'dart:convert';
 enum NebulaLoginProvider { phone, email, oauth }
 
 /// Supported OAuth providers for Auth V2.
-enum NebulaOAuthProvider { apple, google }
+enum NebulaOAuthProvider { apple, google, wechat, qq }
 
 /// Purpose bound to an EMAIL verification code.
 enum NebulaEmailCodePurpose { register, resetPassword }
@@ -76,6 +76,8 @@ final class NebulaLoginRequest {
             'oauth_provider': switch (oauthProvider!) {
               NebulaOAuthProvider.apple => 'APPLE',
               NebulaOAuthProvider.google => 'GOOGLE',
+              NebulaOAuthProvider.wechat => 'WECHAT',
+              NebulaOAuthProvider.qq => 'QQ',
             },
             'oauth_code': oauthCode,
           },
