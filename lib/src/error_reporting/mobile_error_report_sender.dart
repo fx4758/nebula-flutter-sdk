@@ -44,6 +44,8 @@ final class MobileErrorReportSender implements ErrorReportSender {
   final bool compactWireV2;
   DateTime? _cooldownUntil;
   bool _trustRecoveryRequired = false;
+  // One V2 negotiation failure disables V2 until the next SDK session.
+  bool _v2Unsupported = false;
 
   @override
   Future<ErrorReportSendResult> send(List<NebulaErrorReport> reports) async {
@@ -126,6 +128,12 @@ final class MobileErrorReportSender implements ErrorReportSender {
             affectedReportIds: prepared.reportIds,
           );
         case 30001:
+          // Preserve report_ids and retry once as V1 when the server is old.
+          // This is safe because legacy strict JSON rejects V2 pre-ingest.
+          if (prepared.body['v'] == 2 && !_v2Unsupported) {
+            _v2Unsupported = true;
+            return send(reports);
+          }
           return ErrorReportSendResult(
             disposition: ErrorReportSendDisposition.deterministicRequestFailure,
             affectedReportIds: prepared.reportIds,
@@ -165,8 +173,7 @@ final class MobileErrorReportSender implements ErrorReportSender {
     while (count > 0) {
       final List<NebulaErrorReport> selected =
           List<NebulaErrorReport>.unmodifiable(reports.take(count));
-      final Map<String, Object?> body =
-          (compactWireV2 ? compactErrorReports(selected) : null) ??
+      final Map<String, Object?> legacy =
           Map<String, Object?>.unmodifiable(<String, Object?>{
             'reports': List<Map<String, Object?>>.unmodifiable(
               selected.map(
@@ -175,6 +182,17 @@ final class MobileErrorReportSender implements ErrorReportSender {
               ),
             ),
           });
+      // V2 batches may be more compact than V1, but every selected batch
+      // MUST remain transferable to an older server with the same report IDs.
+      if (utf8.encode(jsonEncode(legacy)).length > _maxErrorRequestBytes) {
+        count--;
+        continue;
+      }
+      final Map<String, Object?> body =
+          (compactWireV2 && !_v2Unsupported
+              ? compactErrorReports(selected)
+              : null) ??
+          legacy;
       if (utf8.encode(jsonEncode(body)).length <= _maxErrorRequestBytes) {
         return _PreparedErrorBatch(
           body: body,

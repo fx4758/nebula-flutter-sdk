@@ -76,6 +76,9 @@ final class MobileAnalyticsSender
 
   DateTime? _cooldownUntil;
   bool _trustRecoveryRequired = false;
+  // On a verified V1-only backend, make at most one V2 probe per sender
+  // lifetime. Older servers answer 30001 before accepting V2 data.
+  bool _v2Unsupported = false;
 
   @override
   AssignedMobileAnalyticsBatch assignBatch(
@@ -96,9 +99,19 @@ final class MobileAnalyticsSender
     while (count > 0) {
       final List<NebulaAnalyticsEvent> events =
           List<NebulaAnalyticsEvent>.unmodifiable(candidates.take(count));
+      // Even a compact batch must fit the legacy wire so a server rollback
+      // cannot strand events in an oversized, unconvertible V2 batch.
+      final Map<String, Object?> legacy = _body(batchId, events);
+      final int legacyBytes = utf8.encode(jsonEncode(legacy)).length;
+      if (legacyBytes > _maxAnalyticsRequestBytes) {
+        count--;
+        continue;
+      }
       final Map<String, Object?> body =
-          (compactWireV2 ? compactAnalyticsBatch(batchId, events) : null) ??
-          _body(batchId, events);
+          (compactWireV2 && !_v2Unsupported
+              ? compactAnalyticsBatch(batchId, events)
+              : null) ??
+          legacy;
       final int bytes = utf8.encode(jsonEncode(body)).length;
       if (bytes <= _maxAnalyticsRequestBytes) {
         return AssignedMobileAnalyticsBatch(
@@ -119,6 +132,21 @@ final class MobileAnalyticsSender
   Future<MobileAnalyticsSendDisposition> sendAssigned(
     AssignedMobileAnalyticsBatch batch,
   ) async {
+    // A pending assigned batch can outlive a V2->V1 downgrade. Keep its
+    // identity and exact events; recompute only the transport representation.
+    if (_v2Unsupported && batch.body['v'] == 2) {
+      final body = _body(batch.batchId, batch.events);
+      final bytes = utf8.encode(jsonEncode(body)).length;
+      if (bytes > _maxAnalyticsRequestBytes) {
+        return MobileAnalyticsSendDisposition.defer;
+      }
+      batch = AssignedMobileAnalyticsBatch(
+        batchId: batch.batchId,
+        events: batch.events,
+        body: body,
+        encodedBytes: bytes,
+      );
+    }
     final DateTime now = _now().toUtc();
     if (_trustRecoveryRequired) {
       final DateTime? cooldown = _cooldownUntil;
@@ -200,6 +228,12 @@ final class MobileAnalyticsSender
           _deferTrust(now);
           return MobileAnalyticsSendDisposition.defer;
         case 30001:
+          // V1-only server: strict JSON rejects V2 before ingestion.
+          // Retry exactly once with the SAME batch_id, avoiding data loss.
+          if (batch.body['v'] == 2 && !_v2Unsupported) {
+            _v2Unsupported = true;
+            return sendAssigned(batch);
+          }
           return MobileAnalyticsSendDisposition.nonRetryable;
         default:
           return MobileAnalyticsSendDisposition.nonRetryable;

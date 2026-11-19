@@ -6,6 +6,7 @@ import 'package:nebula_sdk/src/analytics/event.dart';
 import 'package:nebula_sdk/src/analytics/mobile_analytics_sender.dart';
 import 'package:nebula_sdk/src/error_reporting/mobile_error_report_sender.dart';
 import 'package:nebula_sdk/src/error_reporting/report.dart';
+import 'package:nebula_sdk/src/foundation/errors.dart';
 import 'package:nebula_sdk/src/foundation/options.dart';
 import 'package:nebula_sdk/src/foundation/sha256.dart';
 import 'package:nebula_sdk/src/observability/mobile_wire_v2.dart';
@@ -47,6 +48,52 @@ class _SpyTransport implements NebulaTransport {
             },
         ],
         'rejected': <Object>[],
+        'defer_remaining': false,
+      },
+    );
+  }
+}
+
+// Emulates the deployed V1 strict decoder rejecting the unknown V2 keys
+// before any receipt is stored. Successful fallback returns legacy ACKs.
+class _V1OnlyTransport implements NebulaTransport {
+  final requests = <NebulaRequest>[];
+  int rejectCount = 0;
+  bool rejectAll = false;
+
+  @override
+  Future<NebulaResponse> send(NebulaRequest request) async {
+    requests.add(request);
+    final body = request.body! as Map<String, Object?>;
+    if (rejectAll || body['v'] == 2) {
+      rejectCount++;
+      throw const NebulaApiException('unknown protocol', code: 30001);
+    }
+    if (request.path.endsWith('analytics/batches')) {
+      final events = body['events']! as List<Object?>;
+      return NebulaResponse(
+        statusCode: 200,
+        data: <String, Object?>{
+          'batch_id': body['batch_id'],
+          'accepted_events': events.length,
+          'duplicate': false,
+          'ingested_at': 1795080000,
+        },
+      );
+    }
+    final reports = body['reports']! as List<Object?>;
+    return NebulaResponse(
+      statusCode: 200,
+      data: <String, Object?>{
+        'accepted': <Object?>[
+          for (final item in reports)
+            <String, Object?>{
+              'report_id': (item! as Map<String, Object?>)['report_id'],
+              'duplicate': false,
+              'ingested_at': 1795080000,
+            },
+        ],
+        'rejected': <Object?>[],
         'defer_remaining': false,
       },
     );
@@ -258,5 +305,108 @@ void main() {
     expect(response.statusCode, 200);
     expect(await captured.future, encoded);
     expect(signer.signed.single.split('\n')[5], sha256Hex(encoded));
+  });
+  test(
+    'new SDK on V1 server downgrades analytics once; keeps batch id',
+    () async {
+      final legacy = _V1OnlyTransport();
+      final signer = RecordingProofSigner();
+      final sender = MobileAnalyticsSender(
+        options: _options,
+        transport: legacy,
+        proofSigner: signer,
+        installationToken: () async => 'token',
+        recoverInstallationTrust: () async => true,
+        batchIdGenerator: () => 'stable-batch',
+        compactWireV2: true,
+      );
+      NebulaAnalyticsEvent getPage() => NebulaAnalyticsEvent(
+        name: 'page_view',
+        privacy: NebulaEventPrivacy.anonymous,
+        properties: {'page': 'home'},
+        timestamp: clock,
+      );
+      final assigned = sender.assignBatch([getPage()]);
+      expect(assigned.body['v'], 2);
+      expect(
+        await sender.sendAssigned(assigned),
+        MobileAnalyticsSendDisposition.success,
+      );
+      expect(legacy.requests, hasLength(2));
+      expect(legacy.rejectCount, 1);
+      expect(legacy.requests.first.body! as Map, containsPair('v', 2));
+      expect(
+        legacy.requests.last.body! as Map,
+        containsPair('batch_id', 'stable-batch'),
+      );
+      expect(legacy.requests.last.headers, isNot(contains('Content-Encoding')));
+      // Future batches do not make another V2 probe to the old server.
+      expect(sender.assignBatch([getPage()]).body['v'], isNull);
+      expect(
+        await sender.sendAssigned(assigned),
+        MobileAnalyticsSendDisposition.success,
+      );
+      expect(legacy.rejectCount, 1);
+      expect(legacy.requests.length, 3);
+    },
+  );
+
+  test(
+    'V1-only server error-report fallback keeps report IDs and queue data',
+    () async {
+      final legacy = _V1OnlyTransport();
+      final sender = MobileErrorReportSender(
+        options: _options,
+        transport: legacy,
+        proofSigner: RecordingProofSigner(),
+        installationToken: () async => 'token',
+        recoverInstallationTrust: () async => true,
+        compactWireV2: true,
+      );
+      NebulaErrorReport mk(String id) => NebulaErrorReport(
+        reportId: id,
+        occurredAt: clock,
+        errorType: 'StateError',
+        safeMessage: 'caught_error',
+        stack: '#0 NFCWriter.run',
+      );
+      final result = await sender.send([mk('report-1')]);
+      expect(result.acceptedReportIds, {'report-1'});
+      expect(legacy.requests.length, 2);
+      expect(legacy.requests.first.body! as Map, containsPair('v', 2));
+      final rows = (legacy.requests.last.body! as Map)['reports'] as List;
+      expect((rows.first as Map)['report_id'], 'report-1');
+      expect(legacy.rejectCount, 1);
+      expect((await sender.send([mk('report-2')])).acceptedReportIds, {
+        'report-2',
+      });
+      expect(legacy.requests.length, 3);
+      expect(legacy.rejectCount, 1);
+    },
+  );
+
+  test('old server rejecting even V1 is bounded to two attempts', () async {
+    final legacy = _V1OnlyTransport()..rejectAll = true;
+    final analytics = MobileAnalyticsSender(
+      options: _options,
+      transport: legacy,
+      proofSigner: RecordingProofSigner(),
+      installationToken: () async => 'token',
+      recoverInstallationTrust: () async => true,
+      batchIdGenerator: () => 'bad-server',
+      compactWireV2: true,
+    );
+    final e = NebulaAnalyticsEvent(
+      name: 'page_view',
+      privacy: NebulaEventPrivacy.anonymous,
+      properties: {'page': 'home'},
+      timestamp: clock,
+    );
+    expect(
+      await analytics.sendAssigned(analytics.assignBatch([e])),
+      MobileAnalyticsSendDisposition.nonRetryable,
+    );
+    expect(legacy.requests.length, 2);
+    expect(analytics.assignBatch([e]).body['v'], isNull);
   });
 }
