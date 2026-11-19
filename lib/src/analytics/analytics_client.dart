@@ -213,14 +213,19 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
 
   void _enqueueAt(NebulaAnalyticsEvent event, DateTime enqueuedAt) {
     final int bytes = event.estimatedBytes;
-    if (bytes > _maxQueuedBytes) {
-      _dropped++; // 单条超限：直接丢弃并计数。
+    final int activeCount = _activeBatchItems.length;
+    final int activeBytes = _activeBatchItems.fold<int>(
+      0, (sum, item) => sum + item.event.estimatedBytes,
+    );
+    if (bytes + activeBytes > _maxQueuedBytes ||
+        activeCount >= _maxQueuedEvents) {
+      _dropped++; // Never evict a signed in-flight batch to admit new data.
       return;
     }
-    // 为容纳新事件，按需丢弃最旧（FIFO）。
+    // In-flight records count against the same local disk/queue budget.
     while (_queue.isNotEmpty &&
-        (_queue.length >= _maxQueuedEvents ||
-            _queuedBytes + bytes > _maxQueuedBytes)) {
+        (_queue.length + activeCount >= _maxQueuedEvents ||
+            _queuedBytes + activeBytes + bytes > _maxQueuedBytes)) {
       _dropOldest();
     }
     _queue.add(_Queued(event, enqueuedAt));

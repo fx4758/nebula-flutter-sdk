@@ -162,6 +162,23 @@ void main() {
     expect(c.droppedCount, 27);
     expect((await store(storage).load()).records, hasLength(48));
   });
+  test('in-flight records reserve the same 48-row cap', () async {
+    final storage = InMemoryCacheStorage();
+    final transport = Transport()..gate = Completer<void>();
+    final c = client(storage, transport);
+    for (var i=0; i<48; i++) { await c.track(page('home_$i')); }
+    final running = c.flush();
+    for (var i=0; i<20 && transport.requests.isEmpty; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 2));
+    }
+    expect(transport.requests, hasLength(1));
+    await c.track(page('new_event'));
+    expect(c.droppedCount, 1);
+    expect((await store(storage).load()).records, hasLength(48));
+    transport.gate!.complete();
+    await running;
+  });
+
   test('damaged local state is discarded, never becomes an upload', () async {
     final storage = InMemoryCacheStorage();
     final namespace = StorageNamespace.app(
