@@ -54,6 +54,7 @@ final class NebulaMobileObservability {
     required Future<bool> Function() recoverInstallationTrust,
     required CacheStorage persistentStorage,
     bool compactWireV2 = false,
+    bool persistAnonymousAnalytics = false,
   }) {
     final ({
       NebulaAnalytics analytics,
@@ -68,6 +69,7 @@ final class NebulaMobileObservability {
       recoverInstallationTrust: recoverInstallationTrust,
       persistentStorage: persistentStorage,
       compactWireV2: compactWireV2,
+      persistAnonymousAnalytics: persistAnonymousAnalytics,
     );
     return NebulaMobileObservability._(
       analytics: composed.analytics,

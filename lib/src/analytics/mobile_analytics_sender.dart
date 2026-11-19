@@ -84,7 +84,18 @@ final class MobileAnalyticsSender
     if (candidates.isEmpty) {
       throw ArgumentError.value(candidates, 'candidates', 'must not be empty');
     }
-    final String batchId = _batchIdGenerator();
+    return assignBatchWithId(candidates, _batchIdGenerator());
+  }
+
+  /// Reconstitute a previously assigned durable batch with the same receipt
+  /// identity after an interrupted upload. Never create a fresh batch ID.
+  AssignedMobileAnalyticsBatch assignBatchWithId(
+    List<NebulaAnalyticsEvent> candidates,
+    String batchId,
+  ) {
+    if (candidates.isEmpty) {
+      throw ArgumentError.value(candidates, 'candidates', 'must not be empty');
+    }
     final int idBytes = utf8.encode(batchId).length;
     if (idBytes == 0 || idBytes > 128) {
       throw StateError('batch_id must be 1..128 UTF-8 bytes');

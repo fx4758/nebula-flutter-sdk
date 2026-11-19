@@ -1,6 +1,7 @@
 library;
 
 import '../analytics/analytics_client.dart';
+import '../analytics/cache_anonymous_analytics_queue.dart';
 import '../analytics/consent.dart';
 import '../analytics/mobile_analytics_sender.dart';
 import '../analytics/nebula_analytics.dart';
@@ -26,6 +27,7 @@ createMobileObservabilityComposition({
   required Future<bool> Function() recoverInstallationTrust,
   required CacheStorage persistentStorage,
   bool compactWireV2 = false,
+  bool persistAnonymousAnalytics = false,
 }) {
   options.validate();
 
@@ -38,6 +40,13 @@ createMobileObservabilityComposition({
     compactWireV2: compactWireV2,
   );
   final NebulaAnalyticsClient analytics = NebulaAnalyticsClient(
+    anonymousQueue: persistAnonymousAnalytics
+        ? CachedAnonymousAnalyticsQueue(
+            storage: persistentStorage,
+            environment: options.environment,
+            appId: options.appId,
+          )
+        : null,
     consentStore: CacheConsentStore(
       storage: persistentStorage,
       environment: options.environment,

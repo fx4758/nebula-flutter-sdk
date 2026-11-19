@@ -17,6 +17,7 @@ import 'dart:math';
 
 import '../foundation/errors.dart';
 import 'analytics_sender.dart';
+import 'cache_anonymous_analytics_queue.dart';
 import 'consent.dart';
 import 'event.dart';
 import 'mobile_analytics_sender.dart';
@@ -41,6 +42,7 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
   NebulaAnalyticsClient({
     required NebulaConsentStore consentStore,
     NebulaAnalyticsSender? sender,
+    CachedAnonymousAnalyticsQueue? anonymousQueue,
     int maxQueuedEvents = 200,
     int maxQueuedBytes = 64 * 1024,
     Duration maxEventAge = const Duration(hours: 24),
@@ -48,18 +50,26 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
     int sendRetries = 3,
     Duration sendRetryBaseDelay = const Duration(milliseconds: 250),
     DateTime Function()? now,
-  })  : _consentStore = consentStore,
-        _sender = sender,
-        _maxQueuedEvents = maxQueuedEvents,
-        _maxQueuedBytes = maxQueuedBytes,
-        _maxEventAge = maxEventAge,
-        _batchSize = batchSize,
-        _sendRetries = sendRetries,
-        _sendRetryBaseDelay = sendRetryBaseDelay,
-        _now = now ?? DateTime.now;
+  }) : _consentStore = consentStore,
+       _sender = sender,
+       _anonymousQueue = anonymousQueue,
+       _maxQueuedEvents =
+           anonymousQueue != null &&
+               maxQueuedEvents > CachedAnonymousAnalyticsQueue.maxRecords
+           ? CachedAnonymousAnalyticsQueue.maxRecords
+           : maxQueuedEvents,
+       _maxQueuedBytes = maxQueuedBytes,
+       _maxEventAge = maxEventAge,
+       _batchSize = batchSize,
+       _sendRetries = sendRetries,
+       _sendRetryBaseDelay = sendRetryBaseDelay,
+       _now = now ?? DateTime.now;
 
   final NebulaConsentStore _consentStore;
   final NebulaAnalyticsSender? _sender;
+  final CachedAnonymousAnalyticsQueue? _anonymousQueue;
+  Future<void>? _restoreInFlight;
+  Future<void> _writeTail = Future<void>.value();
   final int _maxQueuedEvents;
   final int _maxQueuedBytes;
   final Duration _maxEventAge;
@@ -76,6 +86,9 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
 
   NebulaConsent? _consent;
   _AssignedRetry? _assignedRetry;
+  // An in-flight batch must stay in every durable snapshot, even while a
+  // concurrent track() is appending fresh events to the memory queue.
+  List<_Queued> _activeBatchItems = const <_Queued>[];
 
   /// 当前缓冲中的未发送事件（诊断用，只读）。
   List<NebulaAnalyticsEvent> get pending =>
@@ -90,6 +103,81 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
   /// 已成功发送的事件总数。
   int get sentCount => _sent;
 
+  /// Restore at most 48 anonymous, low-cardinality events. Identity and
+  /// original receipt batch_id survive process termination and ambiguous ACKs.
+  Future<void> _ensureRestored() =>
+      _restoreInFlight ??= _restoreAnonymousQueue();
+
+  Future<void> _restoreAnonymousQueue() async {
+    final store = _anonymousQueue;
+    if (store == null) return;
+    try {
+      final snapshot = await store.load();
+      for (final record in snapshot.records) {
+        if (_now().toUtc().difference(record.queuedAt) > _maxEventAge) continue;
+        final event = record.event;
+        _enqueueAt(event, record.queuedAt);
+      }
+      final sender = _sender;
+      final count = snapshot.assignedCount;
+      if (sender is MobileAnalyticsSender &&
+          snapshot.assignedBatchId != null &&
+          count > 0 &&
+          count <= _queue.length) {
+        final selected = _queue.take(count).toList(growable: false);
+        final restored = sender.assignBatchWithId(
+          selected.map((queued) => queued.event).toList(growable: false),
+          snapshot.assignedBatchId!,
+        );
+        if (restored.events.length == count) {
+          _assignedRetry = _AssignedRetry(restored, selected);
+        }
+      }
+    } on Object {
+      // Bad local cache must not affect account, NFC or app navigation.
+    }
+  }
+
+  /// Serializing immutable snapshots avoids an older async write overwriting
+  /// newer queue/ACK state. Persist *before* a batch goes over the network.
+  Future<bool> _persistQueue() async {
+    final store = _anonymousQueue;
+    if (store == null) return true;
+    final items = <_Queued>[..._activeBatchItems, ..._queue];
+    final safeItems = items
+        .where((item) => CachedAnonymousAnalyticsQueue.allows(item.event))
+        .toList(growable: false);
+    final retry = _assignedRetry;
+    final count = retry?.items.length ?? 0;
+    final id =
+        retry != null &&
+            count <= safeItems.length &&
+            safeItems.take(count).every((e) => retry.items.contains(e))
+        ? retry.batch.batchId
+        : null;
+    final snapshot = CachedAnonymousAnalyticsSnapshot(
+      records: [
+        for (final item in safeItems)
+          CachedAnonymousAnalyticsRecord(item.event, item.enqueuedAt),
+      ],
+      assignedBatchId: id,
+      assignedCount: id == null ? 0 : count,
+    );
+    bool saved = false;
+    final next = _writeTail.then((_) async {
+      try {
+        await store.save(snapshot);
+        saved = true;
+      } on Object {
+        // Storage failure remains fail-soft, without sending an untracked
+        // batch that could be duplicated after an ambiguous ACK.
+      }
+    });
+    _writeTail = next;
+    await next;
+    return saved;
+  }
+
   @override
   Future<NebulaConsent> get consent async {
     _consent ??= await _consentStore.load();
@@ -98,25 +186,32 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
 
   @override
   Future<void> setConsent(NebulaConsent consent) async {
+    await _ensureRestored();
     _consent = consent;
     await _consentStore.save(consent);
     if (consent == NebulaConsent.revoked) {
       // 撤回同意：清理未发送的可识别事件（docs/02 §4）。
       _removeWhere((NebulaAnalyticsEvent e) => e.identifiable);
+      await _persistQueue();
     }
   }
 
   @override
   Future<void> track(NebulaAnalyticsEvent event) async {
+    await _ensureRestored();
     final NebulaConsent current = await consent;
     if (event.identifiable && current != NebulaConsent.granted) {
       return; // 未同意：可识别事件直接丢弃，绝不持久化/缓冲。
     }
     _enqueue(event);
+    await _persistQueue();
   }
 
   /// 有界入队（docs/02 §4：数量 + 字节硬上限；docs/04：满时丢弃最旧并计数）。
-  void _enqueue(NebulaAnalyticsEvent event) {
+  void _enqueue(NebulaAnalyticsEvent event) =>
+      _enqueueAt(event, _now().toUtc());
+
+  void _enqueueAt(NebulaAnalyticsEvent event, DateTime enqueuedAt) {
     final int bytes = event.estimatedBytes;
     if (bytes > _maxQueuedBytes) {
       _dropped++; // 单条超限：直接丢弃并计数。
@@ -128,7 +223,7 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
             _queuedBytes + bytes > _maxQueuedBytes)) {
       _dropOldest();
     }
-    _queue.add(_Queued(event, _now().toUtc()));
+    _queue.add(_Queued(event, enqueuedAt));
     _queuedBytes += bytes;
   }
 
@@ -166,6 +261,7 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
     if (sender == null || _flushing) return;
     _flushing = true;
     try {
+      await _ensureRestored();
       _expireOldEvents();
       if (sender is MobileAnalyticsAssignedSender) {
         await _flushMobile(sender as MobileAnalyticsAssignedSender);
@@ -188,6 +284,7 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
         break;
       }
       _sent += taken.length;
+      await _persistQueue();
     }
   }
 
@@ -213,8 +310,18 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
         taken = _takeCount(assigned.events.length);
       }
 
-      final _MobileBatchOutcome outcome =
-          await _sendAssignedWithRetry(sender, assigned);
+      _assignedRetry = _AssignedRetry(assigned, taken);
+      _activeBatchItems = taken;
+      if (!await _persistQueue()) {
+        _activeBatchItems = const <_Queued>[];
+        _requeue(taken);
+        return;
+      }
+      final _MobileBatchOutcome outcome = await _sendAssignedWithRetry(
+        sender,
+        assigned,
+      );
+      _activeBatchItems = const <_Queued>[];
       switch (outcome) {
         case _MobileBatchOutcome.success:
           _assignedRetry = null;
@@ -225,8 +332,10 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
         case _MobileBatchOutcome.requeue:
           _requeue(taken);
           _assignedRetry = _AssignedRetry(assigned, taken);
+          await _persistQueue();
           return;
       }
+      await _persistQueue();
     }
   }
 
@@ -314,8 +423,8 @@ final class NebulaAnalyticsClient implements NebulaAnalytics {
     int attempt = 0;
     while (true) {
       try {
-        final MobileAnalyticsSendDisposition disposition =
-            await sender.sendAssigned(batch);
+        final MobileAnalyticsSendDisposition disposition = await sender
+            .sendAssigned(batch);
         switch (disposition) {
           case MobileAnalyticsSendDisposition.success:
             return _MobileBatchOutcome.success;
