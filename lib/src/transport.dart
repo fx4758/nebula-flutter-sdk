@@ -9,6 +9,7 @@ final class NebulaRequest {
     this.headers = const <String, String>{},
     this.query = const <String, String>{},
     this.body,
+    this.bodyBytes,
     this.idempotencyKey,
     this.cancellationToken,
   });
@@ -18,6 +19,9 @@ final class NebulaRequest {
   final Map<String, String> headers;
   final Map<String, String> query;
   final Object? body;
+
+  /// Optional signed, exact compressed wire bytes for observability.
+  final List<int>? bodyBytes;
   final String? idempotencyKey;
 
   /// Optional cooperative cancel signal. When cancelled mid-flight the transport

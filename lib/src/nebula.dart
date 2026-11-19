@@ -53,18 +53,21 @@ final class NebulaMobileObservability {
     required Future<String> Function() installationToken,
     required Future<bool> Function() recoverInstallationTrust,
     required CacheStorage persistentStorage,
+    bool compactWireV2 = false,
   }) {
     final ({
       NebulaAnalytics analytics,
       NebulaErrorReporting errorReporting,
       Future<void> Function() flush,
-    }) composed = createMobileObservabilityComposition(
+    })
+    composed = createMobileObservabilityComposition(
       options: options,
       transport: transport,
       proofSigner: proofSigner,
       installationToken: installationToken,
       recoverInstallationTrust: recoverInstallationTrust,
       persistentStorage: persistentStorage,
+      compactWireV2: compactWireV2,
     );
     return NebulaMobileObservability._(
       analytics: composed.analytics,

@@ -17,13 +17,15 @@ import '../transport.dart';
   NebulaAnalytics analytics,
   NebulaErrorReporting errorReporting,
   Future<void> Function() flush,
-}) createMobileObservabilityComposition({
+})
+createMobileObservabilityComposition({
   required NebulaOptions options,
   required NebulaTransport transport,
   required RequestProofSigner proofSigner,
   required Future<String> Function() installationToken,
   required Future<bool> Function() recoverInstallationTrust,
   required CacheStorage persistentStorage,
+  bool compactWireV2 = false,
 }) {
   options.validate();
 
@@ -33,6 +35,7 @@ import '../transport.dart';
     proofSigner: proofSigner,
     installationToken: installationToken,
     recoverInstallationTrust: recoverInstallationTrust,
+    compactWireV2: compactWireV2,
   );
   final NebulaAnalyticsClient analytics = NebulaAnalyticsClient(
     consentStore: CacheConsentStore(
@@ -54,6 +57,7 @@ import '../transport.dart';
     proofSigner: proofSigner,
     installationToken: installationToken,
     recoverInstallationTrust: recoverInstallationTrust,
+    compactWireV2: compactWireV2,
   );
   final ErrorReportingClient errorReporting = ErrorReportingClient(
     store: errorStore,
@@ -76,9 +80,5 @@ import '../transport.dart';
     ]);
   }
 
-  return (
-    analytics: analytics,
-    errorReporting: errorReporting,
-    flush: flush,
-  );
+  return (analytics: analytics, errorReporting: errorReporting, flush: flush);
 }

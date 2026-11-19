@@ -30,11 +30,12 @@ Future<Map<String, String>> buildAuthHeaders({
   required NebulaHttpMethod method,
   required String resolvedPath,
   required Object? body,
+  List<int>? bodyBytes,
   required String installationToken,
   required RequestProofSigner signer,
 }) async {
   final String bodyJson = body == null ? '' : jsonEncode(body);
-  final String bodySha256 = sha256Hex(utf8.encode(bodyJson));
+  final String bodySha256 = sha256Hex(bodyBytes ?? utf8.encode(bodyJson));
   final String tokenSha256 = sha256Hex(utf8.encode(installationToken));
   final String timestamp =
       (DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000).toString();

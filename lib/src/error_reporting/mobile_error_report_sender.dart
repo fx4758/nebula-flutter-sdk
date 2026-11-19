@@ -5,6 +5,7 @@ import 'dart:convert';
 import '../foundation/errors.dart';
 import '../foundation/options.dart';
 import '../foundation/request_proof.dart';
+import '../observability/mobile_wire_v2.dart';
 import '../transport.dart';
 import '../transport/proof_headers.dart';
 import 'report.dart';
@@ -25,12 +26,13 @@ final class MobileErrorReportSender implements ErrorReportSender {
     required InstallationTrustRecovery recoverInstallationTrust,
     DateTime Function()? now,
     this.rateLimitCooldown = const Duration(seconds: 30),
-  })  : _options = options,
-        _transport = transport,
-        _proofSigner = proofSigner,
-        _installationToken = installationToken,
-        _recoverInstallationTrust = recoverInstallationTrust,
-        _now = now ?? DateTime.now;
+    this.compactWireV2 = false,
+  }) : _options = options,
+       _transport = transport,
+       _proofSigner = proofSigner,
+       _installationToken = installationToken,
+       _recoverInstallationTrust = recoverInstallationTrust,
+       _now = now ?? DateTime.now;
 
   final NebulaOptions _options;
   final NebulaTransport _transport;
@@ -39,6 +41,7 @@ final class MobileErrorReportSender implements ErrorReportSender {
   final InstallationTrustRecovery _recoverInstallationTrust;
   final DateTime Function() _now;
   final Duration rateLimitCooldown;
+  final bool compactWireV2;
   DateTime? _cooldownUntil;
   bool _trustRecoveryRequired = false;
 
@@ -80,17 +83,22 @@ final class MobileErrorReportSender implements ErrorReportSender {
     if (prepared == null) {
       return ErrorReportSendResult(
         disposition: ErrorReportSendDisposition.deterministicRequestFailure,
-        affectedReportIds:
-            reports.map((NebulaErrorReport report) => report.reportId),
+        affectedReportIds: reports.map(
+          (NebulaErrorReport report) => report.reportId,
+        ),
       );
     }
 
     try {
       final String token = await _installationToken();
+      final List<int>? compressed = compactWireV2 && prepared.body['v'] == 2
+          ? maybeCompressTelemetry(prepared.body)
+          : null;
       final Map<String, String> headers = await buildAuthHeaders(
         method: NebulaHttpMethod.post,
         resolvedPath: _resolvePath(_errorReportsPath),
         body: prepared.body,
+        bodyBytes: compressed,
         installationToken: token,
         signer: _proofSigner,
       );
@@ -98,8 +106,12 @@ final class MobileErrorReportSender implements ErrorReportSender {
         NebulaRequest(
           method: NebulaHttpMethod.post,
           path: _errorReportsPath,
-          headers: headers,
+          headers: <String, String>{
+            ...headers,
+            if (compressed != null) 'Content-Encoding': 'gzip',
+          },
           body: prepared.body,
+          bodyBytes: compressed,
         ),
       );
       return _decode(response.data, prepared.reportIds);
@@ -143,22 +155,26 @@ final class MobileErrorReportSender implements ErrorReportSender {
   }
 
   _PreparedErrorBatch? _prepare(List<NebulaErrorReport> reports) {
-    final Set<String> allIds =
-        reports.map((NebulaErrorReport report) => report.reportId).toSet();
+    final Set<String> allIds = reports
+        .map((NebulaErrorReport report) => report.reportId)
+        .toSet();
     if (allIds.length != reports.length) return null;
-    int count =
-        reports.length < _maxErrorReports ? reports.length : _maxErrorReports;
+    int count = reports.length < _maxErrorReports
+        ? reports.length
+        : _maxErrorReports;
     while (count > 0) {
       final List<NebulaErrorReport> selected =
           List<NebulaErrorReport>.unmodifiable(reports.take(count));
-      final Map<String, Object?> body = Map<String, Object?>.unmodifiable(
-        <String, Object?>{
-          'reports': List<Map<String, Object?>>.unmodifiable(
-            selected.map((NebulaErrorReport report) =>
-                Map<String, Object?>.unmodifiable(report.toDiagnosticMap())),
-          ),
-        },
-      );
+      final Map<String, Object?> body =
+          (compactWireV2 ? compactErrorReports(selected) : null) ??
+          Map<String, Object?>.unmodifiable(<String, Object?>{
+            'reports': List<Map<String, Object?>>.unmodifiable(
+              selected.map(
+                (report) =>
+                    Map<String, Object?>.unmodifiable(report.toDiagnosticMap()),
+              ),
+            ),
+          });
       if (utf8.encode(jsonEncode(body)).length <= _maxErrorRequestBytes) {
         return _PreparedErrorBatch(
           body: body,
@@ -268,8 +284,9 @@ final class MobileErrorReportSender implements ErrorReportSender {
     final String b = base.endsWith('/') && base.isNotEmpty
         ? base.substring(0, base.length - 1)
         : base;
-    final String p =
-        endpointPath.startsWith('/') ? endpointPath : '/$endpointPath';
+    final String p = endpointPath.startsWith('/')
+        ? endpointPath
+        : '/$endpointPath';
     return '$b$p';
   }
 }

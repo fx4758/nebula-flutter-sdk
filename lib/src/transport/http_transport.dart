@@ -37,8 +37,8 @@ final class HttpTransport implements NebulaTransport {
     Map<String, String> defaultHeaders = const <String, String>{},
     this.logger,
     HttpClientFactory? clientFactory,
-  })  : _defaultHeaders = Map<String, String>.unmodifiable(defaultHeaders),
-        _clientFactory = clientFactory ?? _defaultClientFactory;
+  }) : _defaultHeaders = Map<String, String>.unmodifiable(defaultHeaders),
+       _clientFactory = clientFactory ?? _defaultClientFactory;
 
   /// The absolute origin all requests are resolved against. HTTPS enforcement
   /// for production is owned by [NebulaOptions.validate]; the transport itself
@@ -102,20 +102,15 @@ final class HttpTransport implements NebulaTransport {
     } on NebulaCancelledException {
       rethrow;
     } on NebulaException catch (e) {
-      _emitLog(
-        clientRequestId,
-        request,
-        classifyNebulaError(e),
-        sw,
-        e.message,
-      );
+      _emitLog(clientRequestId, request, classifyNebulaError(e), sw, e.message);
       rethrow;
     } on Object catch (e) {
       // Ensure a hung connection is released even if the abort races the error.
       client.close(force: true);
       final NebulaHttpException wrapped = NebulaHttpException(
-          'Transport failure: $e',
-          requestId: clientRequestId);
+        'Transport failure: $e',
+        requestId: clientRequestId,
+      );
       _emitLog(
         clientRequestId,
         request,
@@ -164,9 +159,12 @@ final class HttpTransport implements NebulaTransport {
     try {
       httpReq = await client
           .openUrl(request.method.name.toUpperCase(), uri)
-          .timeout(connectTimeout, onTimeout: () {
-        throw const NebulaTimeoutException('Connection timed out');
-      });
+          .timeout(
+            connectTimeout,
+            onTimeout: () {
+              throw const NebulaTimeoutException('Connection timed out');
+            },
+          );
     } on NebulaTimeoutException {
       rethrow;
     } catch (e) {
@@ -174,7 +172,7 @@ final class HttpTransport implements NebulaTransport {
     }
 
     httpReq.headers.set('accept', 'application/json');
-    if (request.body != null) {
+    if (request.body != null || request.bodyBytes != null) {
       httpReq.headers.set('content-type', 'application/json; charset=utf-8');
     }
     _defaultHeaders.forEach(httpReq.headers.set);
@@ -188,17 +186,21 @@ final class HttpTransport implements NebulaTransport {
       httpReq.headers.set('x-request-id', clientRequestId);
     }
 
-    if (request.body != null) {
-      final List<int> bytes = utf8.encode(jsonEncode(request.body));
+    if (request.body != null || request.bodyBytes != null) {
+      final List<int> bytes =
+          request.bodyBytes ?? utf8.encode(jsonEncode(request.body));
       httpReq.contentLength = bytes.length;
       httpReq.add(bytes);
     }
 
     final HttpClientResponse httpRes;
     try {
-      httpRes = await httpReq.close().timeout(receiveTimeout, onTimeout: () {
-        throw const NebulaTimeoutException('Response timed out');
-      });
+      httpRes = await httpReq.close().timeout(
+        receiveTimeout,
+        onTimeout: () {
+          throw const NebulaTimeoutException('Response timed out');
+        },
+      );
     } on NebulaTimeoutException {
       rethrow;
     } catch (e) {
@@ -207,12 +209,17 @@ final class HttpTransport implements NebulaTransport {
 
     final List<int> bodyBytes;
     try {
-      bodyBytes = await httpRes.fold<List<int>>(
-          <int>[],
-          (List<int> prev, List<int> e) =>
-              prev..addAll(e)).timeout(receiveTimeout, onTimeout: () {
-        throw const NebulaTimeoutException('Body read timed out');
-      });
+      bodyBytes = await httpRes
+          .fold<List<int>>(
+            <int>[],
+            (List<int> prev, List<int> e) => prev..addAll(e),
+          )
+          .timeout(
+            receiveTimeout,
+            onTimeout: () {
+              throw const NebulaTimeoutException('Body read timed out');
+            },
+          );
     } on NebulaTimeoutException {
       rethrow;
     } catch (e) {

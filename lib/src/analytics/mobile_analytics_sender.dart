@@ -6,6 +6,7 @@ import 'dart:math';
 import '../foundation/errors.dart';
 import '../foundation/options.dart';
 import '../foundation/request_proof.dart';
+import '../observability/mobile_wire_v2.dart';
 import '../transport.dart';
 import '../transport/proof_headers.dart';
 import 'analytics_sender.dart';
@@ -54,13 +55,14 @@ final class MobileAnalyticsSender
     String Function()? batchIdGenerator,
     DateTime Function()? now,
     this.rateLimitCooldown = const Duration(seconds: 30),
-  })  : _options = options,
-        _transport = transport,
-        _proofSigner = proofSigner,
-        _installationToken = installationToken,
-        _recoverInstallationTrust = recoverInstallationTrust,
-        _batchIdGenerator = batchIdGenerator ?? _newBatchId,
-        _now = now ?? DateTime.now;
+    this.compactWireV2 = false,
+  }) : _options = options,
+       _transport = transport,
+       _proofSigner = proofSigner,
+       _installationToken = installationToken,
+       _recoverInstallationTrust = recoverInstallationTrust,
+       _batchIdGenerator = batchIdGenerator ?? _newBatchId,
+       _now = now ?? DateTime.now;
 
   final NebulaOptions _options;
   final NebulaTransport _transport;
@@ -70,6 +72,7 @@ final class MobileAnalyticsSender
   final String Function() _batchIdGenerator;
   final DateTime Function() _now;
   final Duration rateLimitCooldown;
+  final bool compactWireV2;
 
   DateTime? _cooldownUntil;
   bool _trustRecoveryRequired = false;
@@ -93,7 +96,9 @@ final class MobileAnalyticsSender
     while (count > 0) {
       final List<NebulaAnalyticsEvent> events =
           List<NebulaAnalyticsEvent>.unmodifiable(candidates.take(count));
-      final Map<String, Object?> body = _body(batchId, events);
+      final Map<String, Object?> body =
+          (compactWireV2 ? compactAnalyticsBatch(batchId, events) : null) ??
+          _body(batchId, events);
       final int bytes = utf8.encode(jsonEncode(body)).length;
       if (bytes <= _maxAnalyticsRequestBytes) {
         return AssignedMobileAnalyticsBatch(
@@ -106,7 +111,8 @@ final class MobileAnalyticsSender
       count--;
     }
     throw StateError(
-        'single analytics event cannot fit 16 KiB request ceiling');
+      'single analytics event cannot fit 16 KiB request ceiling',
+    );
   }
 
   @override
@@ -149,10 +155,14 @@ final class MobileAnalyticsSender
 
     try {
       final String token = await _installationToken();
+      final List<int>? compressed = compactWireV2 && batch.body['v'] == 2
+          ? maybeCompressTelemetry(batch.body)
+          : null;
       final Map<String, String> headers = await buildAuthHeaders(
         method: NebulaHttpMethod.post,
         resolvedPath: _resolvePath(_analyticsPath),
         body: batch.body,
+        bodyBytes: compressed,
         installationToken: token,
         signer: _proofSigner,
       );
@@ -160,8 +170,12 @@ final class MobileAnalyticsSender
         NebulaRequest(
           method: NebulaHttpMethod.post,
           path: _analyticsPath,
-          headers: headers,
+          headers: <String, String>{
+            ...headers,
+            if (compressed != null) 'Content-Encoding': 'gzip',
+          },
           body: batch.body,
+          bodyBytes: compressed,
         ),
       );
       if (!_validAck(response.data, batch)) {
@@ -208,8 +222,9 @@ final class MobileAnalyticsSender
   }
 
   void _deferRateLimit(DateTime now) {
-    final Duration cooldown =
-        rateLimitCooldown < Duration.zero ? Duration.zero : rateLimitCooldown;
+    final Duration cooldown = rateLimitCooldown < Duration.zero
+        ? Duration.zero
+        : rateLimitCooldown;
     _cooldownUntil = now.add(cooldown);
   }
 
@@ -223,21 +238,19 @@ final class MobileAnalyticsSender
     final String b = base.endsWith('/') && base.isNotEmpty
         ? base.substring(0, base.length - 1)
         : base;
-    final String p =
-        endpointPath.startsWith('/') ? endpointPath : '/$endpointPath';
+    final String p = endpointPath.startsWith('/')
+        ? endpointPath
+        : '/$endpointPath';
     return '$b$p';
   }
 
   static Map<String, Object?> _body(
     String batchId,
     List<NebulaAnalyticsEvent> events,
-  ) =>
-      Map<String, Object?>.unmodifiable(<String, Object?>{
-        'batch_id': batchId,
-        'events': List<Map<String, Object?>>.unmodifiable(
-          events.map(_eventWire),
-        ),
-      });
+  ) => Map<String, Object?>.unmodifiable(<String, Object?>{
+    'batch_id': batchId,
+    'events': List<Map<String, Object?>>.unmodifiable(events.map(_eventWire)),
+  });
 
   static Map<String, Object?> _eventWire(NebulaAnalyticsEvent event) {
     final Object? properties = jsonDecode(jsonEncode(event.properties));
@@ -249,10 +262,7 @@ final class MobileAnalyticsSender
     });
   }
 
-  static bool _validAck(
-    Object? data,
-    AssignedMobileAnalyticsBatch batch,
-  ) {
+  static bool _validAck(Object? data, AssignedMobileAnalyticsBatch batch) {
     if (data is! Map<String, Object?>) return false;
     if (data['batch_id'] != batch.batchId) return false;
     if (data['accepted_events'] != batch.events.length) return false;
