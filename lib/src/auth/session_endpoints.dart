@@ -12,6 +12,7 @@ final class SessionEndpoints {
     this.login = '/api/v1/mobile/auth/login',
     this.refresh = '/api/v1/mobile/auth/refresh',
     this.logout = '/api/v1/mobile/auth/logout',
+    this.emailNextStep = '/api/v1/mobile/auth/email/next-step',
     this.emailCodeSend = '/api/v1/mobile/auth/email/code/send',
     this.emailRegister = '/api/v1/mobile/auth/email/register',
     this.emailPasswordReset = '/api/v1/mobile/auth/email/password/reset',
@@ -20,6 +21,7 @@ final class SessionEndpoints {
   final String login;
   final String refresh;
   final String logout;
+  final String emailNextStep;
   final String emailCodeSend;
   final String emailRegister;
   final String emailPasswordReset;

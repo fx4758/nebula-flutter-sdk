@@ -111,3 +111,6 @@ final class NebulaLoginRequest {
     }
   }
 }
+
+/// Supported next steps for the single email sign-in entry point.
+enum NebulaEmailNextStep { password, register }

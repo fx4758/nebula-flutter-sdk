@@ -116,6 +116,29 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   @override
+  Future<NebulaEmailNextStep> emailNextStep({
+    required String email,
+    NebulaCancellationToken? cancellationToken,
+  }) async {
+    _validateEmail(email);
+    final NebulaResponse response = await _sendWithProof(
+      NebulaHttpMethod.post,
+      endpoints.emailNextStep,
+      body: <String, Object?>{'email': email},
+      cancellationToken: cancellationToken,
+    );
+    final Object? data = response.data;
+    if (data is! Map<String, Object?>) {
+      throw const TemporarilyUnavailableError();
+    }
+    return switch (data['next_step']) {
+      'PASSWORD' => NebulaEmailNextStep.password,
+      'REGISTER' => NebulaEmailNextStep.register,
+      _ => throw const TemporarilyUnavailableError(),
+    };
+  }
+
+  @override
   Future<void> sendEmailCode({
     required String email,
     required NebulaEmailCodePurpose purpose,

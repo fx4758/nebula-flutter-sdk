@@ -27,6 +27,12 @@ final class _Auth implements NebulaAuth {
   }) async {}
 
   @override
+  @override
+  Future<NebulaEmailNextStep> emailNextStep({
+    required String email,
+    NebulaCancellationToken? cancellationToken,
+  }) async => NebulaEmailNextStep.password;
+
   Future<void> sendEmailCode({
     required String email,
     required NebulaEmailCodePurpose purpose,

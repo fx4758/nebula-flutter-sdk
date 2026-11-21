@@ -28,6 +28,13 @@ abstract interface class NebulaAuth {
     NebulaCancellationToken? cancellationToken,
   });
 
+  /// Determines the next email sign-in screen after installation proof.
+  /// This is a bounded, no-mail status lookup and never authenticates a user.
+  Future<NebulaEmailNextStep> emailNextStep({
+    required String email,
+    NebulaCancellationToken? cancellationToken,
+  });
+
   /// Sends a purpose-bound EMAIL verification code.
   Future<void> sendEmailCode({
     required String email,
