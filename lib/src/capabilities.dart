@@ -42,27 +42,36 @@ abstract interface class NebulaAuth {
     NebulaCancellationToken? cancellationToken,
   });
 
+  /// Consumes a six-digit EMAIL code with installation proof, returning a
+  /// five-minute server-side verification grant; never authenticates a user.
+  Future<String> verifyEmailCode({
+    required String email,
+    required NebulaEmailCodePurpose purpose,
+    required String code,
+    NebulaCancellationToken? cancellationToken,
+  });
+
   /// Completes EMAIL registration and enters an authenticated session.
   Future<void> registerEmail({
     required String email,
     required String password,
-    required String code,
+    String? code,
+    String? verificationToken,
     NebulaCancellationToken? cancellationToken,
   });
 
   /// Resets an EMAIL password and clears any current local user session.
   Future<void> resetEmailPassword({
     required String email,
-    required String code,
+    String? code,
+    String? verificationToken,
     required String newPassword,
     NebulaCancellationToken? cancellationToken,
   });
 
   /// Returns a valid access token, performing a single-flight refresh if the
   /// current one is missing or needs rotation.
-  Future<String> getAccessToken({
-    NebulaCancellationToken? cancellationToken,
-  });
+  Future<String> getAccessToken({NebulaCancellationToken? cancellationToken});
 
   /// Proactively refresh the session (single-flight; docs/08 §6.3). Concurrent
   /// callers await the same future, so a 401 storm issues one refresh request.

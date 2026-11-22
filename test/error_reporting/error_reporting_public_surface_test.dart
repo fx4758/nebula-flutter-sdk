@@ -16,9 +16,9 @@ final class _Auth implements NebulaAuth {
   NebulaSessionState get state => NebulaSessionState.uninitialized;
 
   @override
-  Future<String> getAccessToken(
-          {NebulaCancellationToken? cancellationToken}) async =>
-      '';
+  Future<String> getAccessToken({
+    NebulaCancellationToken? cancellationToken,
+  }) async => '';
 
   @override
   Future<void> login(
@@ -40,25 +40,35 @@ final class _Auth implements NebulaAuth {
   }) async {}
 
   @override
+  @override
+  Future<String> verifyEmailCode({
+    required String email,
+    required NebulaEmailCodePurpose purpose,
+    required String code,
+    NebulaCancellationToken? cancellationToken,
+  }) async => 'fake-proof';
+
   Future<void> registerEmail({
     required String email,
     required String password,
-    required String code,
+    String? code,
+    String? verificationToken,
     NebulaCancellationToken? cancellationToken,
   }) async {}
 
   @override
   Future<void> resetEmailPassword({
     required String email,
-    required String code,
+    String? code,
+    String? verificationToken,
     required String newPassword,
     NebulaCancellationToken? cancellationToken,
   }) async {}
 
   @override
-  Future<SessionTokenPair> refresh(
-          {NebulaCancellationToken? cancellationToken}) async =>
-      const SessionTokenPair(accessToken: '', refreshToken: '');
+  Future<SessionTokenPair> refresh({
+    NebulaCancellationToken? cancellationToken,
+  }) async => const SessionTokenPair(accessToken: '', refreshToken: '');
 
   @override
   Future<bool> restoreSession() async => false;
@@ -77,8 +87,7 @@ final class _Config implements NebulaConfig {
   @override
   Future<NebulaEffectiveConfig> getEffectiveConfig({
     NebulaCancellationToken? cancellationToken,
-  }) =>
-      Future<NebulaEffectiveConfig>.error(UnimplementedError());
+  }) => Future<NebulaEffectiveConfig>.error(UnimplementedError());
 }
 
 final class _Analytics implements NebulaAnalytics {
@@ -96,17 +105,17 @@ final class _Analytics implements NebulaAnalytics {
 }
 
 Nebula _nebula({NebulaErrorReporting? errorReporting}) => Nebula(
-      options: NebulaOptions(
-        appId: 'test-app',
-        baseUri: Uri.parse('https://example.invalid'),
-        environment: NebulaEnvironment.staging,
-      ),
-      transport: FakeTransport(),
-      auth: _Auth(),
-      config: _Config(),
-      analytics: _Analytics(),
-      errorReporting: errorReporting,
-    );
+  options: NebulaOptions(
+    appId: 'test-app',
+    baseUri: Uri.parse('https://example.invalid'),
+    environment: NebulaEnvironment.staging,
+  ),
+  transport: FakeTransport(),
+  auth: _Auth(),
+  config: _Config(),
+  analytics: _Analytics(),
+  errorReporting: errorReporting,
+);
 
 void main() {
   test('public barrel exposes only the frozen capability contract', () {
@@ -130,32 +139,34 @@ void main() {
     expect(withCapability.errorReporting, same(client));
   });
 
-  test('caught-error surface maps frozen diagnostic facts and request id',
-      () async {
-    final FakeBoundedErrorStore store = FakeBoundedErrorStore();
-    final ErrorReportingClient client = ErrorReportingClient(
-      store: store,
-      idGenerator: FixedErrorReportIdGenerator('public'),
-    );
-    final DateTime occurredAt = DateTime.utc(2026, 8, 15, 1, 2, 3);
-    final NebulaRequestId requestId = NebulaRequestId.parse('req-public-1');
+  test(
+    'caught-error surface maps frozen diagnostic facts and request id',
+    () async {
+      final FakeBoundedErrorStore store = FakeBoundedErrorStore();
+      final ErrorReportingClient client = ErrorReportingClient(
+        store: store,
+        idGenerator: FixedErrorReportIdGenerator('public'),
+      );
+      final DateTime occurredAt = DateTime.utc(2026, 8, 15, 1, 2, 3);
+      final NebulaRequestId requestId = NebulaRequestId.parse('req-public-1');
 
-    await client.reportCaughtError(
-      errorType: 'StateError',
-      safeMessage: 'safe message',
-      stackTrace: StackTrace.fromString('frame-a\nframe-b'),
-      occurredAt: occurredAt,
-      requestId: requestId,
-    );
+      await client.reportCaughtError(
+        errorType: 'StateError',
+        safeMessage: 'safe message',
+        stackTrace: StackTrace.fromString('frame-a\nframe-b'),
+        occurredAt: occurredAt,
+        requestId: requestId,
+      );
 
-    final report = store.records.single.report;
-    expect(report.reportId, 'public-1');
-    expect(report.errorType, 'StateError');
-    expect(report.safeMessage, 'safe message');
-    expect(report.stack, contains('frame-a'));
-    expect(report.occurredAt, occurredAt);
-    expect(report.requestId, requestId.value);
-  });
+      final report = store.records.single.report;
+      expect(report.reportId, 'public-1');
+      expect(report.errorType, 'StateError');
+      expect(report.safeMessage, 'safe message');
+      expect(report.stack, contains('frame-a'));
+      expect(report.occurredAt, occurredAt);
+      expect(report.requestId, requestId.value);
+    },
+  );
 
   test('public reporting remains fail-soft when persistence fails', () async {
     final FakeBoundedErrorStore store = FakeBoundedErrorStore()

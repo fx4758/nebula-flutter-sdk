@@ -14,6 +14,7 @@ final class SessionEndpoints {
     this.logout = '/api/v1/mobile/auth/logout',
     this.emailNextStep = '/api/v1/mobile/auth/email/next-step',
     this.emailCodeSend = '/api/v1/mobile/auth/email/code/send',
+    this.emailCodeVerify = '/api/v1/mobile/auth/email/code/verify',
     this.emailRegister = '/api/v1/mobile/auth/email/register',
     this.emailPasswordReset = '/api/v1/mobile/auth/email/password/reset',
   });
@@ -23,6 +24,7 @@ final class SessionEndpoints {
   final String logout;
   final String emailNextStep;
   final String emailCodeSend;
+  final String emailCodeVerify;
   final String emailRegister;
   final String emailPasswordReset;
 }

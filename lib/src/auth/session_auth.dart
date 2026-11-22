@@ -27,12 +27,12 @@ final class NebulaSessionAuth implements NebulaAuth {
     required Future<String> Function() installationToken,
     this.endpoints = const SessionEndpoints(),
     List<SessionStateListener> listeners = const <SessionStateListener>[],
-  })  : _options = options,
-        _transport = transport,
-        _tokenStore = tokenStore,
-        _proofSigner = proofSigner,
-        _installationToken = installationToken,
-        _namespace = tokenNamespace(options.environment, options.appId) {
+  }) : _options = options,
+       _transport = transport,
+       _tokenStore = tokenStore,
+       _proofSigner = proofSigner,
+       _installationToken = installationToken,
+       _namespace = tokenNamespace(options.environment, options.appId) {
     _session = NebulaSession(
       namespace: _namespace,
       tokenStore: _tokenStore,
@@ -71,8 +71,10 @@ final class NebulaSessionAuth implements NebulaAuth {
 
   @override
   Future<bool> restoreSession() async {
-    final String? refreshToken =
-        await _tokenStore.read(namespace: _namespace, key: tokenKeyRefresh);
+    final String? refreshToken = await _tokenStore.read(
+      namespace: _namespace,
+      key: tokenKeyRefresh,
+    );
     if (refreshToken == null) return false;
     if (_session.state == NebulaSessionState.authenticated) return true;
 
@@ -157,26 +159,58 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   @override
-  Future<void> registerEmail({
+  Future<String> verifyEmailCode({
     required String email,
-    required String password,
+    required NebulaEmailCodePurpose purpose,
     required String code,
     NebulaCancellationToken? cancellationToken,
   }) async {
     _validateEmail(email);
-    _validatePassword(password, 'password');
     _validateEmailCode(code);
+    final response = await _sendWithProof(
+      NebulaHttpMethod.post,
+      endpoints.emailCodeVerify,
+      body: <String, Object?>{
+        'email': email,
+        'purpose': _emailPurposeWire(purpose),
+        'code': code,
+      },
+      cancellationToken: cancellationToken,
+    );
+    final data = response.data;
+    if (data is! Map<String, Object?> ||
+        data['verification_token'] is! String ||
+        (data['verification_token'] as String).isEmpty) {
+      throw const TemporarilyUnavailableError();
+    }
+    return data['verification_token'] as String;
+  }
+
+  @override
+  Future<void> registerEmail({
+    required String email,
+    required String password,
+    String? code,
+    String? verificationToken,
+    NebulaCancellationToken? cancellationToken,
+  }) async {
+    _validateEmail(email);
+    _validatePassword(password, 'password');
+    if ((verificationToken == null || verificationToken.isEmpty) ==
+        (code == null || code.isEmpty)) {
+      throw ArgumentError('exactly one verification proof required');
+    }
+    if (verificationToken == null) _validateEmailCode(code!);
     await _session.beginAuthenticating();
     try {
-      final SessionTokenPair pair = await _tokenRequest(
-        endpoints.emailRegister,
-        <String, Object?>{
-          'email': email,
-          'password': password,
-          'code': code,
-        },
-        cancellationToken: cancellationToken,
-      );
+      final SessionTokenPair pair =
+          await _tokenRequest(endpoints.emailRegister, <String, Object?>{
+            'email': email,
+            'password': password,
+            if (code != null) 'code': code,
+            if (verificationToken != null)
+              'verification_token': verificationToken,
+          }, cancellationToken: cancellationToken);
       await _session.onAuthenticated(pair);
     } on NebulaSessionError catch (error) {
       await _session.onFailure(error);
@@ -191,19 +225,25 @@ final class NebulaSessionAuth implements NebulaAuth {
   @override
   Future<void> resetEmailPassword({
     required String email,
-    required String code,
+    String? code,
+    String? verificationToken,
     required String newPassword,
     NebulaCancellationToken? cancellationToken,
   }) async {
     _validateEmail(email);
-    _validateEmailCode(code);
+    if ((verificationToken == null || verificationToken.isEmpty) ==
+        (code == null || code.isEmpty)) {
+      throw ArgumentError('exactly one verification proof required');
+    }
+    if (verificationToken == null) _validateEmailCode(code!);
     _validatePassword(newPassword, 'newPassword');
     await _sendWithProof(
       NebulaHttpMethod.post,
       endpoints.emailPasswordReset,
       body: <String, Object?>{
         'email': email,
-        'code': code,
+        if (code != null) 'code': code,
+        if (verificationToken != null) 'verification_token': verificationToken,
         'new_password': newPassword,
       },
       cancellationToken: cancellationToken,
@@ -227,8 +267,7 @@ final class NebulaSessionAuth implements NebulaAuth {
   @override
   Future<SessionTokenPair> refresh({
     NebulaCancellationToken? cancellationToken,
-  }) =>
-      _session.refresh();
+  }) => _session.refresh();
 
   @override
   Future<void> signOut() => _session.signOut();
@@ -236,12 +275,11 @@ final class NebulaSessionAuth implements NebulaAuth {
   Future<SessionTokenPair> _loginRequest(
     Map<String, Object?> body, {
     NebulaCancellationToken? cancellationToken,
-  }) =>
-      _tokenRequest(
-        endpoints.login,
-        body,
-        cancellationToken: cancellationToken,
-      );
+  }) => _tokenRequest(
+    endpoints.login,
+    body,
+    cancellationToken: cancellationToken,
+  );
 
   Future<SessionTokenPair> _tokenRequest(
     String endpointPath,
@@ -258,8 +296,10 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   Future<SessionTokenPair> _refreshExecutor(String refreshRequestId) async {
-    final String? refreshToken =
-        await _tokenStore.read(namespace: _namespace, key: tokenKeyRefresh);
+    final String? refreshToken = await _tokenStore.read(
+      namespace: _namespace,
+      key: tokenKeyRefresh,
+    );
     if (refreshToken == null) {
       // No persisted refresh token: the installation must re-bootstrap.
       throw const InvalidInstallationError();
@@ -372,9 +412,9 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   String _emailPurposeWire(NebulaEmailCodePurpose purpose) => switch (purpose) {
-        NebulaEmailCodePurpose.register => 'REGISTER',
-        NebulaEmailCodePurpose.resetPassword => 'RESET_PASSWORD',
-      };
+    NebulaEmailCodePurpose.register => 'REGISTER',
+    NebulaEmailCodePurpose.resetPassword => 'RESET_PASSWORD',
+  };
 
   void _validateEmail(String email) =>
       _validateUtf8(email, 'email', minBytes: 1, maxBytes: 254);
@@ -385,7 +425,9 @@ final class NebulaSessionAuth implements NebulaAuth {
   void _validateEmailCode(String code) {
     if (!RegExp(r'^[0-9]{6}$').hasMatch(code)) {
       throw ArgumentError(
-          'code must be exactly 6 ASCII decimal digits', 'code');
+        'code must be exactly 6 ASCII decimal digits',
+        'code',
+      );
     }
   }
 
@@ -409,8 +451,9 @@ final class NebulaSessionAuth implements NebulaAuth {
     final String b = base.endsWith('/') && base.isNotEmpty
         ? base.substring(0, base.length - 1)
         : base;
-    final String p =
-        endpointPath.startsWith('/') ? endpointPath : '/$endpointPath';
+    final String p = endpointPath.startsWith('/')
+        ? endpointPath
+        : '/$endpointPath';
     return '$b$p';
   }
 
