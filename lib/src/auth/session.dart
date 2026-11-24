@@ -93,8 +93,8 @@ typedef RefreshExecutor = Future<SessionTokenPair> Function(
   String refreshRequestId,
 );
 
-/// Optional remote logout hook; failures are swallowed (§6.4: local state is
-/// cleared even when the network call fails).
+/// Optional remote logout hook. Local cleanup continues on failure; the
+/// completed state event distinguishes confirmed and unconfirmed remote logout.
 typedef RemoteLogout = Future<void> Function();
 
 /// Serialized, single-flight user session state machine (FS-02).
@@ -312,15 +312,22 @@ final class NebulaSession {
           return; // idempotent: nothing to sign out
         }
         _transition(NebulaSessionState.signingOut);
+        var remoteConfirmed = false;
         if (remoteLogout != null) {
           try {
             await remoteLogout!();
+            remoteConfirmed = true;
           } on Object {
             // §6.4: network failure must not block local cleanup.
           }
         }
         await _clearLocalSession();
-        _transition(NebulaSessionState.installationActive);
+        _transition(
+          NebulaSessionState.installationActive,
+          reason: remoteConfirmed
+              ? 'logout_remote_confirmed'
+              : 'logout_remote_unconfirmed',
+        );
       });
 
   /// Clears user credentials after a successful EMAIL password reset.

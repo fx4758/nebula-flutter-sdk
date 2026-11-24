@@ -495,12 +495,17 @@ void main() {
         const NebulaLoginRequest.phone(phone: '13800000000', code: '123456'),
       );
 
+      final events = <NebulaSessionEvent>[];
+      final sub = auth.events.listen(events.add);
+      addTearDown(sub.cancel);
       await auth.signOut();
 
       expect(auth.state, NebulaSessionState.installationActive);
       expect(auth.accessToken, isNull);
       expect(await store.read(namespace: _ns, key: tokenKeyRefresh), isNull);
       expect(transport.logoutCount, 1);
+      expect(events.whereType<SessionStateChanged>().last.reason,
+          'logout_remote_confirmed');
       // Logout carries the user access token as a bearer credential.
       expect(
         transport.requests
@@ -521,10 +526,36 @@ void main() {
 
       // Remote call throws, but signOut must not propagate it and must still
       // clear local state (docs/08 §6.4).
+      final events = <NebulaSessionEvent>[];
+      final sub = auth.events.listen(events.add);
+      addTearDown(sub.cancel);
       await auth.signOut();
       expect(await store.read(namespace: _ns, key: tokenKeyRefresh), isNull);
       expect(auth.state, NebulaSessionState.installationActive);
       expect(transport.logoutCount, 1);
+      expect(events.whereType<SessionStateChanged>().last.reason,
+          'logout_remote_unconfirmed');
+      final count = events.length;
+      await auth.signOut();
+      expect(events.length, count, reason: 'no-op must not claim confirmation');
+    });
+    test(
+        'restored session without access clears locally, never confirms remotely',
+        () async {
+      final transport = _FakeTransport();
+      final store = InMemoryTokenStore();
+      await store.write(
+          namespace: _ns, key: tokenKeyRefresh, value: 'persisted');
+      final auth = _auth(transport, store: store);
+      expect(await auth.restoreSession(), isTrue);
+      final events = <NebulaSessionEvent>[];
+      final sub = auth.events.listen(events.add);
+      addTearDown(sub.cancel);
+      await auth.signOut();
+      expect(transport.logoutCount, 0);
+      expect(await store.read(namespace: _ns, key: tokenKeyRefresh), isNull);
+      expect(events.whereType<SessionStateChanged>().last.reason,
+          'logout_remote_unconfirmed');
     });
   });
 

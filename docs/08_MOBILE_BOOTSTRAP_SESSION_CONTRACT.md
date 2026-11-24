@@ -228,6 +228,7 @@ Rules:
 - revocation is scoped to current `app_id + user_id + installation_id + session_id`;
 - repeated logout returns success;
 - local access/refresh state is cleared even when the network call fails;
+- On a real local sign-out, the existing `SessionStateChanged(installationActive)` event carries `logout_remote_confirmed` only after a successful remote logout response, otherwise `logout_remote_unconfirmed`. A no-op repeated sign-out emits no confirmation. Consumers must not equate local cleanup with remote acknowledgement, retain old credentials, or expose raw error details. This clarification retains the existing public API and local cleanup contract.
 - “logout all devices” is a separate high-risk operation and not implied by normal logout.
 
 ## 7. SDK session state machine

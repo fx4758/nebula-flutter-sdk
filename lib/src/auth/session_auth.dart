@@ -27,12 +27,12 @@ final class NebulaSessionAuth implements NebulaAuth {
     required Future<String> Function() installationToken,
     this.endpoints = const SessionEndpoints(),
     List<SessionStateListener> listeners = const <SessionStateListener>[],
-  }) : _options = options,
-       _transport = transport,
-       _tokenStore = tokenStore,
-       _proofSigner = proofSigner,
-       _installationToken = installationToken,
-       _namespace = tokenNamespace(options.environment, options.appId) {
+  })  : _options = options,
+        _transport = transport,
+        _tokenStore = tokenStore,
+        _proofSigner = proofSigner,
+        _installationToken = installationToken,
+        _namespace = tokenNamespace(options.environment, options.appId) {
     _session = NebulaSession(
       namespace: _namespace,
       tokenStore: _tokenStore,
@@ -203,14 +203,16 @@ final class NebulaSessionAuth implements NebulaAuth {
     if (verificationToken == null) _validateEmailCode(code!);
     await _session.beginAuthenticating();
     try {
-      final SessionTokenPair pair =
-          await _tokenRequest(endpoints.emailRegister, <String, Object?>{
+      final SessionTokenPair pair = await _tokenRequest(
+          endpoints.emailRegister,
+          <String, Object?>{
             'email': email,
             'password': password,
             if (code != null) 'code': code,
             if (verificationToken != null)
               'verification_token': verificationToken,
-          }, cancellationToken: cancellationToken);
+          },
+          cancellationToken: cancellationToken);
       await _session.onAuthenticated(pair);
     } on NebulaSessionError catch (error) {
       await _session.onFailure(error);
@@ -267,7 +269,8 @@ final class NebulaSessionAuth implements NebulaAuth {
   @override
   Future<SessionTokenPair> refresh({
     NebulaCancellationToken? cancellationToken,
-  }) => _session.refresh();
+  }) =>
+      _session.refresh();
 
   @override
   Future<void> signOut() => _session.signOut();
@@ -275,11 +278,12 @@ final class NebulaSessionAuth implements NebulaAuth {
   Future<SessionTokenPair> _loginRequest(
     Map<String, Object?> body, {
     NebulaCancellationToken? cancellationToken,
-  }) => _tokenRequest(
-    endpoints.login,
-    body,
-    cancellationToken: cancellationToken,
-  );
+  }) =>
+      _tokenRequest(
+        endpoints.login,
+        body,
+        cancellationToken: cancellationToken,
+      );
 
   Future<SessionTokenPair> _tokenRequest(
     String endpointPath,
@@ -314,12 +318,20 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   Future<void> _remoteLogout() async {
-    // Best-effort remote logout; local cleanup remains authoritative.
-    await _sendWithProof(
+    // An absent/expired access credential cannot prove remote revocation.
+    // Never refresh inside the serialized sign-out transition.
+    final access = _session.accessToken;
+    if (access == null || access.isEmpty) {
+      throw const AuthenticationRequiredError();
+    }
+    final response = await _sendWithProof(
       NebulaHttpMethod.post,
       endpoints.logout,
-      accessToken: _session.accessToken,
+      accessToken: access,
     );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw const TemporarilyUnavailableError();
+    }
   }
 
   Future<NebulaResponse> _sendWithProof(
@@ -412,9 +424,9 @@ final class NebulaSessionAuth implements NebulaAuth {
   }
 
   String _emailPurposeWire(NebulaEmailCodePurpose purpose) => switch (purpose) {
-    NebulaEmailCodePurpose.register => 'REGISTER',
-    NebulaEmailCodePurpose.resetPassword => 'RESET_PASSWORD',
-  };
+        NebulaEmailCodePurpose.register => 'REGISTER',
+        NebulaEmailCodePurpose.resetPassword => 'RESET_PASSWORD',
+      };
 
   void _validateEmail(String email) =>
       _validateUtf8(email, 'email', minBytes: 1, maxBytes: 254);
@@ -451,9 +463,8 @@ final class NebulaSessionAuth implements NebulaAuth {
     final String b = base.endsWith('/') && base.isNotEmpty
         ? base.substring(0, base.length - 1)
         : base;
-    final String p = endpointPath.startsWith('/')
-        ? endpointPath
-        : '/$endpointPath';
+    final String p =
+        endpointPath.startsWith('/') ? endpointPath : '/$endpointPath';
     return '$b$p';
   }
 
