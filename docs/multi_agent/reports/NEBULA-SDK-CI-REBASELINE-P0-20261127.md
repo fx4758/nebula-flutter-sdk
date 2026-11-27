@@ -1,29 +1,21 @@
-# NEBULA-SDK-CI-REBASELINE-P0-20261127 — candidate evidence
+# SDK CI rebaseline — Reviewer correction RC2
 
-**State: development draft, not merged/activated.**
+The original PR #164 SHA 89582667128aaaefb558ac14f964a7b9422db5fe passed real Forgejo governance CI run #494. Independent reviewer-agent review #2985 issued REQUEST_CHANGES with two major findings; original approval was NOT granted.
 
-## Root cause and constraints
+Finding 1: The trusted required Dev integration input is exact SHA f6563f6858b1b9d0b1db8071c0e645ea510aea24. Git-tree identity independently checked on the existing V3 workspace: the Dev integration tree and PR #164 old published head tree both equal e3c08b02c4de9108ac056773543fba95a359045c. This proves the first published four-file candidate used the authorized Dev integration source, not only tests against a different SDK base. RC2 is corrective to that exact source.
 
-The historical repository-specific `nebula-sdk-ci` Runner record is offline and the original private image `flypost/nebula-sdk-ci:20260810-v1` is absent on M1. The two existing general-purpose Forgejo Runners remain healthy. Their configuration files have been backed up and were amended only with the old Docker-qualified SDK label; neither service has been restarted. M4 lacks Docker; do not advertise SDK capability until parity. Avoid duplicate Runners and new blocking workspace locks.
+Finding 2: Previously tested 47/47 offline package SHA256 values were not recorded/enforced by Dockerfile. M1 independently verified 47 lockfile pub.dev SHA256 values matching 47 hosted hash files and computed SHA256 content digests for 47 package directories covering 4,215 regular files, 69,518,332 bytes, 0 symlinks. Manifest SDK_CI_47_HASH_MANIFEST.json SHA256 6fc111dff443bfdea195f1d120a0a28161d1f9b591231407120d2fb0bc8c406c. RC2 persists both 47-element SHA256 maps in governance/ci_dependency_snapshot.json and Dockerfile RUN now mechanically verifies exact package set, hosted hashes and ALL cached file contents against that versioned snapshot before finishing image build.
 
-## Independently tested candidate on M1
+The previous RC1 278/278 Dart test PASS and PR #164 original CI SUCCESS do NOT automatically approve the RC2 revision. Rebuild RC2 with --network none, record exact image digest, independently run full SDK governance, guard, Dart tests and negative tamper tests, then obtain new exact-head PR CI SUCCESS and an independent nonstale Reviewer APPROVED. Keep snapshot coordinator-only and Forgejo label coordinator-publication, do not bypass CI, create new Runner or write unrelated files. M1 image/Runner changes must preserve original 7 labels and backup. All evidence retained in M1 and coordinator .ci-infra/nebula-sdk-ci-recovery-20261127 directories; MCP issue root/mcp-bridge #1373.
 
-New `local/nebula-sdk-ci:20261127-rc1` ARM64 candidate image ID `sha256:675b62b38cf4ccc51c0a0406c84d6b8e5c9c4c2e036712796ad7b036b0c592e1`. The image combines official SHA-pinned Dart3.12.0 and Python3.13 with exactly 47 cached Dart packages and 47 hosted checksum files, and uses new marker `nebula-sdk-ci-candidate-20261127-v1`. Its Dockerfile SHA256 is `d2a1346fe60e880a5f6467df09a9b7d7560408d2fe4280b0768443805845df10`.
+## Executed RC2 acceptance and negative proof
 
-Tested in a network-disabled ephemeral container against exact SDK main `f95138da7e0eaa5a0ba9f51a4225f1b553de54a1` and registration PR #162 `b8bae350662c0d940bd98a8de44a5eb9324b9109`. The original identity marker is intentionally rejected by production guard; a **separate, copied source fixture** was updated to the distinct candidate marker for local checks, never the canonical SDK source. Results for PR #162:
+M1 Docker uses the legacy builder, which silently treated the initial multi-line RUN Python heredoc as an empty script. This was discovered by inspecting image layer history before publication. The Dockerfile was corrected to an explicit, auditable Python -c command reconstructed from quoted source lines using shell printf. The fixed offline builder **executed** the code, printing CI_PACKAGE_HASH_GUARD_PASS packages=47 files=4215; no omitted run steps. Dockerfile SHA256 8aed415347cfa37c961bdbd2fe098de1f801fbc49066abbe3ba7c0146dd0fdf8, actual RC2 ARM64 image ID sha256:9356017ef184da817ae41befe4a7c6b7bf4f007488d667b9b06d493b158c3855 (distinct identity v2). Positive build log SHA256 948c8ffe01729e4079e2dce2327576eadeda5faccf4d096e8071c3d6fd3130d4.
 
-| Check | Local result |
-|---|---|
-| Dart 3.12.0, pinned 47 dependencies, offline pub get | PASS |
-| Governance, Task Source, Cross Repo (58 Stories) | PASS |
-| Coordinator State Guard (explicit Coordinator publication) | PASS |
-| Publication mode regression | PASS |
-| Dart format (118 files, zero changes), analyze (zero issues) | PASS |
-| API Surface (131 symbols), Secret Scan, SDK Smoke | PASS |
-| Dart unit tests | **278/278 PASS** |
+Two independent M1 **negative** Docker builds were executed with --network none against temporary scratch copies, with original bytes restored in finally:
+- In the snapshot, change hosted SHA for args to all zeroes. Docker build exited 1, emitting mismatched hosted SHA: args-2.7.0. Log SHA256 09cb6e967db9f41e22118b7db897ec85f3b942c65bf33b4b9d714fae0eed5bec.
+- Modify bytes of one extracted args-2.7.0 package file. Docker build exited 1, emitting package content changed: args-2.7.0. Log SHA256 5d166d97492a0a8b797c7dcdb1e739d842d8798ddcec0ea9ccca7cfac9c6cb73.
 
-Evidence exists on M1 `/Users/fengshawn/Documents/project/forAI/.ci-infra/nebula-sdk-ci-recovery-20261127` and an independent SHA256-verified copy on coordinator `/Users/sean/Documents/project/forAI/.ci-infra/nebula-sdk-ci-recovery-20261127/candidate`. Validation JSON SHA256 `0dd879326ba3d70c7ad62695bc189bc5d4b6274973606c42467e801390aa761a`; full test log SHA256 `0e362206a06d14dc8f8205ba9e402c3f7b75b169e3b02db55f7e858bcfdb549a`. MCP issue evidence: `http://192.168.31.102:3000/root/mcp-bridge/issues/1373#issuecomment-12451`.
+The existing Dev integration source with the RC2 four-file patch was tested inside the real new RC2 image with --network none: all 47 dependencies plus dependency Guard negative regressions PASS; SDK Layer Graph, Product-Erasure, governance, cross-repo, Task Source, Coordinator self-check and its regression, API/platform checks, Checkout Contract, full Governance regression (30 cases), API Surface (131), Secret Scan, Dart format (118/0 changed), dart analyze (0 issues), dart test 278/278 PASS, Smoke PASS. A transient Dev remote workspace could not run the explicit --base Coordinator check due the temporary Git objects alternate path not mounted inside the container; this is *not* an SDK defect. Rebuilt a separate complete local Git fixture rooted at the exact f95138da base (test-only commit 357295311610de5c469831ecb8fc5a4ddcf50075) with the exact four corrected files and verified in RC2 with --network none: Coordinator State Guard --base f95138da --coordinator PASS (protected changes=1: snapshot). No V3 or canonical repository data was changed by that fixture.
 
-## Release hard gates
-
-Coordinator must finalize registered Story `NEBULA-SDK-CI-REBASELINE-P0-20261127` through the `docs/multi_agent/task_board.json` and Task Pack, verify image/cached packages, and publish a protected baseline PR with genuine `coordinator-publication` server label, real exact-head Forgejo Guard and independent Reviewer. The SDK Task Board cross_repo_governance runner image/image identity must match the new snapshot; Implementation Agents are not authorized to modify Task Board state. Then repoint only the existing M1 Runner's SDK label to the reviewed OCI candidate with approved restart and validate that jobs run. Do not claim current registration PR #163 or T08 PR #162 completed; both last observed Guard PENDING. After new canonical baseline, refresh/review/merge #162 separately. No NFC Writer phone login/TEST/user data changes.
+All proofs are independent local evidence, not exact-head official Forgejo CI on the future corrected V3 PR. Require new formal Guard SUCCESS and independent official Reviewer APPROVED at the revised candidate SHA; old REQUEST_CHANGES #2985 remains valid for old SHA.
